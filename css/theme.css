@@ -1,0 +1,472 @@
+/* ==========================================================================
+   AETHER OS — THEME TOKENS & SYSTEM FOUNDATION
+   Refreshing, 3D, Premium, Calm, Human Design System
+   Apple-level simplicity + modern 3D spatial UI + relaxing digital environment
+   ========================================================================== */
+
+:root {
+  /* Fresh & Human Pastel Accents (No harsh neon / no fluorescent cyber) */
+  --accent-primary: #8B5CF6;        /* Soft Royal Lavender */
+  --accent-primary-hover: #7C3AED;
+  --accent-primary-glow: rgba(139, 92, 246, 0.22);
+  --accent-primary-soft: rgba(139, 92, 246, 0.12);
+
+  --accent-sky: #38BDF8;            /* Pale Sky Blue */
+  --accent-sky-glow: rgba(56, 189, 248, 0.2);
+  --accent-sky-soft: rgba(56, 189, 248, 0.1);
+
+  --accent-mint: #34D399;           /* Fresh Mint Green */
+  --accent-mint-glow: rgba(52, 211, 153, 0.2);
+  --accent-mint-soft: rgba(52, 211, 153, 0.12);
+
+  --accent-peach: #FB923C;          /* Warm Peach */
+  --accent-peach-glow: rgba(251, 146, 60, 0.2);
+  --accent-peach-soft: rgba(251, 146, 60, 0.12);
+
+  --accent-coral: #FB7185;          /* Soft Coral Rose */
+  --accent-coral-glow: rgba(251, 113, 133, 0.2);
+  --accent-coral-soft: rgba(251, 113, 133, 0.12);
+
+  --accent-honey: #FBBF24;          /* Warm Sunlit Honey */
+  --accent-honey-glow: rgba(251, 191, 36, 0.2);
+  --accent-honey-soft: rgba(251, 191, 36, 0.12);
+
+  --accent-sage: #6EE7B7;           /* Gentle Sage */
+
+  /* Backward Compatibility Aliases */
+  --accent-cyan: var(--accent-sky);
+  --accent-cyan-glow: var(--accent-sky-glow);
+  --accent-emerald: var(--accent-mint);
+  --accent-emerald-glow: var(--accent-mint-glow);
+  --accent-amber: var(--accent-honey);
+  --accent-amber-glow: var(--accent-honey-glow);
+  --accent-rose: var(--accent-coral);
+  --accent-rose-glow: var(--accent-coral-glow);
+
+  /* Soft Category Palette — Natural & Harmonious */
+  --cat-study: #8B5CF6;             /* Lavender */
+  --cat-research: #38BDF8;          /* Sky Blue */
+  --cat-editing: #A78BFA;           /* Soft Violet */
+  --cat-content: #F472B6;           /* Pastel Pink */
+  --cat-reading: #60A5FA;           /* Soft Azure */
+  --cat-course: #34D399;            /* Mint */
+  --cat-personal: #2DD4BF;          /* Soft Teal */
+  --cat-exercise: #FB923C;          /* Warm Peach */
+  --cat-admin: #94A3B8;             /* Slate Grey */
+  --cat-other: #FBBF24;             /* Honey */
+
+  /* Priority Palette — Human & Clear */
+  --priority-critical: #F43F5E;
+  --priority-high: #FB923C;
+  --priority-medium: #FBBF24;
+  --priority-low: #60A5FA;
+  --priority-none: #94A3B8;
+
+  /* Typography — Clean Editorial Sans & Monospace Accents */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  /* Sizing & Spacing */
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 74px;
+  --topbar-height: 64px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --radius-full: 9999px;
+
+  /* Spring Physics & Spatial Transitions */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* 3D Tactile Elevation & Press Transforms */
+  --press-transform: scale(0.98) translateY(1px);
+  --lift-transform: translateY(-2px);
+  --lift-transform-lg: translateY(-4px) scale(1.01);
+}
+
+/* ==========================================================================
+   LUXURY DARK THEME — Deep Graphite & Smoked Floating Glass
+   (Sophisticated luxury, not hacker/cyber/neon)
+   ========================================================================== */
+[data-theme="dark"], :root:not([data-theme="light"]) {
+  color-scheme: dark;
+
+  /* Atmospheric Background */
+  --bg-app: #12141A;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #1A1E29 0%, #12141A 65%);
+  --bg-atmosphere-tint: rgba(139, 92, 246, 0.05);
+
+  /* Floating Smoked Glass Surfaces */
+  --bg-surface: rgba(26, 29, 39, 0.72);
+  --bg-surface-elevated: rgba(33, 37, 50, 0.88);
+  --bg-surface-hover: rgba(42, 47, 64, 0.75);
+  --bg-glass: rgba(22, 25, 34, 0.65);
+  --bg-glass-heavy: rgba(20, 23, 31, 0.88);
+  --bg-glass-clock: rgba(24, 28, 38, 0.75);
+  --bg-input: rgba(18, 21, 28, 0.75);
+
+  /* Tactile Borders & Delicate Highlights */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glass: rgba(255, 255, 255, 0.13);
+  --border-glass-highlight: rgba(255, 255, 255, 0.2);
+  --border-focus: rgba(139, 92, 246, 0.6);
+
+  /* Human Typography */
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-tertiary: #64748B;
+  --text-muted: #475569;
+
+  /* 3D Depth Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 18px 40px -8px rgba(0, 0, 0, 0.45);
+  --shadow-glass: 0 12px 36px 0 rgba(0, 0, 0, 0.32), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-3d-floating: 0 20px 48px -10px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-bead: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+
+  /* Tactile Dot Matrix */
+  --dot-empty: rgba(255, 255, 255, 0.08);
+  --dot-lvl1: rgba(139, 92, 246, 0.35);
+  --dot-lvl2: rgba(139, 92, 246, 0.6);
+  --dot-lvl3: rgba(139, 92, 246, 0.85);
+  --dot-lvl4: #38BDF8;
+}
+
+/* ==========================================================================
+   WARM OPAL & CREAM LIGHT THEME — Relaxing, Warm, Creative Workspace
+   ========================================================================== */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Atmospheric Background */
+  --bg-app: #FAF8F5;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #F3EFEA 0%, #FAF8F5 70%);
+  --bg-atmosphere-tint: rgba(251, 146, 60, 0.04);
+
+  /* Translucent Opal Surfaces */
+  --bg-surface: rgba(255, 255, 255, 0.82);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.96);
+  --bg-surface-hover: rgba(245, 242, 237, 0.9);
+  --bg-glass: rgba(255, 255, 255, 0.74);
+  --bg-glass-heavy: rgba(255, 255, 255, 0.94);
+  --bg-glass-clock: rgba(255, 255, 255, 0.85);
+  --bg-input: rgba(246, 243, 239, 0.9);
+
+  /* Tactile Borders & Warm Highlights */
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --border-glass: rgba(15, 23, 42, 0.09);
+  --border-glass-highlight: rgba(255, 255, 255, 0.8);
+  --border-focus: rgba(139, 92, 246, 0.65);
+
+  /* Human Typography */
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-tertiary: #64748B;
+  --text-muted: #94A3B8;
+
+  /* 3D Depth Shadows */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 20px 40px -8px rgba(15, 23, 42, 0.1);
+  --shadow-glass: 0 12px 36px 0 rgba(31, 38, 135, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-3d-floating: 0 24px 48px -12px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --shadow-bead: 0 2px 4px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+
+  /* Tactile Dot Matrix */
+  --dot-empty: rgba(15, 23, 42, 0.07);
+  --dot-lvl1: rgba(139, 92, 246, 0.35);
+  --dot-lvl2: rgba(139, 92, 246, 0.6);
+  --dot-lvl3: rgba(139, 92, 246, 0.85);
+  --dot-lvl4: #0284C7;
+}
+
+/* ==========================================================================
+   DAY / NIGHT ATMOSPHERIC LIGHTING STATES
+   ========================================================================== */
+.atmos-morning {
+  --bg-atmosphere-tint: rgba(251, 191, 36, 0.06);
+}
+.atmos-afternoon {
+  --bg-atmosphere-tint: rgba(56, 189, 248, 0.05);
+}
+.atmos-evening {
+  --bg-atmosphere-tint: rgba(251, 113, 133, 0.06);
+}
+.atmos-night {
+  --bg-atmosphere-tint: rgba(139, 92, 246, 0.05);
+}
+
+/* ==========================================================================
+   RESET & BASE STYLES
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  background-image: var(--bg-gradient);
+  color: var(--text-primary);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  transition: background-color var(--transition-slow);
+}
+
+/* Text selections */
+::selection {
+  background: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+/* Elegant custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-glass);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Interactive focus outline */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   3D SPATIAL & GLASSMORPHISM UTILITY CLASSES
+   ========================================================================== */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  position: relative;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+.glass-card {
+  background: var(--bg-surface);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.glass-card:hover {
+  border-color: var(--border-glass);
+  box-shadow: var(--shadow-md);
+}
+
+.glass-card-interactive {
+  cursor: pointer;
+}
+.glass-card-interactive:hover {
+  transform: var(--lift-transform);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-glass-highlight);
+}
+.glass-card-interactive:active {
+  transform: var(--press-transform);
+}
+
+/* Floating 3D Spatial Widget */
+.spatial-floating-card {
+  background: var(--bg-surface-elevated);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-3d-floating);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.spatial-floating-card:hover {
+  transform: var(--lift-transform);
+  box-shadow: 0 28px 56px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* Input Fields */
+.glass-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  outline: none;
+  width: 100%;
+}
+
+.glass-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-primary-soft);
+  background: var(--bg-surface);
+}
+
+/* Tactile 3D Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 550;
+  letter-spacing: -0.2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn:active {
+  transform: var(--press-transform);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px var(--accent-primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-primary:hover {
+  transform: var(--lift-transform);
+  box-shadow: 0 6px 20px var(--accent-primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.btn-secondary {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-glass);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-glass-highlight);
+  transform: var(--lift-transform);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  transform: var(--lift-transform);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 550;
+  border-radius: var(--radius-full);
+  line-height: 1;
+}
+
+/* Category colors */
+.cat-badge {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.cat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 4px currentColor;
+}
+
+/* Priority tags */
+.priority-critical { color: var(--priority-critical); border: 1px solid rgba(244, 63, 94, 0.25); background: rgba(244, 63, 94, 0.1); }
+.priority-high { color: var(--priority-high); border: 1px solid rgba(251, 146, 60, 0.25); background: rgba(251, 146, 60, 0.1); }
+.priority-medium { color: var(--priority-medium); border: 1px solid rgba(251, 191, 36, 0.25); background: rgba(251, 191, 36, 0.1); }
+.priority-low { color: var(--priority-low); border: 1px solid rgba(96, 165, 250, 0.25); background: rgba(96, 165, 250, 0.1); }
+.priority-none { color: var(--priority-none); border: 1px solid var(--border-subtle); background: transparent; }
+
+/* Numeric & tabular font */
+.tabular-nums {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Atmospheric environmental quote */
+.subtle-quote {
+  font-style: italic;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  letter-spacing: 0.15px;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* Smooth motion utilities */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-float {
+  animation: floatGentle 4s ease-in-out infinite;
+}
