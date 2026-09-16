@@ -935,36 +935,43 @@
 }
 
 .timer-target-task {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-secondary);
-  max-width: 220px;
+  color: #E2E8F0 !important;
+  max-width: 240px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: -0.1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
 .timer-time-text {
   font-family: var(--font-mono);
-  font-size: 56px;
-  font-weight: 700;
+  font-size: 64px;
+  font-weight: 800;
   letter-spacing: -2px;
   line-height: 1;
-  color: var(--text-primary);
-  text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  color: #FFFFFF !important;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7),
+               0 0 35px var(--accent-primary-glow),
+               0 0 10px rgba(255, 255, 255, 0.5);
+  transition: all var(--transition-fast);
 }
 
 .timer-phase-badge {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: var(--el-crystal);
-  background: var(--el-crystal-soft);
-  padding: 3px 12px;
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 5px 16px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--el-crystal-glass);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35),
+              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
 }
 
 /* 3D Pomodoro Orbital Beads */
