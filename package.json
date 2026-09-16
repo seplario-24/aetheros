@@ -2,12 +2,7 @@
   "name": "aether-productivity-os",
   "version": "1.0.0",
   "description": "AETHER OS — Premium Personal Productivity Command Center & Deep Work Cockpit",
-  "type": "module",
-  "scripts": {
-    "start": "node server.mjs",
-    "serve": "node server.mjs"
-  },
   "keywords": ["productivity", "pomodoro", "calendar", "time-blocking", "habits", "deep-work"],
-  "author": "AETHER OS Team",
+  "author": "seplario-24",
   "license": "MIT"
 }
