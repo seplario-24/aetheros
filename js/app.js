@@ -3,23 +3,23 @@
  * Router, reactive store sync, 3D canvas lifecycle, and global shortcuts.
  */
 
-import { store } from './store/db.js';
-import { FocusOrb } from './visuals/orb.js';
-import { atmosphereEngine } from './visuals/atmosphere.js';
-import { ParticleSystem } from './visuals/particles.js';
-import { CommandPalette } from './components/command-palette.js';
-import { QuickAddModal } from './components/quick-add.js';
+import { store } from './store/db.js?v=3.0';
+import { FocusOrb } from './visuals/orb.js?v=3.0';
+import { atmosphereEngine } from './visuals/atmosphere.js?v=3.0';
+import { ParticleSystem } from './visuals/particles.js?v=3.0';
+import { CommandPalette } from './components/command-palette.js?v=3.0';
+import { QuickAddModal } from './components/quick-add.js?v=3.0';
 
-import { renderHomeView } from './views/home.js';
-import { renderTasksView } from './views/tasks.js';
-import { renderCalendarView } from './views/calendar.js';
-import { renderFocusView } from './views/focus.js';
-import { renderDotCalendarView } from './views/dot-calendar.js';
-import { renderAnalyticsView } from './views/analytics.js';
-import { renderSleepView } from './views/sleep.js';
-import { renderGamesView } from './views/games.js';
-import { renderHabitsView } from './views/habits.js';
-import { renderSettingsView } from './views/settings.js';
+import { renderHomeView } from './views/home.js?v=3.0';
+import { renderTasksView } from './views/tasks.js?v=3.0';
+import { renderCalendarView } from './views/calendar.js?v=3.0';
+import { renderFocusView } from './views/focus.js?v=3.0';
+import { renderDotCalendarView } from './views/dot-calendar.js?v=3.0';
+import { renderAnalyticsView } from './views/analytics.js?v=3.0';
+import { renderSleepView } from './views/sleep.js?v=3.0';
+import { renderGamesView } from './views/games.js?v=3.0';
+import { renderHabitsView } from './views/habits.js?v=3.0';
+import { renderSettingsView } from './views/settings.js?v=3.0';
 
 // 3D Intensity Mapping by Screen (User Directive Section 133)
 export const SCREEN_3D_INTENSITY = {
