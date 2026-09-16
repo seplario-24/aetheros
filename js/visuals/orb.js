@@ -398,11 +398,12 @@ export class FocusOrb {
   }
 
   setIntensity(intensity) {
-    this.intensity = Math.max(0, Math.min(1, intensity));
+    if (this.canvas) {
+      this.canvas.style.opacity = String(intensity);
+    }
   }
 
   destroy() {
     if (this.animId) cancelAnimationFrame(this.animId);
   }
 }
-

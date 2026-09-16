@@ -131,16 +131,7 @@ export function renderHabitsView(container, navigate) {
         </div>
       </div>
 
-      ${habits.length === 0 ? `
-        <div class="aether-empty-state">
-          <div class="empty-state-orb">🔥</div>
-          <h3 class="empty-state-title">Build your first habit</h3>
-          <p class="empty-state-desc">Establish daily consistency across health, focus, and personal mastery.</p>
-          <button class="btn btn-primary" id="btn-empty-add-habit" style="box-shadow: 0 8px 24px var(--accent-primary-glow);">
-            + Create Habit
-          </button>
-        </div>
-      ` : (activeTab === 'matrix' ? renderMonthlyMatrixSection() : renderTodayDeckSection())}
+      ${activeTab === 'matrix' ? renderMonthlyMatrixSection() : renderTodayDeckSection()}
     </div>
 
     <!-- Add Habit Modal Container -->
@@ -672,9 +663,7 @@ export function renderHabitsView(container, navigate) {
     if (addModal) addModal.classList.remove('open');
   };
 
-  const btnEmptyAdd = container.querySelector('#btn-empty-add-habit');
   if (btnOpenAdd) btnOpenAdd.addEventListener('click', openAddModal);
-  if (btnEmptyAdd) btnEmptyAdd.addEventListener('click', openAddModal);
   if (btnCloseAdd) btnCloseAdd.addEventListener('click', closeAddModal);
   if (btnCancelAdd) btnCancelAdd.addEventListener('click', closeAddModal);
   if (addModal) addModal.addEventListener('click', (e) => { if (e.target === addModal) closeAddModal(); });

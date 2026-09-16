@@ -139,13 +139,8 @@ export function renderTasksView(container, navigate) {
 
         <div class="task-items-list" id="pending-tasks-list" style="display: flex; flex-direction: column; gap: 12px;">
           ${pendingTasks.length === 0 ? `
-            <div class="aether-empty-state">
-              <div class="empty-state-orb">⚡</div>
-              <h3 class="empty-state-title">Your workspace is clear</h3>
-              <p class="empty-state-desc">Capture high-leverage priorities and execute with 3D spatial depth.</p>
-              <button class="btn btn-primary" onclick="window.aetherQuickAdd && window.aetherQuickAdd.open()" style="box-shadow: 0 8px 24px var(--accent-primary-glow);">
-                + Create Your First Task
-              </button>
+            <div class="glass-panel" style="padding: 44px; text-align: center; color: var(--text-tertiary); border-radius: var(--radius-lg);">
+              No pending outcomes in this view. Your mental horizon is completely clear!
             </div>
           ` : pendingTasks.map(t => renderTaskItem(t)).join('')}
         </div>
