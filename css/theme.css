@@ -189,22 +189,22 @@
   --perspective-close:   400px;
 
   /* ─────────────────────────────────────────────────────────────────────────
-     PHYSICS & MOTION
+     PHYSICS & MOTION (144Hz+ ULTRA-FLUID HARDWARE PROFILES)
      ───────────────────────────────────────────────────────────────────────── */
-  --ease-spring:        cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-spring:        cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth:        cubic-bezier(0.16, 1, 0.3, 1);
   --ease-bounce:        cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-silk:          cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --transition-fast:    0.16s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-normal:  0.3s  cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-slow:    0.5s  cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-spring:  0.4s  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-silk:          cubic-bezier(0.2, 0.9, 0.3, 1);
+  --transition-fast:    0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal:  0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow:    0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring:  0.34s cubic-bezier(0.175, 0.885, 0.32, 1.2);
 
-  /* Physical interaction transforms */
-  --press-transform:     scale(0.97) translateY(1px);
-  --lift-transform:      translateY(-3px);
-  --lift-transform-lg:   translateY(-6px) scale(1.015);
-  --float-transform:     translateY(-4px) translateZ(8px);
+  /* Physical interaction transforms (Hardware Composited) */
+  --press-transform:     scale(0.98) translate3d(0, 1px, 0);
+  --lift-transform:      translate3d(0, -3px, 6px);
+  --lift-transform-lg:   translate3d(0, -6px, 12px) scale(1.012);
+  --float-transform:     translate3d(0, -5px, 10px);
 }
 
 /* ==========================================================================
@@ -447,6 +447,9 @@ html, body {
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   position: relative;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
 .glass-card::before {
@@ -457,7 +460,7 @@ html, body {
   right: 0;
   height: 1px;
   border-radius: var(--radius-md) var(--radius-md) 0 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
   pointer-events: none;
 }
 
@@ -469,7 +472,7 @@ html, body {
 .glass-card-interactive { cursor: pointer; }
 .glass-card-interactive:hover {
   transform: var(--lift-transform);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(99, 102, 241, 0.15);
   border-color: var(--border-glass-highlight);
 }
 .glass-card-interactive:active { transform: var(--press-transform); }
@@ -483,7 +486,11 @@ html, body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-3d-floating);
   position: relative;
-  transition: transform var(--transition-spring), box-shadow var(--transition-normal);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal), border-color var(--transition-normal);
 }
 
 .spatial-floating-card::before {
@@ -492,15 +499,16 @@ html, body {
   top: 0; left: 0; right: 0;
   height: 1px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
   pointer-events: none;
 }
 
 .spatial-floating-card:hover {
   transform: var(--lift-transform-lg);
-  box-shadow: 0 32px 72px -12px rgba(0, 0, 0, 0.55),
-              0 8px 20px rgba(0, 0, 0, 0.3),
-              inset 0 1px 0 rgba(255,255,255,0.1);
+  box-shadow: 0 32px 72px -12px rgba(0, 0, 0, 0.65),
+              0 0 30px var(--stat-element-glow, rgba(99, 102, 241, 0.22)),
+              inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  border-color: var(--border-glass-highlight);
 }
 
 /* --- Glass Input --- */
@@ -671,17 +679,27 @@ html, body {
 }
 
 @keyframes floatGentle {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-6px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%       { transform: translate3d(0, -6px, 8px); }
 }
-.animate-float { animation: floatGentle 5s ease-in-out infinite; }
+.animate-float {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation: floatGentle 5s ease-in-out infinite;
+}
 
 @keyframes floatSlow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33%       { transform: translateY(-8px) rotate(1deg); }
-  66%       { transform: translateY(-3px) rotate(-0.5deg); }
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  33%       { transform: translate3d(0, -8px, 10px) rotate(0.8deg); }
+  66%       { transform: translate3d(0, -3px, 4px) rotate(-0.4deg); }
 }
-.animate-float-slow { animation: floatSlow 8s ease-in-out infinite; }
+.animate-float-slow {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  animation: floatSlow 8s ease-in-out infinite;
+}
 
 @keyframes crystalPulse {
   0%, 100% { box-shadow: 0 0 20px var(--el-crystal-glow); }
@@ -690,28 +708,28 @@ html, body {
 .animate-crystal-pulse { animation: crystalPulse 3s ease-in-out infinite; }
 
 @keyframes orbBreathe {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.025); }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%       { transform: translate3d(0, 0, 0) scale(1.025); }
 }
 .animate-orb-breathe { animation: orbBreathe 4s ease-in-out infinite; }
 
 @keyframes particleDrift {
-  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
-  50%  { transform: translateY(-30px) translateX(10px) scale(1.1); opacity: 0.8; }
-  100% { transform: translateY(-60px) translateX(-5px) scale(0.8); opacity: 0; }
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.6; }
+  50%  { transform: translate3d(10px, -30px, 0) scale(1.1); opacity: 0.8; }
+  100% { transform: translate3d(-5px, -60px, 0) scale(0.8); opacity: 0; }
 }
 
 @keyframes tileRise {
-  from { transform: translateZ(0) scale(1); }
-  50%  { transform: translateZ(12px) scale(1.06); }
-  to   { transform: translateZ(4px) scale(1.02); }
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(0, 0, 14px) scale(1.06); }
+  to   { transform: translate3d(0, 0, 5px) scale(1.02); }
 }
 
 @keyframes taskComplete {
-  0%   { transform: scale(1) translateY(0); opacity: 1; }
-  30%  { transform: scale(0.97) translateY(2px); }
-  60%  { transform: scale(1.02) translateY(-1px); }
-  100% { transform: scale(1) translateY(0); opacity: 0.7; }
+  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
+  30%  { transform: translate3d(0, 2px, 0) scale(0.97); }
+  60%  { transform: translate3d(0, -2px, 0) scale(1.02); }
+  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.7; }
 }
 
 @keyframes glowPulse {
@@ -735,15 +753,15 @@ html, body {
 }
 
 /* ==========================================================================
-   VIEW TRANSITIONS — Spatial navigation
+   VIEW TRANSITIONS — Spatial navigation (Hardware Composited)
    ========================================================================== */
 @keyframes viewEnter {
-  from { opacity: 0; transform: translateY(16px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.985); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 @keyframes viewExit {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(-8px) scale(1.01); }
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to   { opacity: 0; transform: translate3d(0, -8px, 0) scale(1.01); }
 }
 
 .view-enter { animation: viewEnter 0.4s var(--ease-spring) forwards; }

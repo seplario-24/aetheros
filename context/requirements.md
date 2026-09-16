@@ -118,3 +118,8 @@ The visual language is grounded in **natural elements, physical materials, direc
 2. **Universal High Contrast**: All text must be clearly legible against dark backgrounds. Never use unstyled native select or input elements that can render light text on light backgrounds.
 3. **Robust Error Boundaries**: Views must be wrapped in error boundaries so that unexpected data errors never create a blank screen.
 4. **Resilient Bootstrap**: Module bootstrapping must account for fast-loading DOM states (`document.readyState !== 'loading'`).
+5. **High Refresh Rate & High FPS (144Hz+)**:
+   - Canvas animation loops must use delta-time based exponential smoothing (`1 - Math.exp(-k * dt)`) rather than frame-locked multipliers, ensuring silky-smooth responsiveness on 144Hz, 165Hz, and 240Hz ProMotion displays.
+   - Zero per-frame allocations or regex operations inside `requestAnimationFrame` loops to prevent garbage collection frame drops.
+   - Hardware compositor layer promotion (`will-change: transform`, `transform: translate3d(...)`) across all animated cards, blobs, particles, and floating objects.
+   - Genuine 3D spatial fidelity: true surface normals, backface culling, specular highlights, and directional lighting on 3D geometric entities.

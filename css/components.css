@@ -286,13 +286,19 @@
   margin-left: auto;
 }
 
-/* View Container */
+/* View Container (High-Refresh 144Hz+ Composited) */
 .view-viewport {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 28px;
   position: relative;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  contain: content;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────

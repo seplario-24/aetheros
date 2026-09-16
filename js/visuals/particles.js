@@ -57,6 +57,9 @@ export class ParticleSystem {
         box-shadow: 0 0 ${size * 2}px ${particleColor};
         --dx: ${dx}px;
         --dy: ${dy}px;
+        will-change: transform, opacity;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
         animation: burstFly ${duration}s ease-out ${delay}s forwards;
         opacity: 0;
       `;
@@ -154,6 +157,9 @@ export class ParticleSystem {
         box-shadow: 0 0 8px ${color}80;
         --dx: ${dx}px;
         --dy: ${dy}px;
+        will-change: transform, opacity;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
         animation: burstFly ${duration}s ease-in ${delay}s forwards;
         opacity: 0;
       `;

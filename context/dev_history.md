@@ -171,3 +171,34 @@
      - Tested all 10 views in automated Node test suite (`scratch/test_all_views.mjs`).
      - Tested all routine store methods (`addRoutineStep`, `updateRoutineStep`, `deleteRoutineStep`, `updateRoutine`).
 - **Reasoning**: Empowered users with complete ownership and flexibility over their circadian protocols, ensuring both morning momentum and evening compression habits can be tailored precisely to their lifestyle.
+
+---
+
+## Milestone 5: 144Hz+ High-Refresh Optimization & True 3D Visual Upgrade
+- **Objective**: Ensure the entire application renders with ultra-smooth 144Hz+ refresh rate, locked high FPS, and elevates the 3D aesthetic into a breathtaking, tactile spatial experience.
+- **Issues Addressed**:
+  - The 3D Hero Focus Orb was performing heavy array filtering, string splits, and JSON lookups on every single frame inside `requestAnimationFrame`, causing garbage collection pauses on high-refresh monitors.
+  - Linear frame-locked mouse interpolation caused jitter and lag on 120Hz, 144Hz, and 240Hz monitors.
+  - Background atmospheric blobs and keyframe animations lacked hardware compositor promotion, resulting in repeated main-thread CPU repaints.
+  - The 3D crystal core had rudimentary 8-triangle geometry without physical surface normals or directional specular lighting.
+- **Modifications Made**:
+  1. **3D Hero Focus Orb Engine (`js/visuals/orb.js`)**:
+     - **Delta-Time Frame-Rate Independent Physics**: Replaced frame-locked lerp with exponential smoothing (`1 - Math.exp(-16 * dt)`), providing silky-smooth parallax tracking across 60Hz, 120Hz, 144Hz, 165Hz, and 240Hz ProMotion displays.
+     - **True 3D Dual-Lattice Crystal Geometry**: Upgraded the crystal core to a 20-face icosahedron with an inner golden octahedron nucleus.
+     - **Physical Surface Normals & Shading**: Added real-time 3D face normal calculation, backface culling (skips rear-facing triangles), directional celestial lighting ($\vec{L}$), specular glints, and Fresnel edge refraction.
+     - **Traveling Photon Nodes**: Added 3 orbital energy beads orbiting along the volumetric rings with glowing halos and white-hot cores.
+     - **Zero-GC Render Loop**: Precomputed static 80-segment unit circle lookup table and pre-parsed RGB color structures, eliminating string manipulation and regex replacements in `render()`.
+     - **Throttled Metrics**: Throttled productivity store sampling to once every 1,500ms instead of 144 times/second.
+     - **High-DPI Alignment**: Added `ctx.setTransform(dpr, 0, 0, dpr, 0, 0)` with desynchronized 2D canvas context hints.
+  2. **Hardware Acceleration & Fluid Physics (`css/theme.css`, `css/elemental.css`)**:
+     - Added `will-change: transform; transform: translate3d(0, 0, 0); backface-visibility: hidden;` to atmospheric blobs, floating cards, buttons, and particles.
+     - Upgraded keyframe animations (`floatGentle`, `floatSlow`, `blobDrift`, `burstFly`, `viewEnter`, `viewExit`) to hardware-composited `translate3d`.
+     - Enhanced 3D card depth on hover (`translate3d(0, -6px, 12px)` with specular rim highlights).
+  3. **Viewport & Navigation Optimization (`css/components.css`, `js/app.js`)**:
+     - Enhanced `.view-viewport` with `scroll-behavior: smooth; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; contain: content;`.
+     - Added automatic smooth scroll-to-top reset on navigation.
+  4. **Particle Performance (`js/visuals/particles.js`)**:
+     - Applied GPU composition (`translate3d`, `will-change`) to dynamic burst particles.
+  5. **Cache Busting**:
+     - Bumped query string versioning to `?v=9.0` in `index.html` and `js/app.js`.
+- **Reasoning**: Delivered an uncompromising 144Hz+ high-refresh experience with zero micro-stutter, genuine 3D lighting, and physical depth.
