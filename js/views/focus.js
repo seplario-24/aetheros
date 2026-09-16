@@ -198,14 +198,17 @@ export function renderFocusView(container, navigate) {
       ` : ''}
 
       <!-- Dimensional Tactile Controls Row -->
-      <div class="focus-controls-row" style="display: flex; align-items: center; gap: 16px; margin-bottom: 28px; z-index: 2;">
-        <button class="btn btn-ghost btn-icon" id="btn-timer-stop" title="Reset Session" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: #FFFFFF; cursor: pointer;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <div class="focus-controls-row" style="display: flex; align-items: center; gap: 14px; margin-bottom: 28px; z-index: 2;">
+        <!-- Circular Reset Symbol Button (Replacing plain box) -->
+        <button class="btn btn-ghost btn-icon" id="btn-timer-stop" title="Reset Focus Session (R)" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: #FFFFFF; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <polyline points="3 3 3 8 8 8"></polyline>
           </svg>
         </button>
 
-        <button class="btn btn-primary btn-focus-primary" id="btn-timer-main-toggle" style="padding: 13px 40px; font-size: 15px; font-weight: 700; border-radius: var(--radius-full); box-shadow: 0 10px 28px var(--accent-primary-glow), inset 0 1px 2px rgba(255, 255, 255, 0.5); display: flex; align-items: center; gap: 10px; cursor: pointer;">
+        <!-- Start Focus / Pause Flow Toggle -->
+        <button class="btn btn-primary btn-focus-primary" id="btn-timer-main-toggle" style="padding: 13px 36px; font-size: 15px; font-weight: 700; border-radius: var(--radius-full); box-shadow: 0 10px 28px var(--accent-primary-glow), inset 0 1px 2px rgba(255, 255, 255, 0.5); display: flex; align-items: center; gap: 10px; cursor: pointer;">
           ${snap.isRunning ? `
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <rect x="6" y="4" width="4" height="16"></rect>
@@ -216,15 +219,25 @@ export function renderFocusView(container, navigate) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
-            Ignite Focus
+            Start Focus
           `}
         </button>
 
-        <button class="btn btn-secondary btn-icon" id="btn-timer-extend" title="Extend +5 Minutes" style="width: 48px; height: 48px; border-radius: 50%; font-weight: 700; font-size: 13px; font-family: var(--font-mono); background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: #FFFFFF; cursor: pointer;">
+        <!-- Mark Lap Button -->
+        <button class="btn btn-secondary btn-icon" id="btn-timer-lap" title="Mark Lap / Split Milestone (L)" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: var(--accent-cyan); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+            <line x1="4" y1="22" x2="4" y2="15"></line>
+          </svg>
+        </button>
+
+        <!-- Extend +5m Button -->
+        <button class="btn btn-secondary btn-icon" id="btn-timer-extend" title="Extend +5 Minutes" style="width: 48px; height: 48px; border-radius: 50%; font-weight: 700; font-size: 13px; font-family: var(--font-mono); background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: #FFFFFF; cursor: pointer;">
           +5m
         </button>
 
-        <button class="btn btn-secondary btn-icon" id="btn-timer-finish" title="Complete Session Early" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: var(--accent-emerald); cursor: pointer;">
+        <!-- Complete Early Button -->
+        <button class="btn btn-secondary btn-icon" id="btn-timer-finish" title="Complete Session Early" style="width: 48px; height: 48px; border-radius: 50%; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.2); color: var(--accent-emerald); cursor: pointer;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
@@ -322,6 +335,38 @@ export function renderFocusView(container, navigate) {
           Zen View
         </button>
       </div>
+
+      <!-- Live Focus Laps & Interval Splits Panel -->
+      <div class="focus-laps-panel" id="focus-laps-panel" style="margin-top: 24px; max-width: 480px; width: 100%; z-index: 2; display: ${snap.laps && snap.laps.length > 0 ? 'block' : 'none'};">
+        <div class="glass-card" style="padding: 16px 20px; border-radius: var(--radius-lg); background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-glass); backdrop-filter: blur(20px); box-shadow: var(--shadow-glass);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 15px;">🏁</span>
+              <span style="font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #FFFFFF;">
+                Session Laps (<span id="laps-count-text">${snap.laps ? snap.laps.length : 0}</span>)
+              </span>
+            </div>
+            <button class="btn btn-ghost" id="btn-clear-laps" style="font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full); color: var(--text-tertiary);" title="Clear Recorded Laps">
+              Clear
+            </button>
+          </div>
+          
+          <div id="focus-laps-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto;">
+            ${(snap.laps || []).map((l) => `
+              <div class="glass-card" style="padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">Lap ${l.lapNumber}</span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">${l.timestamp}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 14px; font-family: var(--font-mono);">
+                  <span style="color: #FFFFFF; font-weight: 600;">+${l.formattedSplit}</span>
+                  <span style="color: var(--text-tertiary); font-size: 11px;">Total: ${l.formattedTotal}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
     </div>
   `;
 
@@ -398,10 +443,44 @@ export function renderFocusView(container, navigate) {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <polygon points="5 3 19 12 5 21 5 3"></polygon>
         </svg>
-        Ignite Focus
+        Start Focus
       `;
     }
+
+    // Update session laps table
+    updateLapsUI(s.laps);
   });
+
+  function updateLapsUI(laps) {
+    const lapsPanel = container.querySelector('#focus-laps-panel');
+    const lapsCount = container.querySelector('#laps-count-text');
+    const lapsList = container.querySelector('#focus-laps-list');
+
+    if (!lapsPanel || !lapsList) return;
+
+    if (!laps || laps.length === 0) {
+      lapsPanel.style.display = 'none';
+      lapsList.innerHTML = '';
+      if (lapsCount) lapsCount.textContent = '0';
+      return;
+    }
+
+    lapsPanel.style.display = 'block';
+    if (lapsCount) lapsCount.textContent = String(laps.length);
+
+    lapsList.innerHTML = laps.map(l => `
+      <div class="glass-card" style="padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">Lap ${l.lapNumber}</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">${l.timestamp}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 14px; font-family: var(--font-mono);">
+          <span style="color: #FFFFFF; font-weight: 600;">+${l.formattedSplit}</span>
+          <span style="color: var(--text-tertiary); font-size: 11px;">Total: ${l.formattedTotal}</span>
+        </div>
+      </div>
+    `).join('');
+  }
 
   // --------------------------------------------------------------------------
   // Mode Selector Buttons
@@ -484,6 +563,26 @@ export function renderFocusView(container, navigate) {
   if (btnStop) {
     btnStop.addEventListener('click', () => {
       timerEngine.stop();
+      ambientAudio.playChime();
+    });
+  }
+
+  const btnLap = container.querySelector('#btn-timer-lap');
+  if (btnLap) {
+    btnLap.addEventListener('click', () => {
+      const lap = timerEngine.markLap();
+      if (lap && window.ParticleSystem && window.ParticleSystem.tileBloom) {
+        const rect = btnLap.getBoundingClientRect();
+        window.ParticleSystem.tileBloom(rect.left + rect.width / 2, rect.top + rect.height / 2, '#06b6d4');
+      }
+      ambientAudio.playChime();
+    });
+  }
+
+  const btnClearLaps = container.querySelector('#btn-clear-laps');
+  if (btnClearLaps) {
+    btnClearLaps.addEventListener('click', () => {
+      timerEngine.clearLaps();
     });
   }
 
@@ -502,6 +601,24 @@ export function renderFocusView(container, navigate) {
       ambientAudio.playChime();
     });
   }
+
+  // Keyboard shortcuts: Space (toggle), L (lap), R (reset)
+  const handleFocusKeydown = (e) => {
+    const isInput = e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable);
+    if (isInput) return;
+
+    if (e.key.toLowerCase() === 'l') {
+      e.preventDefault();
+      if (btnLap) btnLap.click();
+    } else if (e.key.toLowerCase() === 'r') {
+      e.preventDefault();
+      if (btnStop) btnStop.click();
+    } else if (e.code === 'Space') {
+      e.preventDefault();
+      if (btnToggle) btnToggle.click();
+    }
+  };
+  window.addEventListener('keydown', handleFocusKeydown);
 
   // --------------------------------------------------------------------------
   // 3D Procedural Soundscape Matrix & Volume Controls

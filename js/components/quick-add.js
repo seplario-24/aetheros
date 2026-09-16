@@ -62,15 +62,75 @@ export class QuickAddModal {
             </div>
 
             <div>
-              <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">Estimated Duration</label>
-              <select id="quick-add-duration" class="glass-input" style="cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 0;">Estimated Duration</label>
+                <button type="button" id="quick-add-toggle-custom-time" style="background: none; border: none; color: var(--accent-cyan); font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0;" title="Toggle Custom Hours/Mins Setter">
+                  <span>⚙ Custom Time Setter</span>
+                </button>
+              </div>
+
+              <select id="quick-add-duration" class="glass-input" style="cursor: pointer; width: 100%;">
+                <!-- Original Presets (Preserved) -->
                 <option value="15">15 min</option>
                 <option value="30">30 min</option>
                 <option value="45" selected>45 min</option>
                 <option value="60">1 hour (60 min)</option>
                 <option value="90">90 min</option>
                 <option value="120">2 hours (120 min)</option>
+                <!-- Extended Multi-Hour Presets -->
+                <option value="150">2.5 hours (150 min)</option>
+                <option value="180">3 hours (180 min)</option>
+                <option value="240">4 hours (240 min)</option>
+                <option value="300">5 hours (300 min)</option>
+                <option value="360">6 hours (360 min)</option>
+                <option value="480">8 hours (480 min)</option>
+                <option value="600">10 hours (600 min)</option>
+                <option value="720">12 hours (720 min)</option>
+                <option value="custom">⚙ Custom Duration (Set Hours & Mins)...</option>
               </select>
+
+              <!-- Interactive Custom Timesetter Container -->
+              <div id="quick-add-custom-timesetter" class="custom-timesetter-box" style="display: none; margin-top: 8px; background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 12px; backdrop-filter: blur(16px);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px;">
+                  <!-- Hours Stepper -->
+                  <div style="flex: 1;">
+                    <span style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); display: block; margin-bottom: 4px;">Hours</span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                      <button type="button" class="btn btn-ghost btn-sm timesetter-stepper-btn" id="btn-hours-minus" style="width: 26px; height: 26px; padding: 0; font-weight: bold; border: 1px solid var(--border-subtle); border-radius: 4px;">-</button>
+                      <input type="number" id="quick-add-custom-hours" min="0" max="99" value="0" style="width: 46px; text-align: center; padding: 4px 2px; font-weight: 700; font-family: var(--font-mono); background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 4px; color: #fff; font-size: 13px;">
+                      <button type="button" class="btn btn-ghost btn-sm timesetter-stepper-btn" id="btn-hours-plus" style="width: 26px; height: 26px; padding: 0; font-weight: bold; border: 1px solid var(--border-subtle); border-radius: 4px;">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Minutes Stepper -->
+                  <div style="flex: 1;">
+                    <span style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); display: block; margin-bottom: 4px;">Minutes</span>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                      <button type="button" class="btn btn-ghost btn-sm timesetter-stepper-btn" id="btn-mins-minus" style="width: 26px; height: 26px; padding: 0; font-weight: bold; border: 1px solid var(--border-subtle); border-radius: 4px;">-</button>
+                      <input type="number" id="quick-add-custom-mins" min="0" max="59" step="5" value="45" style="width: 46px; text-align: center; padding: 4px 2px; font-weight: 700; font-family: var(--font-mono); background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 4px; color: #fff; font-size: 13px;">
+                      <button type="button" class="btn btn-ghost btn-sm timesetter-stepper-btn" id="btn-mins-plus" style="width: 26px; height: 26px; padding: 0; font-weight: bold; border: 1px solid var(--border-subtle); border-radius: 4px;">+</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quick Hours Shortcut Chips -->
+                <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;">
+                  <button type="button" class="timesetter-chip" data-hours="1" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">1h</button>
+                  <button type="button" class="timesetter-chip" data-hours="2" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">2h</button>
+                  <button type="button" class="timesetter-chip" data-hours="3" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">3h</button>
+                  <button type="button" class="timesetter-chip" data-hours="4" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">4h</button>
+                  <button type="button" class="timesetter-chip" data-hours="5" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">5h</button>
+                  <button type="button" class="timesetter-chip" data-hours="6" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">6h</button>
+                  <button type="button" class="timesetter-chip" data-hours="8" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">8h</button>
+                  <button type="button" class="timesetter-chip" data-hours="10" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">10h</button>
+                  <button type="button" class="timesetter-chip" data-hours="12" data-mins="0" style="padding: 2px 8px; font-size: 11px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer;">12h</button>
+                </div>
+
+                <!-- Live Total Duration Summary -->
+                <div id="timesetter-summary" style="font-size: 11.5px; font-family: var(--font-mono); color: var(--accent-cyan); font-weight: 600; text-align: center; background: rgba(6, 182, 212, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(6, 182, 212, 0.25);">
+                  ⏱ Effective Duration: 45 min
+                </div>
+              </div>
             </div>
 
             <div>
@@ -118,9 +178,44 @@ export class QuickAddModal {
     this.deadlineInput = this.overlay.querySelector('#quick-add-deadline');
     this.notesInput = this.overlay.querySelector('#quick-add-notes');
 
+    // Timesetter elements
+    this.toggleCustomBtn = this.overlay.querySelector('#quick-add-toggle-custom-time');
+    this.customTimesetterBox = this.overlay.querySelector('#quick-add-custom-timesetter');
+    this.customHoursInput = this.overlay.querySelector('#quick-add-custom-hours');
+    this.customMinsInput = this.overlay.querySelector('#quick-add-custom-mins');
+    this.timesetterSummary = this.overlay.querySelector('#timesetter-summary');
+    this.btnHoursMinus = this.overlay.querySelector('#btn-hours-minus');
+    this.btnHoursPlus = this.overlay.querySelector('#btn-hours-plus');
+    this.btnMinsMinus = this.overlay.querySelector('#btn-mins-minus');
+    this.btnMinsPlus = this.overlay.querySelector('#btn-mins-plus');
+    this.timesetterChips = this.overlay.querySelectorAll('.timesetter-chip');
+
     this.closeBtn = this.overlay.querySelector('#quick-add-close');
     this.cancelBtn = this.overlay.querySelector('#quick-add-cancel');
     this.submitBtn = this.overlay.querySelector('#quick-add-submit');
+  }
+
+  updateTimesetterSummary() {
+    const h = parseInt(this.customHoursInput.value, 10) || 0;
+    const m = parseInt(this.customMinsInput.value, 10) || 0;
+    const totalMins = h * 60 + m;
+
+    let label = '';
+    if (h > 0 && m > 0) label = `${h} hr${h > 1 ? 's' : ''} ${m} min`;
+    else if (h > 0) label = `${h} hr${h > 1 ? 's' : ''}`;
+    else label = `${m} min`;
+
+    if (this.timesetterSummary) {
+      this.timesetterSummary.textContent = `⏱ Effective Duration: ${label} (${totalMins} min total)`;
+    }
+  }
+
+  syncTimesetterFromMinutes(totalMinutes) {
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    if (this.customHoursInput) this.customHoursInput.value = String(h);
+    if (this.customMinsInput) this.customMinsInput.value = String(m);
+    this.updateTimesetterSummary();
   }
 
   bindEvents() {
@@ -143,6 +238,98 @@ export class QuickAddModal {
     this.closeBtn.addEventListener('click', () => this.close());
     this.cancelBtn.addEventListener('click', () => this.close());
     this.submitBtn.addEventListener('click', () => this.submit());
+
+    // Duration dropdown change listener
+    this.durationSelect.addEventListener('change', () => {
+      if (this.durationSelect.value === 'custom') {
+        this.customTimesetterBox.style.display = 'block';
+      } else {
+        const val = Number(this.durationSelect.value);
+        if (!isNaN(val)) {
+          this.syncTimesetterFromMinutes(val);
+        }
+      }
+    });
+
+    // Custom time toggle button
+    if (this.toggleCustomBtn) {
+      this.toggleCustomBtn.addEventListener('click', () => {
+        const isHidden = this.customTimesetterBox.style.display === 'none' || !this.customTimesetterBox.style.display;
+        this.customTimesetterBox.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          if (this.durationSelect.value !== 'custom') {
+            const val = Number(this.durationSelect.value);
+            if (!isNaN(val)) this.syncTimesetterFromMinutes(val);
+          }
+        }
+      });
+    }
+
+    // Stepper buttons
+    if (this.btnHoursPlus) {
+      this.btnHoursPlus.addEventListener('click', () => {
+        let val = parseInt(this.customHoursInput.value, 10) || 0;
+        this.customHoursInput.value = String(Math.min(99, val + 1));
+        this.durationSelect.value = 'custom';
+        this.updateTimesetterSummary();
+      });
+    }
+    if (this.btnHoursMinus) {
+      this.btnHoursMinus.addEventListener('click', () => {
+        let val = parseInt(this.customHoursInput.value, 10) || 0;
+        this.customHoursInput.value = String(Math.max(0, val - 1));
+        this.durationSelect.value = 'custom';
+        this.updateTimesetterSummary();
+      });
+    }
+    if (this.btnMinsPlus) {
+      this.btnMinsPlus.addEventListener('click', () => {
+        let val = parseInt(this.customMinsInput.value, 10) || 0;
+        this.customMinsInput.value = String(Math.min(55, val + 5));
+        this.durationSelect.value = 'custom';
+        this.updateTimesetterSummary();
+      });
+    }
+    if (this.btnMinsMinus) {
+      this.btnMinsMinus.addEventListener('click', () => {
+        let val = parseInt(this.customMinsInput.value, 10) || 0;
+        this.customMinsInput.value = String(Math.max(0, val - 5));
+        this.durationSelect.value = 'custom';
+        this.updateTimesetterSummary();
+      });
+    }
+
+    if (this.customHoursInput) {
+      this.customHoursInput.addEventListener('input', () => {
+        this.durationSelect.value = 'custom';
+        this.updateTimesetterSummary();
+      });
+    }
+    if (this.customMinsInput) {
+      this.customMinsInput.addEventListener('input', () => {
+        this.durationSelect.value = 'custom';
+        this.updateTimesetterSummary();
+      });
+    }
+
+    // Quick chips
+    this.timesetterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const h = parseInt(chip.getAttribute('data-hours'), 10) || 0;
+        const m = parseInt(chip.getAttribute('data-mins'), 10) || 0;
+        this.customHoursInput.value = String(h);
+        this.customMinsInput.value = String(m);
+        const total = h * 60 + m;
+        // Check if exists in dropdown
+        const opt = this.durationSelect.querySelector(`option[value="${total}"]`);
+        if (opt) {
+          this.durationSelect.value = String(total);
+        } else {
+          this.durationSelect.value = 'custom';
+        }
+        this.updateTimesetterSummary();
+      });
+    });
 
     this.titleInput.addEventListener('input', () => this.parseNaturalInput());
     this.titleInput.addEventListener('keydown', (e) => {
@@ -270,9 +457,14 @@ export class QuickAddModal {
       .replace(/\s+/g, ' ')
       .trim();
 
-    if (!cleanTitle) cleanTitle = rawTitle;
-
-    const duration = parsed.duration || Number(this.durationSelect.value) || 45;
+    let duration = 45;
+    if (this.durationSelect.value === 'custom') {
+      const h = parseInt(this.customHoursInput.value, 10) || 0;
+      const m = parseInt(this.customMinsInput.value, 10) || 0;
+      duration = Math.max(5, h * 60 + m);
+    } else {
+      duration = parsed.duration || Number(this.durationSelect.value) || 45;
+    }
     const categoryId = this.categorySelect.value || (parsed.matchedCategory ? parsed.matchedCategory.id : 'cat-research');
     const priority = this.prioritySelect.value || 'medium';
     const energyLevel = this.energySelect.value || 'medium';

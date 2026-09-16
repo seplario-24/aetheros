@@ -282,6 +282,14 @@ export function renderTasksView(container, navigate) {
   });
 }
 
+function formatDurationBadge(mins) {
+  const m = Number(mins) || 0;
+  if (m < 60) return `${m}m`;
+  const hrs = Math.floor(m / 60);
+  const rem = m % 60;
+  return rem > 0 ? `${hrs}h ${rem}m` : `${hrs}h`;
+}
+
 function renderTaskItem(task) {
   const cat = store.getCategoryById(task.categoryId);
   const subtasks = task.subtasks || [];
@@ -317,7 +325,7 @@ function renderTaskItem(task) {
               <span class="cat-dot" style="background: ${cat.color};"></span>
               ${cat.name}
             </span>
-            <span>⏱ ${task.estimatedDuration}m</span>
+            <span title="Estimated Focus Duration">⏱ ${formatDurationBadge(task.estimatedDuration)}</span>
             ${timeDisplay ? `<span>🕒 ${timeDisplay}</span>` : ''}
             ${task.priority !== 'none' ? `<span class="badge priority-${task.priority}" style="font-size: 10.5px; text-transform: uppercase; font-weight: 700; padding: 2px 6px; border-radius: 4px;">${task.priority}</span>` : ''}
             ${subtasks.length > 0 ? `

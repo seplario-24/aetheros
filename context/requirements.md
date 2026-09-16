@@ -52,10 +52,14 @@ The visual language is grounded in **natural elements, physical materials, direc
 - **Target Priority Task**: Physical glass preview of the top urgent outcome with quick start trigger.
 - **Quick Action Bar**: Launch Focus, Log Sleep, or Log Habit with a single click.
 
-### 4.2 Tasks & Outcomes (`js/views/tasks.js`)
-- **Tactile Task Cards**: Physical depth, status pills, category indicator tags, estimated duration badges.
+### 4.2 Tasks & Outcomes (`js/views/tasks.js`, `js/components/quick-add.js`)
+- **Tactile Task Cards**: Physical depth, status pills, category indicator tags, multi-hour estimated duration badges (e.g. `⏱ 2h`, `⏱ 2h 30m`).
 - **Organized Filtering**: All, Active, Completed, Priority (Critical, High, Medium, Low), Category tabs.
 - **Interactive Completion**: Completing a task triggers tactile audio chime and radial particle explosion (`ParticleSystem.taskComplete()`).
+- **Extended Estimated Task Duration**:
+  - Preserves 6 core presets: `15m`, `30m`, `45m`, `1 hour (60 min)`, `90m`, `2 hours (120 min)`.
+  - Extended multi-hour presets: `2.5h`, `3h`, `4h`, `5h`, `6h`, `8h`, `10h`, `12h`.
+  - Interactive Custom Timesetter: Dedicated steppers (`+` / `-`) for hours and minutes, quick-select hour chips (`1h`–`12h`), real-time duration badge, and bi-directional dropdown sync.
 - **Modal Add/Edit**: Modal overlay with keyboard shortcuts (`N` for quick add, `Ctrl+K` for search).
 
 ### 4.3 Time Calendar (`js/views/calendar.js`)
@@ -63,9 +67,15 @@ The visual language is grounded in **natural elements, physical materials, direc
 - **Time Cursor**: Glowing real-time current time indicator line spanning across the schedule.
 - **Event Blocks**: Glassmorphic scheduled task blocks with color-coded category lighting.
 
-### 4.4 Focus Cockpit (`js/views/focus.js`)
+### 4.4 Focus Cockpit (`js/views/focus.js`, `js/engine/timer.js`)
 - **Glass Sphere Timer Stage**: Central 330px spherical countdown cockpit with specular lens glints, 64px bold glowing countdown, and dynamic 3D mouse parallax tilt.
 - **Orbital Pomodoro Crystals**: 4 tactile beads displaying cycle status (completed emerald glow, active coral fire pulse, pending smoked crystal).
+- **Tactile Timer Controls**:
+  - **Start Focus** Primary Action: Explicit "Start Focus" CTA button with play glyph when idle/paused, morphing to "Pause Focus" during session.
+  - **Circular Reset Symbol**: True curved circular reset glyph (`↺`) replacing square box.
+  - **Precision Lap Tracking**: Dedicated "Mark Lap" button (`#btn-timer-lap`) and keyboard shortcut (`L`) recording interval splits and total elapsed time.
+  - **Live Session Laps Panel**: Collapsible glass container displaying lap counts, timestamped split intervals (`+XXm YYs`), total elapsed time, and clear action.
+  - **Keyboard Shortcuts**: `Space` (Start/Pause), `L` (Lap), `R` (Reset).
 - **Elemental Deep Work Modes**:
   - 💧 Task Flow (Water)
   - 🔥 Pomodoro 25/5 (Fire)

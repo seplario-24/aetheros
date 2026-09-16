@@ -1052,6 +1052,52 @@
               inset 0 1px 1px rgba(255,255,255,0.35);
 }
 
+/* Custom Timesetter & Chips */
+.custom-timesetter-box {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.timesetter-stepper-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.timesetter-stepper-btn:hover {
+  background: var(--accent-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 8px var(--accent-primary-glow) !important;
+}
+
+.timesetter-chip {
+  transition: all var(--transition-fast);
+}
+
+.timesetter-chip:hover {
+  background: rgba(6, 182, 212, 0.2) !important;
+  border-color: var(--accent-cyan) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
+}
+
+/* Focus Laps Panel */
+.focus-laps-panel {
+  animation: fadeIn 0.3s ease-out;
+}
+
+#focus-laps-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+#focus-laps-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
 /* Zen / Focus mode */
 body.zen-mode .app-sidebar,
 body.zen-mode .app-topbar,

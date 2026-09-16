@@ -159,3 +159,33 @@ i want a systematic dot calender which is from 1st january 2026 to 31st december
   5. Bumped cache-busting query strings to `?v=10.0` in `index.html` and `js/app.js`.
   6. Verified store data, calendar math, and view rendering via automated Node test script (`scratch/verify_dots.mjs`).
 
+---
+
+### Exchange 13
+- **User Request**:
+  > EXTEND THR ESTIMATED DURATION OF THE TASKS FOR MOPRE HOURS.. KEEP THIS OPTIONS AS IT IS AS SHOWN IN THE IMAGE, BUT ADD CUSTOM AND EASY TO USE TYIMESETTER, BY WHICH I CAN SET HOW MANY HOURS THIS TASK WILL TAKE, ALSO WHILE STARTING THE TIMER IN THE FOCUS, GIVE OPTION TO START THE FOCUS AND OPTION TO MARK LAPS.. AND ALSO GIVE RESET SYMBOL RATHER THAN JUST GIVING A BOX..
+- **Assistant**:
+  1. Preserved all 6 original duration dropdown options in `QuickAddModal` (`15m`, `30m`, `45m`, `1 hour (60 min)`, `90m`, `2 hours (120 min)`).
+  2. Extended duration dropdown with multi-hour options (`2.5 hours`, `3 hours`, `4 hours`, `5 hours`, `6 hours`, `8 hours`, `10 hours`, `12 hours`, and `Custom Duration...`).
+  3. Built an interactive Custom Timesetter component (`#quick-add-custom-timesetter`) with:
+     - Hours and Minutes stepper controls (`+` / `-`).
+     - Quick hour selector chips (`1h`, `2h`, `3h`, `4h`, `6h`, `8h`, `12h`).
+     - Real-time formatted summary badge (`⏱ Effective Duration: X hrs Y min (Z min total)`).
+     - Full bi-directional synchronization between the dropdown, numeric inputs, and quick chips.
+     - Custom time toggle button (`#quick-add-toggle-custom-time`).
+  4. Upgraded `TimerEngine` in `js/engine/timer.js`:
+     - Added session `laps` array to state.
+     - Implemented `markLap(note)` method computing interval split times and cumulative elapsed times.
+     - Implemented `clearLaps()` and automatic laps reset on timer `stop()` or mode reconfiguration.
+     - Integrated laps into `getSnapshot()`.
+  5. Enhanced Focus Cockpit in `js/views/focus.js`:
+     - Replaced the square box `<rect>` on `#btn-timer-stop` with an authentic circular reset symbol (`↺`).
+     - Updated primary toggle button label to clearly display **"Start Focus"** with play icon when idle/paused.
+     - Added **"Mark Lap"** button (`#btn-timer-lap`) with split flag icon and particle bloom feedback.
+     - Added tactile keyboard shortcuts: `Space` (Start/Pause), `L` (Mark Lap), `R` (Reset).
+     - Added real-time Session Laps panel (`#focus-laps-panel`) displaying lap counter, clear button, and interval split/total elapsed timestamps.
+  6. Updated `js/views/tasks.js` with `formatDurationBadge(mins)` to cleanly format multi-hour durations (e.g., `⏱ 2h`, `⏱ 2h 30m`).
+  7. Styled all components in `css/components.css` (`.custom-timesetter-box`, `.timesetter-stepper-btn`, `.timesetter-chip`, `.focus-laps-panel`).
+  8. Bumped cache-busting query strings to `?v=11.0` in `index.html` and `js/app.js`.
+  9. Verified with automated test script (`scratch/test_duration_laps.mjs`).
+

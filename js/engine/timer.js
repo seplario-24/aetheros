@@ -24,6 +24,9 @@ export class TimerEngine {
     this.pomodoroCycle = 1;
     this.pomodorosUntilLongBreak = 4;
 
+    // Laps & Interval Milestone tracking
+    this.laps = [];
+
     this.timerInterval = null;
     this.listeners = new Set();
 
@@ -47,6 +50,7 @@ export class TimerEngine {
     this.pausedRemaining = null;
     this.targetEndTime = null;
     this.isRunning = false;
+    this.laps = [];
     this.clearLoop();
     this.emitTick();
   }
@@ -92,7 +96,41 @@ export class TimerEngine {
     this.pausedRemaining = null;
     this.targetEndTime = null;
     this.sessionStartTime = null;
+    this.clearLaps();
     this.emitTick();
+  }
+
+  markLap(note = '') {
+    const totalElapsedSeconds = Math.max(0, this.totalDurationSeconds - this.remainingSeconds);
+    // Find the total elapsed seconds at the previous lap
+    const lastLapElapsed = this.laps.length > 0 ? this.laps[0].totalElapsedSeconds : 0;
+    const splitSeconds = Math.max(0, totalElapsedSeconds - lastLapElapsed);
+
+    const lapNumber = this.laps.length + 1;
+    const lap = {
+      id: `lap-${Date.now()}-${lapNumber}`,
+      lapNumber,
+      splitSeconds,
+      formattedSplit: this.formatTime(splitSeconds),
+      totalElapsedSeconds,
+      formattedTotal: this.formatTime(totalElapsedSeconds),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      note: (note || '').trim()
+    };
+
+    this.laps.unshift(lap); // Most recent lap at index 0
+    this.notify('LAP_MARKED', { lap, laps: [...this.laps] });
+    this.emitTick();
+    return lap;
+  }
+
+  clearLaps() {
+    this.laps = [];
+    this.notify('LAPS_CLEARED', { laps: [] });
+  }
+
+  getLaps() {
+    return [...this.laps];
   }
 
   extend(minutes = 5) {
@@ -245,7 +283,8 @@ export class TimerEngine {
       remainingSeconds: this.remainingSeconds,
       formattedTime: this.formatTime(this.remainingSeconds),
       progressRatio: Math.min(1, Math.max(0, progress)),
-      pomodoroCycle: this.pomodoroCycle
+      pomodoroCycle: this.pomodoroCycle,
+      laps: [...this.laps]
     };
   }
 

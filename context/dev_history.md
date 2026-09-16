@@ -234,3 +234,40 @@
   4. **Cache Busting**:
      - Bumped query string versioning to `?v=10.0` in `index.html` and `js/app.js`.
 - **Reasoning**: Delivered an accurate, systematic 365-day annual timeline from Jan 1 to Dec 31 with real-time countdown, completion progress, and automated annual refresh.
+
+---
+
+### [2026-09-17 03:25] Milestone 8: Multi-Hour Task Duration Timesetter, Focus Laps Tracking, and Circular Reset Symbol
+- **Problem**: User requested:
+  1. Extending the estimated duration of tasks for more hours while keeping the original 6 dropdown options intact as shown in their screenshot.
+  2. Adding an easy-to-use custom timesetter to set any number of hours and minutes.
+  3. Adding an explicit option to "Start Focus" when starting the timer in the Focus Cockpit.
+  4. Adding an option to mark laps with split interval times.
+  5. Replacing the square timer reset button with an authentic circular reset symbol (`↺`).
+- **Modifications Made**:
+  1. **Task Duration Dropdown & Presets (`js/components/quick-add.js`)**:
+     - Preserved all 6 original options: `15m`, `30m`, `45m`, `1 hour (60 min)`, `90m`, `2 hours (120 min)`.
+     - Appended multi-hour preset options: `2.5 hours (150 min)`, `3 hours (180 min)`, `4 hours (240 min)`, `5 hours (300 min)`, `6 hours (360 min)`, `8 hours (480 min)`, `10 hours (600 min)`, `12 hours (720 min)`, and `Custom Duration...`.
+  2. **Custom Interactive Timesetter Component (`js/components/quick-add.js`, `css/components.css`)**:
+     - Built `#quick-add-custom-timesetter` with stepper buttons (`+` / `-`) for hours (0–99) and minutes (0–55 in 5m steps).
+     - Added quick-select hour chips (`1h`, `2h`, `3h`, `4h`, `6h`, `8h`, `12h`).
+     - Added real-time summary badge (`⏱ Effective Duration: X hrs Y min (Z min total)`).
+     - Added quick toggle button `#quick-add-toggle-custom-time`.
+     - Full bi-directional synchronization between dropdown and custom inputs.
+     - Updated `submit()` to compute effective duration from custom inputs when selected.
+  3. **Focus Engine Laps State (`js/engine/timer.js`)**:
+     - Added `laps` array to `TimerEngine`.
+     - Implemented `markLap(note)` computing `lapNumber`, `splitSeconds`, `formattedSplit`, `totalElapsedSeconds`, `formattedTotal`, and `timestamp`.
+     - Implemented `clearLaps()` and automatic laps cleanup on timer `stop()` or `configure()`.
+     - Included `laps` in `getSnapshot()`.
+  4. **Focus Cockpit Controls & UI (`js/views/focus.js`, `css/components.css`)**:
+     - Replaced the square box `<rect>` on `#btn-timer-stop` with an authentic circular reset symbol (`<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline>`).
+     - Updated `#btn-timer-main-toggle` to display **"Start Focus"** with play icon when idle or paused.
+     - Added **"Mark Lap"** button (`#btn-timer-lap`) with split flag icon and particle bloom feedback.
+     - Added `#focus-laps-panel` with lap counter, clear button, and real-time list of recorded laps.
+     - Added keyboard shortcuts: `Space` (Start/Pause), `L` (Mark Lap), `R` (Reset).
+  5. **Task Item Duration Formatting (`js/views/tasks.js`)**:
+     - Added `formatDurationBadge(mins)` to format $\ge 60$ min tasks into clean multi-hour badges (e.g. `⏱ 2h`, `⏱ 2h 30m`, `⏱ 4h`).
+  6. **Cache Busting**:
+     - Bumped query string versioning to `?v=11.0` in `index.html` and `js/app.js`.
+- **Reasoning**: Extended task duration capabilities to accommodate realistic multi-hour deep work blocks, introduced precision lap interval tracking for focus sessions, and polished cockpit ergonomics with the intuitive circular reset glyph and clear "Start Focus" CTA.

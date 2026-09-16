@@ -3,23 +3,23 @@
  * Router, reactive store sync, 3D canvas lifecycle, and global shortcuts.
  */
 
-import { store } from './store/db.js?v=10.0';
-import { FocusOrb } from './visuals/orb.js?v=10.0';
-import { atmosphereEngine } from './visuals/atmosphere.js?v=10.0';
-import { ParticleSystem } from './visuals/particles.js?v=10.0';
-import { CommandPalette } from './components/command-palette.js?v=10.0';
-import { QuickAddModal } from './components/quick-add.js?v=10.0';
+import { store } from './store/db.js?v=11.0';
+import { FocusOrb } from './visuals/orb.js?v=11.0';
+import { atmosphereEngine } from './visuals/atmosphere.js?v=11.0';
+import { ParticleSystem } from './visuals/particles.js?v=11.0';
+import { CommandPalette } from './components/command-palette.js?v=11.0';
+import { QuickAddModal } from './components/quick-add.js?v=11.0';
 
-import { renderHomeView } from './views/home.js?v=10.0';
-import { renderTasksView } from './views/tasks.js?v=10.0';
-import { renderCalendarView } from './views/calendar.js?v=10.0';
-import { renderFocusView } from './views/focus.js?v=10.0';
-import { renderDotCalendarView } from './views/dot-calendar.js?v=10.0';
-import { renderAnalyticsView } from './views/analytics.js?v=10.0';
-import { renderSleepView } from './views/sleep.js?v=10.0';
-import { renderGamesView } from './views/games.js?v=10.0';
-import { renderHabitsView } from './views/habits.js?v=10.0';
-import { renderSettingsView } from './views/settings.js?v=10.0';
+import { renderHomeView } from './views/home.js?v=11.0';
+import { renderTasksView } from './views/tasks.js?v=11.0';
+import { renderCalendarView } from './views/calendar.js?v=11.0';
+import { renderFocusView } from './views/focus.js?v=11.0';
+import { renderDotCalendarView } from './views/dot-calendar.js?v=11.0';
+import { renderAnalyticsView } from './views/analytics.js?v=11.0';
+import { renderSleepView } from './views/sleep.js?v=11.0';
+import { renderGamesView } from './views/games.js?v=11.0';
+import { renderHabitsView } from './views/habits.js?v=11.0';
+import { renderSettingsView } from './views/settings.js?v=11.0';
 
 // 3D Intensity Mapping by Screen (User Directive Section 133)
 export const SCREEN_3D_INTENSITY = {
