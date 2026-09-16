@@ -1,8 +1,7 @@
 /**
- * AETHER OS — DEDICATED HABIT TRACKER
- * Unlimited habits, Monthly Matrix Grid (Habit × Day = Status),
- * 1-click state cycling (— → ✓ → ✕ → S → —), streak policies,
- * individual habit history calendars, and Today's rapid logging deck.
+ * AETHER OS — 3D ELEMENTAL HABIT ARCHITECTURE
+ * Physical 3D tile mosaic, streak crystal bars, tactile 1-click state cycling,
+ * particle blooms on completion, and today's rapid routine deck.
  */
 
 import { store } from '../store/db.js';
@@ -10,7 +9,6 @@ import { ambientAudio } from '../audio/ambient.js';
 
 let selectedMonth = new Date().toISOString().substring(0, 7); // 'YYYY-MM'
 let activeTab = 'matrix'; // 'matrix' | 'today'
-let groupByGroup = false;
 
 export function renderHabitsView(container, navigate) {
   const habits = store.getHabits();
@@ -49,29 +47,32 @@ export function renderHabitsView(container, navigate) {
   const dowLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   container.innerHTML = `
-    <div class="animate-fade-in">
+    <div class="animate-fade-in" style="perspective: 1200px;">
       <!-- Header Bar -->
       <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
         <div>
-          <h1 style="font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px;">Habit Architecture</h1>
-          <p style="font-size: 13.5px; color: var(--text-secondary);">Unlimited consistency matrix. Track and calibrate non-negotiable daily behaviors.</p>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--el-fire);">Elemental Discipline</span>
+          </div>
+          <h1 style="font-size: 28px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 4px;">Habit Architecture</h1>
+          <p style="font-size: 13.5px; color: var(--text-secondary);">Physical consistency matrix. Calibrate and solidify non-negotiable daily protocols.</p>
         </div>
 
         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
           <!-- View Switcher -->
-          <div style="display: flex; background: var(--bg-surface); padding: 4px; border-radius: var(--radius-full); border: 1px solid var(--border-subtle);">
+          <div style="display: flex; background: rgba(15, 23, 42, 0.4); padding: 4px; border-radius: var(--radius-full); border: 1px solid var(--border-glass); backdrop-filter: blur(12px);">
             <button class="btn btn-ghost ${activeTab === 'matrix' ? 'active' : ''}" id="btn-tab-matrix"
-              style="padding: 6px 14px; font-size: 12.5px; border-radius: var(--radius-full); ${activeTab === 'matrix' ? 'background: var(--accent-primary); color: #fff; font-weight: 600;' : ''}">
-              ⊞ Monthly Matrix
+              style="padding: 6px 16px; font-size: 12.5px; border-radius: var(--radius-full); ${activeTab === 'matrix' ? 'background: var(--accent-primary); color: #fff; font-weight: 700; box-shadow: 0 2px 10px var(--accent-primary-glow);' : ''}">
+              ⊞ 3D Matrix
             </button>
             <button class="btn btn-ghost ${activeTab === 'today' ? 'active' : ''}" id="btn-tab-today"
-              style="padding: 6px 14px; font-size: 12.5px; border-radius: var(--radius-full); ${activeTab === 'today' ? 'background: var(--accent-primary); color: #fff; font-weight: 600;' : ''}">
-              ✓ Log Today
+              style="padding: 6px 16px; font-size: 12.5px; border-radius: var(--radius-full); ${activeTab === 'today' ? 'background: var(--accent-primary); color: #fff; font-weight: 700; box-shadow: 0 2px 10px var(--accent-primary-glow);' : ''}">
+              ✓ Today's Deck
             </button>
           </div>
 
           <!-- Add Habit Button -->
-          <button class="btn btn-primary" id="btn-open-add-habit">
+          <button class="btn btn-primary" id="btn-open-add-habit" style="box-shadow: 0 4px 16px var(--accent-primary-glow);">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -81,32 +82,52 @@ export function renderHabitsView(container, navigate) {
         </div>
       </div>
 
-      <!-- Vitals Cards -->
-      <div class="stats-overview-grid" style="margin-bottom: 20px;">
-        <div class="glass-card stat-card">
-          <div class="stat-header">Today's Habits Completed</div>
+      <!-- 4 Elemental Floating Stat Cards -->
+      <div class="stats-overview-grid" style="margin-bottom: 22px;">
+        <!-- Water Element: Today's Logs -->
+        <div class="glass-card stat-card spatial-floating-card animate-float" style="--stat-element-glow: var(--el-water-glow); animation-delay: 0s;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="stat-header">Today's Flow</div>
+            <span style="font-size: 14px;">💧</span>
+          </div>
           <div class="stat-value tabular-nums">${todaySummary.completed}<span style="font-size: 16px; color: var(--text-tertiary);">/${todaySummary.total}</span></div>
-          <div class="stat-caption">${todaySummary.completionPct}% completion rate for today</div>
+          <div class="stat-caption">${todaySummary.completionPct}% completed for today</div>
         </div>
 
-        <div class="glass-card stat-card">
-          <div class="stat-header">Monthly Consistency</div>
+        <!-- Crystal Element: Monthly Consistency -->
+        <div class="glass-card stat-card spatial-floating-card animate-float" style="--stat-element-glow: var(--el-crystal-glow); animation-delay: 0.15s;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="stat-header">Monthly Calibration</div>
+            <span style="font-size: 14px;">💎</span>
+          </div>
           <div class="stat-value tabular-nums">${monthlyConsistencyPct}%</div>
           <div class="stat-caption">${totalCompletedInMonth} completed logs in ${monthName.split(' ')[0]}</div>
         </div>
 
-        <div class="glass-card stat-card">
-          <div class="stat-header">Active Behaviors</div>
+        <!-- Earth Element: Active Behaviors -->
+        <div class="glass-card stat-card spatial-floating-card animate-float" style="--stat-element-glow: var(--el-earth-glow); animation-delay: 0.3s;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="stat-header">Active Protocols</div>
+            <span style="font-size: 14px;">🌿</span>
+          </div>
           <div class="stat-value tabular-nums">${habits.length} <span style="font-size: 16px; color: var(--text-tertiary);">habits</span></div>
-          <div class="stat-caption">Unlimited tracking matrix</div>
+          <div class="stat-caption">Disciplined daily foundation</div>
         </div>
 
-        <div class="glass-card stat-card">
-          <div class="stat-header">Top Active Streak</div>
-          <div class="stat-value tabular-nums" style="color: var(--accent-amber);">
-            🔥 ${topStreak} <span style="font-size: 16px; color: var(--text-tertiary);">days</span>
+        <!-- Fire Element: Top Streak + Crystal Shard -->
+        <div class="glass-card stat-card spatial-floating-card animate-float" style="--stat-element-glow: var(--el-fire-glow); animation-delay: 0.45s;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="stat-header">Top Active Streak</div>
+            <span style="font-size: 14px;">🔥</span>
           </div>
-          <div class="stat-caption">Skip policy protects consistency</div>
+          <div class="stat-value tabular-nums" style="color: var(--accent-amber);">
+            ${topStreak} <span style="font-size: 16px; color: var(--text-tertiary);">days</span>
+          </div>
+          <div style="margin-top: 8px;">
+            <div class="streak-crystal-wrap" style="height: 6px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; position: relative;">
+              <div class="streak-crystal-fill" style="width: ${Math.min(100, (topStreak / 30) * 100)}%; height: 100%; background: linear-gradient(90deg, var(--el-fire) 0%, var(--el-light) 100%); border-radius: var(--radius-full);"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -115,24 +136,24 @@ export function renderHabitsView(container, navigate) {
 
     <!-- Add Habit Modal Container -->
     <div id="add-habit-modal" class="modal-backdrop">
-      <div class="modal-container" style="max-width: 580px;">
-        <div class="modal-header">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-primary);"></div>
-            <h3 style="font-size: 16px; font-weight: 600;">Create New Habit</h3>
+      <div class="modal-container" style="max-width: 580px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(28px); border: 1px solid var(--border-glass); box-shadow: 0 25px 60px rgba(0,0,0,0.6);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent-primary); box-shadow: 0 0 10px var(--accent-primary-glow);"></div>
+            <h3 style="font-size: 17px; font-weight: 700;">Initiate New Habit</h3>
           </div>
           <button class="btn btn-ghost btn-icon" id="add-habit-close" style="width: 28px; height: 28px;">✕</button>
         </div>
 
-        <div class="modal-body">
+        <div class="modal-body" style="padding: 20px 0; display: flex; flex-direction: column; gap: 16px;">
           <!-- Preset Templates -->
           <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">Quick Templates</label>
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <button class="filter-pill habit-template-btn" data-template="morning">☀️ Healthy Morning</button>
-              <button class="filter-pill habit-template-btn" data-template="deepwork">🧠 Deep Work</button>
-              <button class="filter-pill habit-template-btn" data-template="fitness">🏃 Fitness & Cardio</button>
-              <button class="filter-pill habit-template-btn" data-template="learning">📚 Student Mastery</button>
+            <label style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-tertiary); margin-bottom: 8px; display: block;">Quick Protocol Blueprints</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="filter-pill habit-template-btn" data-template="morning" style="background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.3); color: #fbbf24;">☀️ Healthy Morning</button>
+              <button class="filter-pill habit-template-btn" data-template="deepwork" style="background: rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.3); color: #818cf8;">🧠 Deep Work Flow</button>
+              <button class="filter-pill habit-template-btn" data-template="fitness" style="background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.3); color: #f87171;">🏃 Zone-2 Cardio</button>
+              <button class="filter-pill habit-template-btn" data-template="learning" style="background: rgba(6, 182, 212, 0.12); border-color: rgba(6, 182, 212, 0.3); color: #22d3ee;">📚 Deep Learning</button>
             </div>
           </div>
 
@@ -159,64 +180,64 @@ export function renderHabitsView(container, navigate) {
             </div>
 
             <div>
-              <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">Target Goal (Optional)</label>
-              <input type="text" id="habit-target-input" class="glass-input" placeholder="e.g. 30 (min), 2500 (ml), 1 (binary)" value="30">
+              <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">Target Goal</label>
+              <input type="text" id="habit-target-input" class="glass-input" placeholder="e.g. 30 (min), 1 (binary)" value="30">
             </div>
 
             <div>
-              <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">Accent Color</label>
+              <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block;">Elemental Accent Color</label>
               <select id="habit-color-input" class="glass-input">
-                <option value="#6366F1">Indigo (#6366F1)</option>
-                <option value="#06B6D4">Cyan (#06B6D4)</option>
-                <option value="#10B981">Emerald (#10B981)</option>
-                <option value="#F59E0B">Amber (#F59E0B)</option>
-                <option value="#EC4899">Pink (#EC4899)</option>
-                <option value="#8B5CF6">Purple (#8B5CF6)</option>
+                <option value="#6366F1">Crystal Violet (#6366F1)</option>
+                <option value="#06B6D4">Water Cyan (#06B6D4)</option>
+                <option value="#10B981">Earth Emerald (#10B981)</option>
+                <option value="#F59E0B">Light Amber (#F59E0B)</option>
+                <option value="#F43F5E">Fire Coral (#F43F5E)</option>
+                <option value="#8B5CF6">Cosmic Purple (#8B5CF6)</option>
               </select>
             </div>
           </div>
 
           <!-- Streak Policy & Reminder -->
-          <div class="glass-card" style="padding: 12px 16px; display: flex; flex-direction: column; gap: 10px;">
-            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+          <div class="glass-card" style="padding: 14px; display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--accent-cyan);">
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; cursor: pointer;">
               <input type="checkbox" id="habit-skip-policy-input" checked>
-              <span><strong>Skipped days preserve streak</strong> (Do not penalize planned rest/fasting days)</span>
+              <span><strong>Rest Protection</strong> (Skipped planned rest days preserve streak)</span>
             </label>
 
-            <div style="display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border-subtle); padding-top: 8px;">
+            <div style="display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
               <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
                 <input type="checkbox" id="habit-reminder-toggle" checked>
-                <span>Daily Reminder:</span>
+                <span>Daily Prompt:</span>
               </label>
               <input type="time" id="habit-reminder-time" class="glass-input" value="08:00" style="width: 120px; padding: 4px 8px;">
             </div>
           </div>
         </div>
 
-        <div class="modal-footer">
+        <div class="modal-footer" style="border-top: 1px solid var(--border-subtle); padding-top: 14px;">
           <button class="btn btn-ghost" id="add-habit-cancel">Cancel</button>
-          <button class="btn btn-primary" id="add-habit-submit">Create Habit</button>
+          <button class="btn btn-primary" id="add-habit-submit">Solidify Protocol</button>
         </div>
       </div>
     </div>
 
     <!-- Habit Detail & History Modal -->
     <div id="habit-detail-modal" class="modal-backdrop">
-      <div class="modal-container" style="max-width: 540px;">
+      <div class="modal-container" style="max-width: 560px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(28px); border: 1px solid var(--border-glass);">
         <div class="modal-header">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div id="detail-modal-icon" class="habit-icon-orb"></div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div id="detail-modal-icon" class="habit-icon-orb" style="width: 38px; height: 38px; font-size: 18px;"></div>
             <div>
-              <h3 id="detail-modal-title" style="font-size: 16px; font-weight: 600;"></h3>
+              <h3 id="detail-modal-title" style="font-size: 17px; font-weight: 700;"></h3>
               <span id="detail-modal-cat" style="font-size: 11.5px; color: var(--text-tertiary);"></span>
             </div>
           </div>
           <button class="btn btn-ghost btn-icon" id="detail-modal-close" style="width: 28px; height: 28px;">✕</button>
         </div>
 
-        <div class="modal-body" id="detail-modal-body"></div>
+        <div class="modal-body" id="detail-modal-body" style="padding: 16px 0;"></div>
 
-        <div class="modal-footer" style="justify-content: space-between;">
+        <div class="modal-footer" style="justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
           <button class="btn btn-ghost" id="btn-archive-habit" style="color: var(--priority-critical);">Archive Habit</button>
           <button class="btn btn-primary" id="btn-detail-close">Done</button>
         </div>
@@ -228,37 +249,37 @@ export function renderHabitsView(container, navigate) {
   function renderMonthlyMatrixSection() {
     return `
       <!-- Month Navigator & Grouping Bar -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
         <!-- Month Switcher -->
-        <div style="display: flex; align-items: center; gap: 6px; background: var(--bg-surface); padding: 4px 8px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="display: flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.4); padding: 4px 10px; border-radius: var(--radius-full); border: 1px solid var(--border-glass); backdrop-filter: blur(12px);">
           <button class="btn btn-ghost btn-icon" id="btn-month-prev" style="width: 28px; height: 28px;">‹</button>
-          <span style="font-size: 14px; font-weight: 600; min-width: 150px; text-align: center;">${monthName}</span>
+          <span style="font-size: 13.5px; font-weight: 700; min-width: 150px; text-align: center; font-family: var(--font-mono);">${monthName}</span>
           <button class="btn btn-ghost btn-icon" id="btn-month-next" style="width: 28px; height: 28px;">›</button>
-          <button class="btn btn-ghost" id="btn-month-today" style="font-size: 11.5px; padding: 2px 8px; border-radius: 4px; ${selectedMonth === currentMonthStr ? 'color: var(--accent-cyan); font-weight: 600;' : ''}">
-            Current Month
+          <button class="btn btn-ghost" id="btn-month-today" style="font-size: 11.5px; padding: 2px 10px; border-radius: var(--radius-full); ${selectedMonth === currentMonthStr ? 'color: var(--accent-cyan); font-weight: 700; background: rgba(6, 182, 212, 0.15);' : ''}">
+            Current
           </button>
         </div>
 
-        <!-- Legend -->
-        <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-secondary);">
-          <span style="display: flex; align-items: center; gap: 4px;"><strong style="color: var(--accent-emerald);">✓</strong> Completed</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><strong style="color: var(--priority-critical);">✕</strong> Failed</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><strong style="color: var(--accent-amber);">S</strong> Skipped</span>
-          <span style="display: flex; align-items: center; gap: 4px;"><strong style="color: var(--text-muted);">—</strong> Unlogged</span>
+        <!-- 3D Legend -->
+        <div style="display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--text-secondary); background: rgba(15, 23, 42, 0.3); padding: 5px 14px; border-radius: var(--radius-full); border: 1px solid var(--border-subtle);">
+          <span style="display: flex; align-items: center; gap: 5px;"><strong style="color: var(--accent-emerald);">✓</strong> Complete</span>
+          <span style="display: flex; align-items: center; gap: 5px;"><strong style="color: var(--priority-critical);">✕</strong> Missed</span>
+          <span style="display: flex; align-items: center; gap: 5px;"><strong style="color: var(--accent-amber);">S</strong> Rest/Skip</span>
+          <span style="display: flex; align-items: center; gap: 5px;"><strong style="color: var(--text-muted);">—</strong> Empty</span>
         </div>
       </div>
 
-      <!-- Matrix Scroll Viewport -->
-      <div class="habit-matrix-scroll-wrap" id="habit-matrix-scroll">
+      <!-- Matrix Scroll Viewport with 3D Depth -->
+      <div class="habit-matrix-scroll-wrap glass-panel" id="habit-matrix-scroll" style="padding: 16px; border-radius: var(--radius-lg); box-shadow: var(--shadow-glass);">
         <table class="habit-matrix-table">
           <thead>
             <tr>
-              <th class="habit-corner-cell">
+              <th class="habit-corner-cell" style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px;">
-                    Habit Name (${habits.length})
+                  <span style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px;">
+                    Habits (${habits.length})
                   </span>
-                  <span style="font-size: 11px; color: var(--text-tertiary);">1-Click Cycle</span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">Cycle</span>
                 </div>
               </th>
 
@@ -271,16 +292,16 @@ export function renderHabitsView(container, navigate) {
                 const isToday = dStr === todayStr;
 
                 return `
-                  <th class="habit-header-cell ${isToday ? 'is-today' : ''}" title="${dateObj.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}">
-                    <span class="habit-header-dow">${dow}</span>
-                    <span class="habit-header-num">${day}</span>
+                  <th class="habit-header-cell ${isToday ? 'is-today' : ''}" title="${dateObj.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}" style="${isToday ? 'border-bottom: 2px solid var(--accent-cyan);' : ''}">
+                    <span class="habit-header-dow" style="${isToday ? 'color: var(--accent-cyan); font-weight: 700;' : ''}">${dow}</span>
+                    <span class="habit-header-num" style="${isToday ? 'color: var(--accent-cyan); font-weight: 800;' : ''}">${day}</span>
                   </th>
                 `;
               }).join('')}
 
-              <th class="habit-header-cell habit-summary-cell" style="text-align: center; min-width: 90px;">
-                <span class="habit-header-dow">Monthly</span>
-                <span class="habit-header-num">Rate</span>
+              <th class="habit-header-cell habit-summary-cell" style="text-align: center; min-width: 80px;">
+                <span class="habit-header-dow">Rate</span>
+                <span class="habit-header-num">%</span>
               </th>
             </tr>
           </thead>
@@ -288,8 +309,8 @@ export function renderHabitsView(container, navigate) {
           <tbody>
             ${habits.length === 0 ? `
               <tr>
-                <td colspan="${daysInMonth + 2}" style="padding: 40px; text-align: center; color: var(--text-tertiary);">
-                  No habits active yet. Click "Add Habit" above to create your first consistency routine!
+                <td colspan="${daysInMonth + 2}" style="padding: 50px; text-align: center; color: var(--text-tertiary);">
+                  No habit protocols active. Click "Add Habit" above to forge your consistency matrix!
                 </td>
               </tr>
             ` : habits.map(h => renderHabitRow(h, selectedMonth, daysInMonth, todayStr)).join('')}
@@ -328,14 +349,14 @@ export function renderHabitsView(container, navigate) {
     }
 
     return `
-      <tr>
+      <tr class="habit-matrix-row">
         <td class="habit-name-cell" data-open-detail="${habit.id}">
           <div class="habit-title-row">
-            <div class="habit-icon-orb" style="color: ${habit.color};">
+            <div class="habit-icon-orb" style="color: ${habit.color}; width: 28px; height: 28px; font-size: 14px; background: radial-gradient(circle, ${habit.color}25 0%, transparent 80%); box-shadow: 0 0 10px ${habit.color}30;">
               ${renderHabitIcon(habit.icon)}
             </div>
-            <div style="overflow: hidden; min-width: 0;">
-              <div class="habit-name-text">${habit.name}</div>
+            <div style="overflow: hidden; min-width: 0; flex: 1;">
+              <div class="habit-name-text" style="font-weight: 600;">${habit.name}</div>
               <div style="font-size: 11px; color: var(--text-tertiary); display: flex; align-items: center; gap: 6px;">
                 <span class="cat-dot" style="background: ${habit.color};"></span>
                 <span>${habit.category}</span>
@@ -343,7 +364,7 @@ export function renderHabitsView(container, navigate) {
               </div>
             </div>
             ${stats.currentStreak > 0 ? `
-              <span class="habit-streak-badge" title="${stats.currentStreak} day streak">
+              <span class="habit-streak-badge" title="${stats.currentStreak} day streak" style="font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border-radius: var(--radius-full); background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
                 🔥 ${stats.currentStreak}d
               </span>
             ` : ''}
@@ -353,7 +374,7 @@ export function renderHabitsView(container, navigate) {
         ${cellsHtml}
 
         <td class="habit-summary-cell" style="text-align: center;">
-          <span class="badge" style="font-family: var(--font-mono); font-size: 11.5px; background: rgba(99, 102, 241, 0.12); color: var(--accent-primary);">
+          <span class="badge" style="font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; background: rgba(99, 102, 241, 0.15); color: var(--accent-primary); border: 1px solid rgba(99, 102, 241, 0.3);">
             ${stats.monthlyConsistency}%
           </span>
         </td>
@@ -364,58 +385,58 @@ export function renderHabitsView(container, navigate) {
   // Helper: Render Today's Habit Quick Deck
   function renderTodayDeckSection() {
     return `
-      <div class="glass-panel" style="padding: 24px; max-width: 680px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div class="glass-panel" style="padding: 26px; max-width: 720px; margin: 0 auto; box-shadow: var(--shadow-glass); border-radius: var(--radius-lg);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
           <div>
-            <h3 style="font-size: 16px; font-weight: 600;">Today's Routine Check — ${today.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
-            <span style="font-size: 12.5px; color: var(--text-secondary);">${todaySummary.completed} of ${todaySummary.total} completed (${todaySummary.completionPct}%)</span>
+            <h3 style="font-size: 17px; font-weight: 700;">Today's Protocol Check — ${today.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</h3>
+            <span style="font-size: 13px; color: var(--text-secondary);">${todaySummary.completed} of ${todaySummary.total} completed (${todaySummary.completionPct}%)</span>
           </div>
-          <div style="width: 120px; height: 6px; background: var(--bg-surface-elevated); border-radius: var(--radius-full); overflow: hidden;">
-            <div style="width: ${todaySummary.completionPct}%; height: 100%; background: var(--accent-emerald); border-radius: var(--radius-full); transition: width 0.3s ease;"></div>
+          <div style="width: 140px; height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: var(--radius-full); overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);">
+            <div style="width: ${todaySummary.completionPct}%; height: 100%; background: linear-gradient(90deg, var(--el-water) 0%, var(--accent-emerald) 100%); border-radius: var(--radius-full); transition: width 0.4s ease; box-shadow: 0 0 10px var(--accent-emerald-glow);"></div>
           </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
           ${habits.map(h => {
             const rec = store.getHabitRecord(h.id, todayStr);
             const status = rec ? rec.status : 'unlogged';
 
             return `
-              <div class="glass-card habit-quick-item">
-                <div style="display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1;">
-                  <div class="habit-icon-orb" style="color: ${h.color}; width: 34px; height: 34px; font-size: 16px;">
+              <div class="glass-card habit-quick-item" style="padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border-left: 4px solid ${h.color}; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
+                  <div class="habit-icon-orb" style="color: ${h.color}; width: 38px; height: 38px; font-size: 17px; background: radial-gradient(circle, ${h.color}25 0%, transparent 80%); box-shadow: 0 0 10px ${h.color}30;">
                     ${renderHabitIcon(h.icon)}
                   </div>
                   <div style="overflow: hidden;">
-                    <div style="font-size: 14px; font-weight: 600;">${h.name}</div>
-                    <div style="font-size: 11.5px; color: var(--text-tertiary);">${h.category} • ${h.description || 'Daily Behavior'}</div>
+                    <div style="font-size: 14.5px; font-weight: 700;">${h.name}</div>
+                    <div style="font-size: 12px; color: var(--text-tertiary);">${h.category} • ${h.description || 'Daily Behavior'}</div>
                   </div>
                 </div>
 
                 <!-- 4-State Quick Selector -->
-                <div style="display: flex; gap: 6px; flex-shrink: 0;">
+                <div style="display: flex; gap: 8px; flex-shrink: 0;">
                   <button class="btn btn-ghost btn-set-status ${status === 'completed' ? 'active' : ''}"
                     data-habit-id="${h.id}" data-date="${todayStr}" data-status="completed"
-                    style="padding: 6px 12px; font-size: 13px; font-weight: 600; ${status === 'completed' ? 'background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.4);' : ''}">
+                    style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; border-radius: var(--radius-full); ${status === 'completed' ? 'background: rgba(16, 185, 129, 0.25); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.5); box-shadow: 0 0 12px var(--accent-emerald-glow);' : ''}">
                     ✓ Done
                   </button>
 
                   <button class="btn btn-ghost btn-set-status ${status === 'failed' ? 'active' : ''}"
                     data-habit-id="${h.id}" data-date="${todayStr}" data-status="failed"
-                    style="padding: 6px 10px; font-size: 13px; font-weight: 600; ${status === 'failed' ? 'background: rgba(239, 68, 68, 0.2); color: var(--priority-critical); border: 1px solid rgba(239, 68, 68, 0.4);' : ''}">
-                    ✕ Missed
+                    style="padding: 7px 12px; font-size: 12.5px; font-weight: 700; border-radius: var(--radius-full); ${status === 'failed' ? 'background: rgba(239, 68, 68, 0.25); color: var(--priority-critical); border: 1px solid rgba(239, 68, 68, 0.5);' : ''}">
+                    ✕ Miss
                   </button>
 
                   <button class="btn btn-ghost btn-set-status ${status === 'skipped' ? 'active' : ''}"
                     data-habit-id="${h.id}" data-date="${todayStr}" data-status="skipped"
-                    style="padding: 6px 10px; font-size: 12px; font-weight: 600; ${status === 'skipped' ? 'background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4);' : ''}">
-                    S Skip
+                    style="padding: 7px 12px; font-size: 12px; font-weight: 700; border-radius: var(--radius-full); ${status === 'skipped' ? 'background: rgba(245, 158, 11, 0.25); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.5);' : ''}">
+                    S Rest
                   </button>
 
                   ${status !== 'unlogged' ? `
                     <button class="btn btn-ghost btn-set-status"
                       data-habit-id="${h.id}" data-date="${todayStr}" data-status="unlogged"
-                      title="Clear status" style="padding: 6px 8px; font-size: 12px; color: var(--text-muted);">
+                      title="Clear status" style="padding: 7px 10px; font-size: 12px; color: var(--text-muted); border-radius: var(--radius-full);">
                       —
                     </button>
                   ` : ''}
@@ -462,7 +483,7 @@ export function renderHabitsView(container, navigate) {
     });
   }
 
-  // 1-Click State Cycling on Matrix Cells
+  // 1-Click State Cycling on Matrix Cells + Particle Bloom
   container.querySelectorAll('.habit-status-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -471,21 +492,29 @@ export function renderHabitsView(container, navigate) {
 
       const updated = store.cycleHabitStatus(habitId, dateStr);
       if (updated && updated.status === 'completed') {
+        const rect = btn.getBoundingClientRect();
+        if (window.ParticleSystem && window.ParticleSystem.tileBloom) {
+          window.ParticleSystem.tileBloom(rect.left + rect.width / 2, rect.top + rect.height / 2, '#10b981');
+        }
         ambientAudio.playChime();
       }
       renderHabitsView(container, navigate);
     });
   });
 
-  // Direct Status Setting (Today Deck)
+  // Direct Status Setting (Today Deck) + Particle Bloom
   container.querySelectorAll('.btn-set-status').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
       const habitId = btn.getAttribute('data-habit-id');
       const dateStr = btn.getAttribute('data-date');
       const status = btn.getAttribute('data-status');
 
       const updated = store.setHabitStatus(habitId, dateStr, status);
       if (updated && updated.status === 'completed') {
+        const rect = btn.getBoundingClientRect();
+        if (window.ParticleSystem && window.ParticleSystem.tileBloom) {
+          window.ParticleSystem.tileBloom(rect.left + rect.width / 2, rect.top + rect.height / 2, '#10b981');
+        }
         ambientAudio.playChime();
       }
       renderHabitsView(container, navigate);
@@ -535,36 +564,50 @@ export function renderHabitsView(container, navigate) {
       detailIcon.innerHTML = renderHabitIcon(habit.icon);
       detailIcon.style.color = habit.color;
       detailTitle.textContent = habit.name;
-      detailCat.textContent = `${habit.category} • Streak Policy: ${habit.streakPolicy === 'preserve_on_skip' ? 'Skipped preserves streak' : 'Skipped breaks streak'}`;
+      detailCat.textContent = `${habit.category} • Streak Policy: ${habit.streakPolicy === 'preserve_on_skip' ? 'Rest preserves streak' : 'Rest breaks streak'}`;
 
       detailBody.innerHTML = `
-        <!-- Vitals -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-          <div class="glass-card" style="padding: 12px; text-align: center;">
-            <span style="font-size: 11px; color: var(--text-tertiary);">Current Streak</span>
-            <div style="font-size: 22px; font-weight: 700; color: var(--accent-amber);">🔥 ${stats.currentStreak}d</div>
+        <!-- Vitals Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <div class="glass-card" style="padding: 14px; text-align: center; border-bottom: 2px solid var(--accent-amber);">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary);">Current Streak</span>
+            <div style="font-size: 24px; font-weight: 800; color: var(--accent-amber); margin-top: 4px;">🔥 ${stats.currentStreak}d</div>
           </div>
-          <div class="glass-card" style="padding: 12px; text-align: center;">
-            <span style="font-size: 11px; color: var(--text-tertiary);">Longest Streak</span>
-            <div style="font-size: 22px; font-weight: 700; color: var(--accent-primary);">${stats.longestStreak}d</div>
+          <div class="glass-card" style="padding: 14px; text-align: center; border-bottom: 2px solid var(--accent-primary);">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary);">Record Streak</span>
+            <div style="font-size: 24px; font-weight: 800; color: var(--accent-primary); margin-top: 4px;">${stats.longestStreak}d</div>
           </div>
-          <div class="glass-card" style="padding: 12px; text-align: center;">
-            <span style="font-size: 11px; color: var(--text-tertiary);">Monthly Rate</span>
-            <div style="font-size: 22px; font-weight: 700; color: var(--accent-emerald);">${stats.monthlyConsistency}%</div>
+          <div class="glass-card" style="padding: 14px; text-align: center; border-bottom: 2px solid var(--accent-emerald);">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary);">Monthly Rate</span>
+            <div style="font-size: 24px; font-weight: 800; color: var(--accent-emerald); margin-top: 4px;">${stats.monthlyConsistency}%</div>
           </div>
+        </div>
+
+        <!-- Streak Crystal Shard Indicator -->
+        <div class="glass-card" style="padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">💎</span>
+            <span style="font-size: 12.5px; font-weight: 600;">Crystal Streak Tier</span>
+          </div>
+          <div style="flex: 1; max-width: 240px;">
+            <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: var(--radius-full); overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);">
+              <div style="width: ${Math.min(100, (stats.currentStreak / 30) * 100)}%; height: 100%; background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-cyan) 100%); border-radius: var(--radius-full); box-shadow: 0 0 10px var(--accent-primary-glow);"></div>
+            </div>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 11.5px; color: var(--text-tertiary);">${stats.currentStreak}/30d goal</span>
         </div>
 
         <!-- Breakdown Counts -->
-        <div class="glass-card" style="padding: 12px 16px; display: flex; justify-content: space-around; font-size: 12px; margin-bottom: 20px;">
-          <div><strong style="color: var(--accent-emerald);">${stats.completedCount}</strong> Completed</div>
-          <div><strong style="color: var(--priority-critical);">${stats.failedCount}</strong> Failed</div>
-          <div><strong style="color: var(--accent-amber);">${stats.skippedCount}</strong> Skipped</div>
-          <div><strong style="color: var(--text-muted);">${stats.unloggedCount}</strong> Unlogged</div>
+        <div class="glass-card" style="padding: 12px 16px; display: flex; justify-content: space-around; font-size: 12.5px; margin-bottom: 20px;">
+          <div><strong style="color: var(--accent-emerald); font-size: 14px;">${stats.completedCount}</strong> Completed</div>
+          <div><strong style="color: var(--priority-critical); font-size: 14px;">${stats.failedCount}</strong> Missed</div>
+          <div><strong style="color: var(--accent-amber); font-size: 14px;">${stats.skippedCount}</strong> Rest</div>
+          <div><strong style="color: var(--text-muted); font-size: 14px;">${stats.unloggedCount}</strong> Unlogged</div>
         </div>
 
         <!-- Monthly Mini Calendar -->
-        <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">
-          ${monthName} Matrix Calendar
+        <h4 style="font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; color: var(--text-secondary);">
+          ${monthName} Log Mosaic
         </h4>
         <div class="habit-detail-cal-grid" style="margin-bottom: 20px;">
           ${dowLetters.map(l => `<span style="font-size: 10.5px; font-weight: 700; color: var(--text-muted);">${l}</span>`).join('')}
@@ -572,19 +615,19 @@ export function renderHabitsView(container, navigate) {
         </div>
 
         <!-- Weekly Pattern Detection -->
-        <h4 style="font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">
-          Weekly Consistency Patterns
+        <h4 style="font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; color: var(--text-secondary);">
+          Weekly Consistency Rhythm
         </h4>
-        <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 70px; border-bottom: 1px solid var(--border-subtle); padding-top: 10px; gap: 8px;">
+        <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 74px; border-bottom: 1px solid var(--border-subtle); padding-top: 10px; gap: 8px;">
           ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((dName, i) => {
             const count = stats.dayOfWeekCounts[i] || 0;
             const maxC = Math.max(...stats.dayOfWeekCounts, 1);
-            const hPct = Math.min(100, Math.max(10, (count / maxC) * 100));
+            const hPct = Math.min(100, Math.max(12, (count / maxC) * 100));
 
             return `
               <div style="display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end;" title="${dName}: ${count} completions">
-                <div style="width: 100%; max-width: 18px; height: ${hPct}%; background: var(--accent-primary); border-radius: 3px 3px 0 0;"></div>
-                <span style="font-size: 9.5px; color: var(--text-muted); margin-top: 4px;">${dName}</span>
+                <div style="width: 100%; max-width: 20px; height: ${hPct}%; background: var(--accent-primary); border-radius: 4px 4px 0 0; box-shadow: 0 0 8px var(--accent-primary-glow);"></div>
+                <span style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">${dName}</span>
               </div>
             `;
           }).join('')}
@@ -647,7 +690,7 @@ export function renderHabitsView(container, navigate) {
         if (habitCatInp) habitCatInp.value = 'Fitness';
         if (habitGroupInp) habitGroupInp.value = 'Health';
         if (habitTargetInp) habitTargetInp.value = '45';
-        if (habitColorInp) habitColorInp.value = '#F97316';
+        if (habitColorInp) habitColorInp.value = '#F43F5E';
       } else if (tmpl === 'learning') {
         habitNameInp.value = 'Read Research Paper';
         if (habitCatInp) habitCatInp.value = 'Learning';
@@ -725,21 +768,21 @@ function renderDetailMonthGrid(habitId, monthStr, daysInMonth) {
     let text = `${d}`;
 
     if (status === 'completed') {
-      bg = 'rgba(16, 185, 129, 0.2)';
-      border = 'rgba(16, 185, 129, 0.45)';
+      bg = 'rgba(16, 185, 129, 0.25)';
+      border = 'rgba(16, 185, 129, 0.5)';
       text = '✓';
     } else if (status === 'failed') {
-      bg = 'rgba(239, 68, 68, 0.15)';
-      border = 'rgba(239, 68, 68, 0.4)';
+      bg = 'rgba(239, 68, 68, 0.2)';
+      border = 'rgba(239, 68, 68, 0.5)';
       text = '✕';
     } else if (status === 'skipped') {
-      bg = 'rgba(245, 158, 11, 0.15)';
-      border = 'rgba(245, 158, 11, 0.4)';
+      bg = 'rgba(245, 158, 11, 0.2)';
+      border = 'rgba(245, 158, 11, 0.5)';
       text = 'S';
     }
 
     cells.push(`
-      <div class="habit-detail-cal-day" style="background: ${bg}; border-color: ${border};" title="${dStr}: ${status}">
+      <div class="habit-detail-cal-day" style="background: ${bg}; border-color: ${border}; border-radius: 4px;" title="${dStr}: ${status}">
         <span style="font-weight: 700; font-size: 11.5px;">${text}</span>
       </div>
     `);

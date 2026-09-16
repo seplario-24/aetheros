@@ -1,206 +1,368 @@
 /* ==========================================================================
-   AETHER OS — THEME TOKENS & SYSTEM FOUNDATION
-   Refreshing, 3D, Premium, Calm, Human Design System
-   Apple-level simplicity + modern 3D spatial UI + relaxing digital environment
+   AETHER OS — ELEMENTAL DESIGN SYSTEM
+   A 3D Elemental Productivity World
+   "Digital art installation + premium productivity app + spatial computing
+    + colorful elemental materials"
    ========================================================================== */
 
 :root {
-  /* Fresh & Human Pastel Accents (No harsh neon / no fluorescent cyber) */
-  --accent-primary: #8B5CF6;        /* Soft Royal Lavender */
-  --accent-primary-hover: #7C3AED;
-  --accent-primary-glow: rgba(139, 92, 246, 0.22);
-  --accent-primary-soft: rgba(139, 92, 246, 0.12);
+  /* ─────────────────────────────────────────────────────────────────────────
+     ELEMENTAL COLOR SYSTEM
+     Six elemental identities, each with solid / glass / glow / soft variants
+     ───────────────────────────────────────────────────────────────────────── */
 
-  --accent-sky: #38BDF8;            /* Pale Sky Blue */
-  --accent-sky-glow: rgba(56, 189, 248, 0.2);
-  --accent-sky-soft: rgba(56, 189, 248, 0.1);
+  /* WATER — transparent blue, cyan, turquoise */
+  --el-water:          #06B6D4;
+  --el-water-deep:     #0891B2;
+  --el-water-glass:    rgba(6, 182, 212, 0.14);
+  --el-water-glow:     rgba(6, 182, 212, 0.35);
+  --el-water-soft:     rgba(6, 182, 212, 0.08);
+  --el-water-rim:      rgba(103, 232, 249, 0.6);
 
-  --accent-mint: #34D399;           /* Fresh Mint Green */
-  --accent-mint-glow: rgba(52, 211, 153, 0.2);
-  --accent-mint-soft: rgba(52, 211, 153, 0.12);
+  /* FIRE / ENERGY — coral, orange, amber, warm red */
+  --el-fire:           #F97316;
+  --el-fire-deep:      #EA580C;
+  --el-fire-glass:     rgba(249, 115, 22, 0.14);
+  --el-fire-glow:      rgba(249, 115, 22, 0.4);
+  --el-fire-soft:      rgba(249, 115, 22, 0.08);
+  --el-fire-rim:       rgba(253, 186, 116, 0.6);
 
-  --accent-peach: #FB923C;          /* Warm Peach */
-  --accent-peach-glow: rgba(251, 146, 60, 0.2);
-  --accent-peach-soft: rgba(251, 146, 60, 0.12);
+  /* AIR — white, pale blue, lavender, clouds */
+  --el-air:            #818CF8;
+  --el-air-deep:       #6366F1;
+  --el-air-glass:      rgba(129, 140, 248, 0.14);
+  --el-air-glow:       rgba(129, 140, 248, 0.35);
+  --el-air-soft:       rgba(129, 140, 248, 0.08);
+  --el-air-rim:        rgba(199, 210, 254, 0.6);
 
-  --accent-coral: #FB7185;          /* Soft Coral Rose */
-  --accent-coral-glow: rgba(251, 113, 133, 0.2);
-  --accent-coral-soft: rgba(251, 113, 133, 0.12);
+  /* EARTH — green, olive, emerald, organic */
+  --el-earth:          #10B981;
+  --el-earth-deep:     #059669;
+  --el-earth-glass:    rgba(16, 185, 129, 0.14);
+  --el-earth-glow:     rgba(16, 185, 129, 0.35);
+  --el-earth-soft:     rgba(16, 185, 129, 0.08);
+  --el-earth-rim:      rgba(110, 231, 183, 0.6);
 
-  --accent-honey: #FBBF24;          /* Warm Sunlit Honey */
-  --accent-honey-glow: rgba(251, 191, 36, 0.2);
-  --accent-honey-soft: rgba(251, 191, 36, 0.12);
+  /* CRYSTAL — violet, magenta, electric blue, refracted */
+  --el-crystal:        #8B5CF6;
+  --el-crystal-deep:   #7C3AED;
+  --el-crystal-glass:  rgba(139, 92, 246, 0.16);
+  --el-crystal-glow:   rgba(139, 92, 246, 0.4);
+  --el-crystal-soft:   rgba(139, 92, 246, 0.08);
+  --el-crystal-rim:    rgba(196, 181, 253, 0.65);
 
-  --accent-sage: #6EE7B7;           /* Gentle Sage */
+  /* LIGHT — warm white, gold, luminous */
+  --el-light:          #F59E0B;
+  --el-light-deep:     #D97706;
+  --el-light-glass:    rgba(245, 158, 11, 0.14);
+  --el-light-glow:     rgba(245, 158, 11, 0.35);
+  --el-light-soft:     rgba(245, 158, 11, 0.08);
+  --el-light-rim:      rgba(252, 211, 77, 0.6);
 
-  /* Backward Compatibility Aliases */
-  --accent-cyan: var(--accent-sky);
-  --accent-cyan-glow: var(--accent-sky-glow);
-  --accent-emerald: var(--accent-mint);
-  --accent-emerald-glow: var(--accent-mint-glow);
-  --accent-amber: var(--accent-honey);
-  --accent-amber-glow: var(--accent-honey-glow);
-  --accent-rose: var(--accent-coral);
-  --accent-rose-glow: var(--accent-coral-glow);
+  /* CORAL — soft rose-coral accent */
+  --el-coral:          #FB7185;
+  --el-coral-glass:    rgba(251, 113, 133, 0.14);
+  --el-coral-glow:     rgba(251, 113, 133, 0.35);
+  --el-coral-soft:     rgba(251, 113, 133, 0.08);
+  --el-coral-rim:      rgba(253, 164, 175, 0.6);
 
-  /* Soft Category Palette — Natural & Harmonious */
-  --cat-study: #8B5CF6;             /* Lavender */
-  --cat-research: #38BDF8;          /* Sky Blue */
-  --cat-editing: #A78BFA;           /* Soft Violet */
-  --cat-content: #F472B6;           /* Pastel Pink */
-  --cat-reading: #60A5FA;           /* Soft Azure */
-  --cat-course: #34D399;            /* Mint */
-  --cat-personal: #2DD4BF;          /* Soft Teal */
-  --cat-exercise: #FB923C;          /* Warm Peach */
-  --cat-admin: #94A3B8;             /* Slate Grey */
-  --cat-other: #FBBF24;             /* Honey */
+  /* LIME — kinetic energy */
+  --el-lime:           #84CC16;
+  --el-lime-glass:     rgba(132, 204, 22, 0.14);
+  --el-lime-glow:      rgba(132, 204, 22, 0.35);
+  --el-lime-soft:      rgba(132, 204, 22, 0.08);
 
-  /* Priority Palette — Human & Clear */
+  /* ─────────────────────────────────────────────────────────────────────────
+     CATEGORY → ELEMENTAL IDENTITY MAPPING
+     Each category has a primary elemental color (for materials, glows, accents)
+     ───────────────────────────────────────────────────────────────────────── */
+  --cat-study:         var(--el-crystal);
+  --cat-study-glass:   var(--el-crystal-glass);
+  --cat-study-glow:    var(--el-crystal-glow);
+  --cat-study-rim:     var(--el-crystal-rim);
+
+  --cat-research:      var(--el-water);
+  --cat-research-glass: var(--el-water-glass);
+  --cat-research-glow: var(--el-water-glow);
+  --cat-research-rim:  var(--el-water-rim);
+
+  --cat-editing:       var(--el-coral);
+  --cat-editing-glass: var(--el-coral-glass);
+  --cat-editing-glow:  var(--el-coral-glow);
+  --cat-editing-rim:   var(--el-coral-rim);
+
+  --cat-content:       var(--el-fire);
+  --cat-content-glass: var(--el-fire-glass);
+  --cat-content-glow:  var(--el-fire-glow);
+  --cat-content-rim:   var(--el-fire-rim);
+
+  --cat-reading:       var(--el-earth);
+  --cat-reading-glass: var(--el-earth-glass);
+  --cat-reading-glow:  var(--el-earth-glow);
+  --cat-reading-rim:   var(--el-earth-rim);
+
+  --cat-course:        var(--el-air);
+  --cat-course-glass:  var(--el-air-glass);
+  --cat-course-glow:   var(--el-air-glow);
+  --cat-course-rim:    var(--el-air-rim);
+
+  --cat-exercise:      var(--el-lime);
+  --cat-exercise-glass: var(--el-lime-glass);
+  --cat-exercise-glow: var(--el-lime-glow);
+
+  --cat-personal:      var(--el-light);
+  --cat-personal-glass: var(--el-light-glass);
+  --cat-personal-glow: var(--el-light-glow);
+  --cat-personal-rim:  var(--el-light-rim);
+
+  --cat-admin:         #94A3B8;
+  --cat-other:         var(--el-light);
+
+  /* Backward-compat aliases */
+  --accent-primary:         var(--el-crystal);
+  --accent-primary-hover:   var(--el-crystal-deep);
+  --accent-primary-glow:    var(--el-crystal-glow);
+  --accent-primary-soft:    var(--el-crystal-soft);
+  --accent-sky:             var(--el-water);
+  --accent-sky-glow:        var(--el-water-glow);
+  --accent-sky-soft:        var(--el-water-soft);
+  --accent-mint:            var(--el-earth);
+  --accent-mint-glow:       var(--el-earth-glow);
+  --accent-mint-soft:       var(--el-earth-soft);
+  --accent-peach:           #FB923C;
+  --accent-peach-glow:      rgba(251, 146, 60, 0.35);
+  --accent-peach-soft:      rgba(251, 146, 60, 0.1);
+  --accent-coral:           var(--el-coral);
+  --accent-coral-glow:      var(--el-coral-glow);
+  --accent-coral-soft:      var(--el-coral-soft);
+  --accent-honey:           var(--el-light);
+  --accent-honey-glow:      var(--el-light-glow);
+  --accent-honey-soft:      var(--el-light-soft);
+  --accent-sage:            #6EE7B7;
+  --accent-cyan:            var(--el-water);
+  --accent-cyan-glow:       var(--el-water-glow);
+  --accent-emerald:         var(--el-earth);
+  --accent-emerald-glow:    var(--el-earth-glow);
+  --accent-amber:           var(--el-light);
+  --accent-amber-glow:      var(--el-light-glow);
+  --accent-rose:            var(--el-coral);
+  --accent-rose-glow:       var(--el-coral-glow);
+
+  /* Priority palette */
   --priority-critical: #F43F5E;
-  --priority-high: #FB923C;
-  --priority-medium: #FBBF24;
-  --priority-low: #60A5FA;
-  --priority-none: #94A3B8;
+  --priority-high:     #FB923C;
+  --priority-medium:   #FBBF24;
+  --priority-low:      #60A5FA;
+  --priority-none:     #94A3B8;
 
-  /* Typography — Clean Editorial Sans & Monospace Accents */
+  /* ─────────────────────────────────────────────────────────────────────────
+     TYPOGRAPHY
+     ───────────────────────────────────────────────────────────────────────── */
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
 
-  /* Sizing & Spacing */
-  --sidebar-width: 250px;
+  /* ─────────────────────────────────────────────────────────────────────────
+     SPATIAL SIZING
+     ───────────────────────────────────────────────────────────────────────── */
+  --sidebar-width:          250px;
   --sidebar-collapsed-width: 74px;
-  --topbar-height: 64px;
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 30px;
+  --topbar-height:          64px;
+  --radius-xs:  6px;
+  --radius-sm:  10px;
+  --radius-md:  16px;
+  --radius-lg:  22px;
+  --radius-xl:  32px;
   --radius-full: 9999px;
 
-  /* Spring Physics & Spatial Transitions */
-  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
-  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-fast: 0.16s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-slow: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  /* ─────────────────────────────────────────────────────────────────────────
+     DEPTH LAYERS — 4 spatial planes
+     ───────────────────────────────────────────────────────────────────────── */
+  --depth-atmosphere:    1;   /* bg blobs, environment */
+  --depth-canvas:        2;   /* hero orb canvas */
+  --depth-ui:            10;  /* main layout */
+  --depth-floating:      20;  /* floating overlays */
+  --depth-modal:         50;  /* modals */
 
-  /* 3D Tactile Elevation & Press Transforms */
-  --press-transform: scale(0.98) translateY(1px);
-  --lift-transform: translateY(-2px);
-  --lift-transform-lg: translateY(-4px) scale(1.01);
+  /* Perspective for 3D CSS transforms */
+  --perspective-deep:    1200px;
+  --perspective-mid:     800px;
+  --perspective-close:   400px;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     PHYSICS & MOTION
+     ───────────────────────────────────────────────────────────────────────── */
+  --ease-spring:        cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-smooth:        cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce:        cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-silk:          cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-fast:    0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal:  0.3s  cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow:    0.5s  cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring:  0.4s  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Physical interaction transforms */
+  --press-transform:     scale(0.97) translateY(1px);
+  --lift-transform:      translateY(-3px);
+  --lift-transform-lg:   translateY(-6px) scale(1.015);
+  --float-transform:     translateY(-4px) translateZ(8px);
 }
 
 /* ==========================================================================
-   LUXURY DARK THEME — Deep Graphite & Smoked Floating Glass
-   (Sophisticated luxury, not hacker/cyber/neon)
+   LUXURY DARK THEME — Deep Elemental Space
    ========================================================================== */
 [data-theme="dark"], :root:not([data-theme="light"]) {
   color-scheme: dark;
 
-  /* Atmospheric Background */
-  --bg-app: #12141A;
-  --bg-gradient: radial-gradient(circle at 50% 0%, #1A1E29 0%, #12141A 65%);
-  --bg-atmosphere-tint: rgba(139, 92, 246, 0.05);
+  /* Atmospheric Depths */
+  --bg-app:              #0D0F14;
+  --bg-gradient:         radial-gradient(ellipse at 30% 0%, #151923 0%, #0D0F14 55%),
+                         radial-gradient(ellipse at 80% 100%, #131820 0%, transparent 60%);
+  --bg-atmosphere-tint:  rgba(139, 92, 246, 0.04);
 
-  /* Floating Smoked Glass Surfaces */
-  --bg-surface: rgba(26, 29, 39, 0.72);
-  --bg-surface-elevated: rgba(33, 37, 50, 0.88);
-  --bg-surface-hover: rgba(42, 47, 64, 0.75);
-  --bg-glass: rgba(22, 25, 34, 0.65);
-  --bg-glass-heavy: rgba(20, 23, 31, 0.88);
-  --bg-glass-clock: rgba(24, 28, 38, 0.75);
-  --bg-input: rgba(18, 21, 28, 0.75);
+  /* Material Surfaces — smoked glass, deep graphite */
+  --bg-surface:          rgba(22, 26, 38, 0.75);
+  --bg-surface-elevated: rgba(28, 33, 48, 0.88);
+  --bg-surface-hover:    rgba(36, 42, 60, 0.8);
+  --bg-glass:            rgba(18, 22, 32, 0.6);
+  --bg-glass-heavy:      rgba(14, 17, 25, 0.85);
+  --bg-glass-clock:      rgba(20, 24, 36, 0.72);
+  --bg-input:            rgba(14, 18, 26, 0.8);
 
-  /* Tactile Borders & Delicate Highlights */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-glass: rgba(255, 255, 255, 0.13);
-  --border-glass-highlight: rgba(255, 255, 255, 0.2);
-  --border-focus: rgba(139, 92, 246, 0.6);
+  /* Crystal-clear borders with highlights */
+  --border-subtle:            rgba(255, 255, 255, 0.06);
+  --border-glass:             rgba(255, 255, 255, 0.12);
+  --border-glass-highlight:   rgba(255, 255, 255, 0.22);
+  --border-focus:             rgba(139, 92, 246, 0.65);
 
-  /* Human Typography */
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-tertiary: #64748B;
-  --text-muted: #475569;
+  /* Typography */
+  --text-primary:    #F1F5F9;
+  --text-secondary:  #8899A8;
+  --text-tertiary:   #556677;
+  --text-muted:      #3D4F5E;
 
-  /* 3D Depth Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 18px 40px -8px rgba(0, 0, 0, 0.45);
-  --shadow-glass: 0 12px 36px 0 rgba(0, 0, 0, 0.32), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
-  --shadow-3d-floating: 0 20px 48px -10px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-bead: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  /* 3D Elemental Depth Shadows */
+  --shadow-sm:         0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md:         0 8px 28px -4px rgba(0, 0, 0, 0.45);
+  --shadow-lg:         0 20px 48px -8px rgba(0, 0, 0, 0.55);
+  --shadow-glass:      0 8px 32px 0 rgba(0, 0, 0, 0.4),
+                       inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --shadow-3d-floating: 0 24px 56px -10px rgba(0, 0, 0, 0.6),
+                        0 4px 16px rgba(0, 0, 0, 0.35),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-bead:       0 3px 8px rgba(0, 0, 0, 0.4),
+                       inset 0 1px 1px rgba(255, 255, 255, 0.22);
+  --shadow-inset:      inset 0 2px 8px rgba(0, 0, 0, 0.3),
+                       inset 0 1px 2px rgba(0, 0, 0, 0.5);
 
   /* Tactile Dot Matrix */
-  --dot-empty: rgba(255, 255, 255, 0.08);
-  --dot-lvl1: rgba(139, 92, 246, 0.35);
-  --dot-lvl2: rgba(139, 92, 246, 0.6);
-  --dot-lvl3: rgba(139, 92, 246, 0.85);
-  --dot-lvl4: #38BDF8;
+  --dot-empty:  rgba(255, 255, 255, 0.06);
+  --dot-lvl1:   rgba(139, 92, 246, 0.3);
+  --dot-lvl2:   rgba(139, 92, 246, 0.55);
+  --dot-lvl3:   rgba(6, 182, 212, 0.7);
+  --dot-lvl4:   #06B6D4;
+
+  /* Atmospheric environmental particles */
+  --particle-color-a: rgba(139, 92, 246, 0.25);
+  --particle-color-b: rgba(6, 182, 212, 0.2);
+  --particle-color-c: rgba(249, 115, 22, 0.15);
 }
 
 /* ==========================================================================
-   WARM OPAL & CREAM LIGHT THEME — Relaxing, Warm, Creative Workspace
+   WARM OPAL LIGHT THEME — Luminous, elemental, creative
    ========================================================================== */
 [data-theme="light"] {
   color-scheme: light;
 
-  /* Atmospheric Background */
-  --bg-app: #FAF8F5;
-  --bg-gradient: radial-gradient(circle at 50% 0%, #F3EFEA 0%, #FAF8F5 70%);
-  --bg-atmosphere-tint: rgba(251, 146, 60, 0.04);
+  --bg-app:              #F5F3F0;
+  --bg-gradient:         radial-gradient(ellipse at 30% 0%, #EDE9E0 0%, #F5F3F0 60%),
+                         radial-gradient(ellipse at 80% 100%, #EAF4FF 0%, transparent 60%);
+  --bg-atmosphere-tint:  rgba(249, 115, 22, 0.03);
 
-  /* Translucent Opal Surfaces */
-  --bg-surface: rgba(255, 255, 255, 0.82);
+  --bg-surface:          rgba(255, 255, 255, 0.85);
   --bg-surface-elevated: rgba(255, 255, 255, 0.96);
-  --bg-surface-hover: rgba(245, 242, 237, 0.9);
-  --bg-glass: rgba(255, 255, 255, 0.74);
-  --bg-glass-heavy: rgba(255, 255, 255, 0.94);
-  --bg-glass-clock: rgba(255, 255, 255, 0.85);
-  --bg-input: rgba(246, 243, 239, 0.9);
+  --bg-surface-hover:    rgba(248, 246, 242, 0.92);
+  --bg-glass:            rgba(255, 255, 255, 0.72);
+  --bg-glass-heavy:      rgba(255, 255, 255, 0.94);
+  --bg-glass-clock:      rgba(255, 255, 255, 0.88);
+  --bg-input:            rgba(244, 241, 236, 0.92);
 
-  /* Tactile Borders & Warm Highlights */
-  --border-subtle: rgba(15, 23, 42, 0.06);
-  --border-glass: rgba(15, 23, 42, 0.09);
-  --border-glass-highlight: rgba(255, 255, 255, 0.8);
-  --border-focus: rgba(139, 92, 246, 0.65);
+  --border-subtle:           rgba(15, 23, 42, 0.06);
+  --border-glass:            rgba(15, 23, 42, 0.1);
+  --border-glass-highlight:  rgba(255, 255, 255, 0.85);
+  --border-focus:            rgba(139, 92, 246, 0.7);
 
-  /* Human Typography */
-  --text-primary: #1E293B;
-  --text-secondary: #475569;
-  --text-tertiary: #64748B;
-  --text-muted: #94A3B8;
+  --text-primary:    #1A2535;
+  --text-secondary:  #4A6275;
+  --text-tertiary:   #647D90;
+  --text-muted:      #94A3B8;
 
-  /* 3D Depth Shadows */
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.07);
-  --shadow-lg: 0 20px 40px -8px rgba(15, 23, 42, 0.1);
-  --shadow-glass: 0 12px 36px 0 rgba(31, 38, 135, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
-  --shadow-3d-floating: 0 24px 48px -12px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.04);
-  --shadow-bead: 0 2px 4px rgba(15, 23, 42, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  --shadow-sm:         0 2px 8px rgba(15, 23, 42, 0.05);
+  --shadow-md:         0 8px 28px -4px rgba(15, 23, 42, 0.09);
+  --shadow-lg:         0 20px 48px -8px rgba(15, 23, 42, 0.12);
+  --shadow-glass:      0 8px 32px 0 rgba(31, 38, 135, 0.07),
+                       inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --shadow-3d-floating: 0 24px 56px -10px rgba(15, 23, 42, 0.14),
+                        0 4px 16px rgba(15, 23, 42, 0.05),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-bead:       0 3px 8px rgba(15, 23, 42, 0.1),
+                       inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  --shadow-inset:      inset 0 2px 8px rgba(15, 23, 42, 0.07),
+                       inset 0 1px 2px rgba(15, 23, 42, 0.1);
 
-  /* Tactile Dot Matrix */
-  --dot-empty: rgba(15, 23, 42, 0.07);
-  --dot-lvl1: rgba(139, 92, 246, 0.35);
-  --dot-lvl2: rgba(139, 92, 246, 0.6);
-  --dot-lvl3: rgba(139, 92, 246, 0.85);
-  --dot-lvl4: #0284C7;
+  --dot-empty:  rgba(15, 23, 42, 0.07);
+  --dot-lvl1:   rgba(139, 92, 246, 0.3);
+  --dot-lvl2:   rgba(139, 92, 246, 0.55);
+  --dot-lvl3:   rgba(6, 182, 212, 0.7);
+  --dot-lvl4:   #0891B2;
+
+  --particle-color-a: rgba(139, 92, 246, 0.15);
+  --particle-color-b: rgba(6, 182, 212, 0.12);
+  --particle-color-c: rgba(249, 115, 22, 0.1);
 }
 
 /* ==========================================================================
-   DAY / NIGHT ATMOSPHERIC LIGHTING STATES
+   TIME-OF-DAY ELEMENTAL ATMOSPHERES
+   These override environmental variables based on hour of day
    ========================================================================== */
+
+/* MORNING (5–11): Sunrise — peach, warm gold, sky */
 .atmos-morning {
-  --bg-atmosphere-tint: rgba(251, 191, 36, 0.06);
+  --bg-atmosphere-tint:    rgba(245, 158, 11, 0.06);
+  --atmos-primary:         #F59E0B;
+  --atmos-secondary:       #FB923C;
+  --atmos-glow-a:          rgba(245, 158, 11, 0.18);
+  --atmos-glow-b:          rgba(251, 146, 60, 0.12);
+  --atmos-particle:        rgba(252, 211, 77, 0.5);
 }
+
+/* AFTERNOON (12–17): Clear — cyan, turquoise, bright */
 .atmos-afternoon {
-  --bg-atmosphere-tint: rgba(56, 189, 248, 0.05);
+  --bg-atmosphere-tint:    rgba(6, 182, 212, 0.05);
+  --atmos-primary:         #06B6D4;
+  --atmos-secondary:       #10B981;
+  --atmos-glow-a:          rgba(6, 182, 212, 0.18);
+  --atmos-glow-b:          rgba(16, 185, 129, 0.12);
+  --atmos-particle:        rgba(103, 232, 249, 0.45);
 }
+
+/* EVENING (18–21): Twilight — violet, coral, warm rose */
 .atmos-evening {
-  --bg-atmosphere-tint: rgba(251, 113, 133, 0.06);
+  --bg-atmosphere-tint:    rgba(139, 92, 246, 0.07);
+  --atmos-primary:         #8B5CF6;
+  --atmos-secondary:       #FB7185;
+  --atmos-glow-a:          rgba(139, 92, 246, 0.2);
+  --atmos-glow-b:          rgba(251, 113, 133, 0.14);
+  --atmos-particle:        rgba(196, 181, 253, 0.5);
 }
+
+/* NIGHT (22–4): Deep Space — indigo, midnight blue, velvet */
 .atmos-night {
-  --bg-atmosphere-tint: rgba(139, 92, 246, 0.05);
+  --bg-atmosphere-tint:    rgba(67, 56, 202, 0.06);
+  --atmos-primary:         #6366F1;
+  --atmos-secondary:       #4F46E5;
+  --atmos-glow-a:          rgba(99, 102, 241, 0.16);
+  --atmos-glow-b:          rgba(79, 70, 229, 0.1);
+  --atmos-particle:        rgba(165, 180, 252, 0.4);
 }
 
 /* ==========================================================================
@@ -224,45 +386,38 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
-  transition: background-color var(--transition-slow);
+  transition: background-color var(--transition-slow), color var(--transition-slow);
 }
 
-/* Text selections */
 ::selection {
-  background: var(--accent-primary);
+  background: var(--el-crystal);
   color: #FFFFFF;
 }
 
-/* Elegant custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* Elegant elemental scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--border-glass);
   border-radius: var(--radius-full);
   transition: background var(--transition-fast);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
-}
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 
-/* Interactive focus outline */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--el-crystal);
   outline-offset: 2px;
 }
 
 /* ==========================================================================
-   3D SPATIAL & GLASSMORPHISM UTILITY CLASSES
+   3D SPATIAL UTILITY CLASSES — Core building blocks
    ========================================================================== */
+
+/* --- Glass Panel (primary floating surface) --- */
 .glass-panel {
   background: var(--bg-glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-glass);
@@ -270,14 +425,40 @@ html, body {
   transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
 }
 
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,0.06) 0%,
+    transparent 50%,
+    rgba(0,0,0,0.04) 100%);
+  pointer-events: none;
+}
+
+/* --- Glass Card (secondary card surface) --- */
 .glass-card {
   background: var(--bg-surface);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
 }
 
 .glass-card:hover {
@@ -285,35 +466,44 @@ html, body {
   box-shadow: var(--shadow-md);
 }
 
-.glass-card-interactive {
-  cursor: pointer;
-}
+.glass-card-interactive { cursor: pointer; }
 .glass-card-interactive:hover {
   transform: var(--lift-transform);
   box-shadow: var(--shadow-md);
   border-color: var(--border-glass-highlight);
 }
-.glass-card-interactive:active {
-  transform: var(--press-transform);
-}
+.glass-card-interactive:active { transform: var(--press-transform); }
 
-/* Floating 3D Spatial Widget */
+/* --- Spatial Floating Card (primary 3D elevated widget) --- */
 .spatial-floating-card {
   background: var(--bg-surface-elevated);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-3d-floating);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  position: relative;
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal);
+}
+
+.spatial-floating-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  pointer-events: none;
 }
 
 .spatial-floating-card:hover {
-  transform: var(--lift-transform);
-  box-shadow: 0 28px 56px -12px rgba(0, 0, 0, 0.4);
+  transform: var(--lift-transform-lg);
+  box-shadow: 0 32px 72px -12px rgba(0, 0, 0, 0.55),
+              0 8px 20px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
-/* Input Fields */
+/* --- Glass Input --- */
 .glass-input {
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
@@ -328,12 +518,14 @@ html, body {
 }
 
 .glass-input:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px var(--accent-primary-soft);
+  border-color: var(--el-crystal);
+  box-shadow: 0 0 0 3px var(--el-crystal-soft);
   background: var(--bg-surface);
 }
 
-/* Tactile 3D Buttons */
+/* ==========================================================================
+   3D ELEMENTAL BUTTONS
+   ========================================================================== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -342,7 +534,7 @@ html, body {
   padding: 9px 18px;
   font-family: var(--font-sans);
   font-size: 13.5px;
-  font-weight: 550;
+  font-weight: 600;
   letter-spacing: -0.2px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
@@ -350,22 +542,35 @@ html, body {
   transition: all var(--transition-fast);
   white-space: nowrap;
   user-select: none;
+  position: relative;
+  overflow: hidden;
 }
 
-.btn:active {
-  transform: var(--press-transform);
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
 }
+.btn:hover::after { opacity: 1; }
+
+.btn:active { transform: var(--press-transform); }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-primary-hover) 100%);
+  background: linear-gradient(135deg, var(--el-crystal) 0%, var(--el-crystal-deep) 100%);
   color: #FFFFFF;
-  box-shadow: 0 4px 14px var(--accent-primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 18px var(--el-crystal-glow),
+              inset 0 1px 0 rgba(255,255,255,0.28);
+  border: 1px solid rgba(255,255,255,0.15);
 }
-
 .btn-primary:hover {
   transform: var(--lift-transform);
-  box-shadow: 0 6px 20px var(--accent-primary-glow), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 28px var(--el-crystal-glow),
+              inset 0 1px 0 rgba(255,255,255,0.35);
 }
 
 .btn-secondary {
@@ -374,7 +579,6 @@ html, body {
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
 }
-
 .btn-secondary:hover {
   background: var(--bg-surface-hover);
   border-color: var(--border-glass-highlight);
@@ -386,7 +590,6 @@ html, body {
   background: transparent;
   color: var(--text-secondary);
 }
-
 .btn-ghost:hover {
   background: var(--bg-surface-hover);
   color: var(--text-primary);
@@ -398,75 +601,172 @@ html, body {
   height: 36px;
   padding: 0;
   border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* Badges */
+/* ==========================================================================
+   BADGES & LABELS
+   ========================================================================== */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 4px 10px;
   font-size: 11.5px;
-  font-weight: 550;
+  font-weight: 600;
   border-radius: var(--radius-full);
   line-height: 1;
 }
 
-/* Category colors */
 .cat-badge {
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
+
 .cat-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   display: inline-block;
-  box-shadow: 0 0 4px currentColor;
+  box-shadow: 0 0 5px currentColor;
 }
 
-/* Priority tags */
-.priority-critical { color: var(--priority-critical); border: 1px solid rgba(244, 63, 94, 0.25); background: rgba(244, 63, 94, 0.1); }
-.priority-high { color: var(--priority-high); border: 1px solid rgba(251, 146, 60, 0.25); background: rgba(251, 146, 60, 0.1); }
-.priority-medium { color: var(--priority-medium); border: 1px solid rgba(251, 191, 36, 0.25); background: rgba(251, 191, 36, 0.1); }
-.priority-low { color: var(--priority-low); border: 1px solid rgba(96, 165, 250, 0.25); background: rgba(96, 165, 250, 0.1); }
-.priority-none { color: var(--priority-none); border: 1px solid var(--border-subtle); background: transparent; }
+.priority-critical { color: var(--priority-critical); border: 1px solid rgba(244,63,94,0.28); background: rgba(244,63,94,0.1); }
+.priority-high     { color: var(--priority-high);     border: 1px solid rgba(251,146,60,0.28); background: rgba(251,146,60,0.1); }
+.priority-medium   { color: var(--priority-medium);   border: 1px solid rgba(251,191,36,0.28); background: rgba(251,191,36,0.1); }
+.priority-low      { color: var(--priority-low);      border: 1px solid rgba(96,165,250,0.28); background: rgba(96,165,250,0.1); }
+.priority-none     { color: var(--priority-none);     border: 1px solid var(--border-subtle); background: transparent; }
 
-/* Numeric & tabular font */
 .tabular-nums {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
-/* Atmospheric environmental quote */
 .subtle-quote {
   font-style: italic;
   color: var(--text-tertiary);
   font-size: 13px;
   letter-spacing: 0.15px;
-  opacity: 0.8;
-  line-height: 1.4;
+  opacity: 0.82;
+  line-height: 1.45;
 }
 
-/* Smooth motion utilities */
+/* ==========================================================================
+   KEYFRAME ANIMATIONS
+   ========================================================================== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) var(--ease-smooth) forwards;
 }
 
-.animate-fade-in {
-  animation: fadeIn var(--transition-normal) forwards;
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-fade-in-scale {
+  animation: fadeInScale var(--transition-normal) var(--ease-spring) forwards;
 }
 
 @keyframes floatGentle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+.animate-float { animation: floatGentle 5s ease-in-out infinite; }
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(1deg); }
+  66%       { transform: translateY(-3px) rotate(-0.5deg); }
+}
+.animate-float-slow { animation: floatSlow 8s ease-in-out infinite; }
+
+@keyframes crystalPulse {
+  0%, 100% { box-shadow: 0 0 20px var(--el-crystal-glow); }
+  50%       { box-shadow: 0 0 40px var(--el-crystal-glow), 0 0 80px var(--el-crystal-soft); }
+}
+.animate-crystal-pulse { animation: crystalPulse 3s ease-in-out infinite; }
+
+@keyframes orbBreathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.025); }
+}
+.animate-orb-breathe { animation: orbBreathe 4s ease-in-out infinite; }
+
+@keyframes particleDrift {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
+  50%  { transform: translateY(-30px) translateX(10px) scale(1.1); opacity: 0.8; }
+  100% { transform: translateY(-60px) translateX(-5px) scale(0.8); opacity: 0; }
 }
 
-.animate-float {
-  animation: floatGentle 4s ease-in-out infinite;
+@keyframes tileRise {
+  from { transform: translateZ(0) scale(1); }
+  50%  { transform: translateZ(12px) scale(1.06); }
+  to   { transform: translateZ(4px) scale(1.02); }
+}
+
+@keyframes taskComplete {
+  0%   { transform: scale(1) translateY(0); opacity: 1; }
+  30%  { transform: scale(0.97) translateY(2px); }
+  60%  { transform: scale(1.02) translateY(-1px); }
+  100% { transform: scale(1) translateY(0); opacity: 0.7; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1; transform: scale(1.2); }
+}
+
+/* ==========================================================================
+   VIEW TRANSITIONS — Spatial navigation
+   ========================================================================== */
+@keyframes viewEnter {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes viewExit {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-8px) scale(1.01); }
+}
+
+.view-enter { animation: viewEnter 0.4s var(--ease-spring) forwards; }
+.view-exit  { animation: viewExit 0.25s var(--ease-smooth) forwards; }
+
+/* ==========================================================================
+   REDUCED MOTION & 3D QUALITY LEVELS
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.quality-medium .animate-float,
+.quality-medium .animate-float-slow,
+.quality-medium .animate-crystal-pulse { animation: none; }
+
+.quality-low .glass-panel,
+.quality-low .glass-card,
+.quality-low .spatial-floating-card {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }

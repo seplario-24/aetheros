@@ -1,70 +1,87 @@
 /**
- * AETHER OS — ATMOSPHERIC ENVIRONMENTAL ENGINE
- * Subtle day/night ambient light fields, slow organic floating color blobs,
- * time-of-day awareness, and smooth atmospheric transitions.
+ * AETHER OS — ELEMENTAL ATMOSPHERE ENGINE
+ * Multi-layer atmospheric system with time-of-day elemental character,
+ * floating micro-particles, and smooth environment transitions.
  */
 
-import { store } from '../store/db.js';
-
-export class AtmosphereEngine {
+class AtmosphereEngine {
   constructor() {
-    this.container = null;
-    this.currentPhase = '';
-    this.timer = null;
+    this.currentAtmos = null;
+    this.particleCount = 20;
+    this.particles = [];
+    this.intervalId = null;
   }
 
   init() {
-    this.container = document.getElementById('atmosphere-layer');
-    if (!this.container) {
-      this.container = document.createElement('div');
-      this.container.id = 'atmosphere-layer';
-      this.container.innerHTML = `
-        <div class="atmosphere-blob blob-primary"></div>
-        <div class="atmosphere-blob blob-secondary"></div>
-        <div class="atmosphere-blob blob-warm"></div>
-      `;
-      document.body.insertBefore(this.container, document.body.firstChild);
-    }
+    this.updateAtmosphere();
+    this.spawnAtmosphereParticles();
 
-    this.update();
-    // Check every minute for subtle atmospheric transitions
-    this.timer = setInterval(() => this.update(), 60000);
+    // Update every 3 minutes
+    this.intervalId = setInterval(() => this.updateAtmosphere(), 3 * 60 * 1000);
   }
 
-  update() {
-    const now = new Date();
-    const hour = now.getHours();
+  getAtmosClass() {
+    const hour = new Date().getHours();
+    if (hour >= 5  && hour < 12) return 'atmos-morning';
+    if (hour >= 12 && hour < 18) return 'atmos-afternoon';
+    if (hour >= 18 && hour < 22) return 'atmos-evening';
+    return 'atmos-night';
+  }
 
-    let phase = 'afternoon';
-    if (hour >= 5 && hour < 12) phase = 'morning';
-    else if (hour >= 12 && hour < 18) phase = 'afternoon';
-    else if (hour >= 18 && hour < 22) phase = 'evening';
-    else phase = 'night';
+  updateAtmosphere() {
+    const body = document.body;
+    const newAtmos = this.getAtmosClass();
 
-    if (this.currentPhase !== phase) {
-      document.body.classList.remove('atmos-morning', 'atmos-afternoon', 'atmos-evening', 'atmos-night');
-      document.body.classList.add(`atmos-${phase}`);
-      this.currentPhase = phase;
+    if (this.currentAtmos === newAtmos) return;
+
+    // Remove old atmos class
+    if (this.currentAtmos) body.classList.remove(this.currentAtmos);
+    body.classList.add(newAtmos);
+    this.currentAtmos = newAtmos;
+
+    // Also set on the atmosphere layer for CSS variable inheritance
+    const layer = document.getElementById('atmosphere-layer');
+    if (layer) {
+      layer.className = '';
+      layer.classList.add(newAtmos);
     }
+  }
 
-    // Check 3D Effects / Performance preference
-    const prefs = store.getPreferences();
-    const effects3D = prefs.effects3D || 'full';
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  spawnAtmosphereParticles() {
+    const container = document.getElementById('atmos-particles');
+    if (!container) return;
 
-    if (this.container) {
-      if (effects3D === 'off' || prefersReducedMotion) {
-        this.container.style.opacity = '0';
-      } else if (effects3D === 'reduced') {
-        this.container.style.opacity = '0.2';
-      } else {
-        this.container.style.opacity = '1';
-      }
+    container.innerHTML = '';
+    this.particles = [];
+
+    for (let i = 0; i < this.particleCount; i++) {
+      const el = document.createElement('div');
+      el.className = 'atmos-particle';
+
+      const size = 2 + Math.random() * 4;
+      const x = Math.random() * 100;
+      const y = 20 + Math.random() * 70;
+      const duration = 8 + Math.random() * 16;
+      const delay = Math.random() * 12;
+      const opacity = 0.2 + Math.random() * 0.4;
+
+      el.style.cssText = `
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}%;
+        top: ${y}%;
+        opacity: ${opacity};
+        --particle-duration: ${duration}s;
+        --particle-delay: -${delay}s;
+      `;
+
+      container.appendChild(el);
+      this.particles.push(el);
     }
   }
 
   destroy() {
-    if (this.timer) clearInterval(this.timer);
+    if (this.intervalId) clearInterval(this.intervalId);
   }
 }
 

@@ -1,0 +1,963 @@
+/* ==========================================================================
+   AETHER OS — ELEMENTAL MATERIAL & 3D OBJECT LIBRARY
+   The physical vocabulary of the 3D Elemental World
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────────
+   HOME 3D WORLD LAYOUT
+   ────────────────────────────────────────────────────────────────────────── */
+.home-3d-world {
+  padding-bottom: 48px;
+}
+
+.home-hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.home-greeting-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-greeting-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.2px;
+}
+
+.home-quote-float {
+  text-align: right;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ATMOSPHERIC BACKGROUND SYSTEM
+   ────────────────────────────────────────────────────────────────────────── */
+#atmosphere-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--depth-atmosphere);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.atmosphere-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  transition: all 3s ease-in-out;
+}
+
+.blob-primary {
+  width: 600px;
+  height: 600px;
+  top: -120px;
+  right: -80px;
+  background: radial-gradient(circle, var(--atmos-glow-a, rgba(139,92,246,0.2)) 0%, transparent 70%);
+  animation: blobDrift1 18s ease-in-out infinite;
+}
+
+.blob-secondary {
+  width: 500px;
+  height: 500px;
+  bottom: -100px;
+  left: -60px;
+  background: radial-gradient(circle, var(--atmos-glow-b, rgba(6,182,212,0.15)) 0%, transparent 70%);
+  animation: blobDrift2 22s ease-in-out infinite;
+}
+
+.blob-warm {
+  width: 400px;
+  height: 400px;
+  top: 40%;
+  left: 35%;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+  animation: blobDrift3 28s ease-in-out infinite;
+}
+
+/* Floating micro-particles in the atmosphere */
+.atmosphere-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.atmos-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--atmos-particle, rgba(139,92,246,0.4));
+  animation: particleDrift var(--particle-duration, 8s) ease-in-out infinite;
+  animation-delay: var(--particle-delay, 0s);
+}
+
+@keyframes blobDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-40px, 30px) scale(1.08); }
+  66%       { transform: translate(25px, -20px) scale(0.95); }
+}
+@keyframes blobDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%       { transform: translate(50px, -35px) scale(1.05); }
+  70%       { transform: translate(-25px, 20px) scale(0.98); }
+}
+@keyframes blobDrift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  50%       { transform: translate(-30px, -25px) scale(1.12); opacity: 0.7; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MATERIAL SYSTEM — 6 elemental materials for components
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* GLASS — pure translucent clarity */
+.material-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),
+              0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* CRYSTAL — faceted, refractive, luminous */
+.material-crystal {
+  background: linear-gradient(135deg,
+    var(--el-crystal-glass) 0%,
+    rgba(255,255,255,0.05) 50%,
+    var(--el-crystal-soft) 100%);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid var(--el-crystal-rim);
+  box-shadow: 0 0 30px var(--el-crystal-soft),
+              inset 0 1px 0 rgba(255,255,255,0.25),
+              inset 0 -1px 0 var(--el-crystal-glass);
+}
+
+/* WATER — flowing, translucent, serene */
+.material-water {
+  background: linear-gradient(135deg,
+    var(--el-water-glass) 0%,
+    rgba(255,255,255,0.04) 50%,
+    var(--el-water-soft) 100%);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid var(--el-water-rim);
+  box-shadow: 0 0 28px var(--el-water-soft),
+              inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* FIRE — warm glowing energy */
+.material-fire {
+  background: linear-gradient(135deg,
+    var(--el-fire-glass) 0%,
+    rgba(255,255,255,0.03) 50%,
+    var(--el-fire-soft) 100%);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--el-fire-rim);
+  box-shadow: 0 0 28px var(--el-fire-soft),
+              inset 0 1px 0 rgba(255,200,100,0.2);
+}
+
+/* EARTH — soft organic warmth */
+.material-earth {
+  background: linear-gradient(135deg,
+    var(--el-earth-glass) 0%,
+    rgba(255,255,255,0.04) 50%,
+    var(--el-earth-soft) 100%);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid var(--el-earth-rim);
+  box-shadow: 0 0 24px var(--el-earth-soft),
+              inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+/* CERAMIC — matte, smooth, tactile */
+.material-ceramic {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-md),
+              inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* AIR — light, cloudlike, airy */
+.material-air {
+  background: linear-gradient(135deg,
+    var(--el-air-glass) 0%,
+    rgba(255,255,255,0.06) 50%,
+    var(--el-air-soft) 100%);
+  backdrop-filter: blur(28px) saturate(1.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  border: 1px solid var(--el-air-rim);
+  box-shadow: 0 0 24px var(--el-air-soft),
+              inset 0 1px 0 rgba(255,255,255,0.22);
+}
+
+/* LIGHT — warm gold luminescence */
+.material-light {
+  background: linear-gradient(135deg,
+    var(--el-light-glass) 0%,
+    rgba(255,255,255,0.04) 50%,
+    var(--el-light-soft) 100%);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid var(--el-light-rim);
+  box-shadow: 0 0 28px var(--el-light-soft),
+              inset 0 1px 0 rgba(255,240,150,0.25);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DEPTH UTILITY CLASSES — 4 spatial planes
+   ────────────────────────────────────────────────────────────────────────── */
+.depth-1 {
+  transform: translateZ(0px);
+  z-index: 1;
+}
+.depth-2 {
+  transform: translateZ(4px);
+  z-index: 2;
+  box-shadow: var(--shadow-sm);
+}
+.depth-3 {
+  transform: translateZ(8px);
+  z-index: 3;
+  box-shadow: var(--shadow-md);
+}
+.depth-4 {
+  transform: translateZ(14px);
+  z-index: 4;
+  box-shadow: var(--shadow-lg);
+}
+
+/* 3D Preserve transforms */
+.preserve-3d {
+  transform-style: preserve-3d;
+  perspective: var(--perspective-mid);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   3D PHYSICAL OBJECTS
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Orb — floating sphere object */
+.obj-orb {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.obj-orb::before {
+  content: '';
+  position: absolute;
+  top: 12%;
+  left: 18%;
+  width: 35%;
+  height: 25%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  filter: blur(6px);
+  pointer-events: none;
+  transform: rotate(-20deg);
+}
+
+/* Crystal shard shape */
+.obj-crystal {
+  clip-path: polygon(50% 0%, 85% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 15% 30%);
+  position: relative;
+}
+
+/* Floating slab — for calendar events, task cards */
+.obj-slab {
+  border-radius: var(--radius-md);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Dimensional card with visible left face */
+.obj-slab::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: -4px;
+  width: 4px;
+  height: calc(100% - 6px);
+  border-radius: 2px 0 0 2px;
+  background: inherit;
+  filter: brightness(0.7);
+  transform: rotateY(-90deg) translateX(2px);
+  transform-origin: right;
+}
+
+/* Habit tile — 3D press/raise states */
+.obj-habit-tile {
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal);
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.obj-habit-tile.state-completed {
+  transform: translateZ(6px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3),
+              inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.obj-habit-tile.state-failed {
+  transform: translateZ(-2px) scale(0.96);
+  box-shadow: var(--shadow-inset);
+  opacity: 0.65;
+}
+
+.obj-habit-tile.state-skipped {
+  opacity: 0.45;
+  transform: translateZ(0);
+}
+
+.obj-habit-tile.state-unlogged {
+  transform: translateZ(0);
+  opacity: 0.8;
+}
+
+.obj-habit-tile:hover {
+  transform: translateZ(8px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.obj-habit-tile:active {
+  transform: translateZ(2px) scale(0.97);
+  animation: tileRise 0.4s var(--ease-spring);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   ELEMENTAL GLOW HELPERS
+   ────────────────────────────────────────────────────────────────────────── */
+.glow-crystal { box-shadow: 0 0 24px var(--el-crystal-glow); }
+.glow-water   { box-shadow: 0 0 24px var(--el-water-glow); }
+.glow-fire    { box-shadow: 0 0 24px var(--el-fire-glow); }
+.glow-earth   { box-shadow: 0 0 24px var(--el-earth-glow); }
+.glow-light   { box-shadow: 0 0 24px var(--el-light-glow); }
+.glow-air     { box-shadow: 0 0 24px var(--el-air-glow); }
+.glow-coral   { box-shadow: 0 0 24px var(--el-coral-glow); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   3D ELEMENTAL BAR CHARTS
+   ────────────────────────────────────────────────────────────────────────── */
+.chart-3d-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 160px;
+  padding: 0 8px;
+  perspective: var(--perspective-mid);
+}
+
+.chart-3d-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-3d-bar {
+  width: 100%;
+  border-radius: var(--radius-sm) var(--radius-sm) 2px 2px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: height 0.8s var(--ease-spring);
+  min-height: 6px;
+}
+
+/* Front face: translucent material */
+.chart-3d-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Right face: depth illusion */
+.chart-3d-bar::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: -5px;
+  width: 5px;
+  height: calc(100% - 6px);
+  border-radius: 0 2px 2px 0;
+  background: rgba(0,0,0,0.25);
+  transform: skewY(-2deg);
+}
+
+.chart-3d-bar:hover {
+  transform: scaleY(1.04) scaleX(1.02);
+  filter: brightness(1.15);
+}
+
+.chart-3d-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SPATIAL TIMELINE
+   ────────────────────────────────────────────────────────────────────────── */
+.spatial-timeline-rail {
+  position: relative;
+  padding-left: 24px;
+}
+
+.spatial-timeline-rail::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg,
+    var(--el-crystal-glass) 0%,
+    var(--el-water-glass) 50%,
+    transparent 100%);
+  border-radius: var(--radius-full);
+}
+
+.timeline-node {
+  position: relative;
+  padding: 12px 0 12px 20px;
+}
+
+.timeline-node::before {
+  content: '';
+  position: absolute;
+  left: -19px;
+  top: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--el-crystal);
+  box-shadow: 0 0 12px var(--el-crystal-glow);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   PARTICLE BURST — for completion animations
+   ────────────────────────────────────────────────────────────────────────── */
+.particle-burst-wrap {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  z-index: 100;
+  overflow: visible;
+}
+
+.burst-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: burstFly 0.7s var(--ease-smooth) forwards;
+  opacity: 0;
+}
+
+@keyframes burstFly {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   3D POMODORO ORBITAL BEADS
+   ────────────────────────────────────────────────────────────────────────── */
+.pomodoro-orbital-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  perspective: 300px;
+}
+
+.pomodoro-bead-3d {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  position: relative;
+  transition: all var(--transition-spring);
+}
+
+.pomodoro-bead-3d::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  width: 35%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  filter: blur(2px);
+}
+
+.pomodoro-bead-3d.active {
+  transform: translateY(-4px) scale(1.15);
+  animation: crystalPulse 2s ease-in-out infinite;
+}
+
+.pomodoro-bead-3d.inactive {
+  opacity: 0.3;
+  filter: grayscale(0.8);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   3D CRYSTAL STREAK VISUALIZATION
+   ────────────────────────────────────────────────────────────────────────── */
+.streak-crystal-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 40px;
+  perspective: 200px;
+}
+
+.streak-crystal-bar {
+  border-radius: 2px 2px 0 0;
+  flex: 1;
+  transition: height var(--transition-spring), background var(--transition-normal);
+  position: relative;
+  min-height: 4px;
+}
+
+.streak-crystal-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   DOT CALENDAR 3D LANDSCAPE
+   ────────────────────────────────────────────────────────────────────────── */
+.dot-landscape-grid {
+  perspective: 600px;
+  transform-style: preserve-3d;
+}
+
+.dot-cell-3d {
+  transition: transform var(--transition-spring), box-shadow var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+  transform-origin: bottom center;
+}
+
+.dot-cell-3d:hover {
+  transform: translateZ(var(--dot-height, 4px)) scale(1.4);
+  z-index: 10;
+}
+
+.dot-info-popup {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.dot-cell-3d:hover .dot-info-popup {
+  opacity: 1;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   VOLUMETRIC CALENDAR EVENT BLOCKS
+   ────────────────────────────────────────────────────────────────────────── */
+.cal-event-3d {
+  position: absolute;
+  left: 8px;
+  right: 12px;
+  border-radius: var(--radius-sm);
+  overflow: visible;
+  cursor: pointer;
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal), z-index 0s;
+  z-index: 3;
+  transform-style: preserve-3d;
+}
+
+/* Translucent glass face */
+.cal-event-face {
+  border-radius: inherit;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.cal-event-face::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  pointer-events: none;
+}
+
+/* Left face for depth illusion */
+.cal-event-depth-face {
+  position: absolute;
+  top: 3px;
+  left: -5px;
+  width: 6px;
+  height: calc(100% - 6px);
+  border-radius: 2px 0 0 2px;
+  opacity: 0.6;
+}
+
+.cal-event-3d:hover {
+  transform: translateX(2px) translateZ(6px) scale(1.012);
+  z-index: 10;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TASK CARD PHYSICAL OBJECTS
+   ────────────────────────────────────────────────────────────────────────── */
+.task-card-3d {
+  position: relative;
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal);
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.task-card-3d:hover {
+  transform: translateY(-3px) translateZ(6px);
+  box-shadow: 0 12px 36px -6px rgba(0,0,0,0.4),
+              0 4px 12px rgba(0,0,0,0.25);
+}
+
+.task-card-3d:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.task-card-3d.completed-anim {
+  animation: taskComplete 0.45s var(--ease-spring) forwards;
+}
+
+/* Category material strip on left edge */
+.task-material-strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  box-shadow: 2px 0 8px currentColor;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FOCUS GLASS SPHERE
+   ────────────────────────────────────────────────────────────────────────── */
+.focus-sphere-stage {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+  perspective: var(--perspective-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.focus-sphere-outer {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+/* Glass sphere body */
+.focus-sphere-body {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--bg-glass-clock);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 32px 72px -12px rgba(0,0,0,0.55),
+              inset 0 2px 4px rgba(255,255,255,0.35),
+              inset 0 -8px 20px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Specular highlight on sphere */
+.focus-sphere-body::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 18%;
+  width: 38%;
+  height: 28%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  filter: blur(8px);
+  pointer-events: none;
+  transform: rotate(-15deg);
+}
+
+/* Bottom shadow/refraction */
+.focus-sphere-body::after {
+  content: '';
+  position: absolute;
+  bottom: 8%;
+  left: 20%;
+  right: 20%;
+  height: 15%;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.1);
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* Orbital ring around sphere */
+.focus-orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+  pointer-events: none;
+  animation: spinSlow linear infinite;
+}
+
+.focus-sphere-stage:hover .focus-sphere-outer {
+  transform: scale(1.02) translateZ(10px);
+}
+
+/* Focus running breathe */
+.focus-running .focus-sphere-body {
+  animation: orbBreathe 3.5s ease-in-out infinite;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   SLEEP MOON ORB
+   ────────────────────────────────────────────────────────────────────────── */
+.sleep-moon-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto 32px;
+}
+
+.sleep-moon-orb {
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,
+    rgba(99, 102, 241, 0.3) 0%,
+    rgba(67, 56, 202, 0.2) 40%,
+    rgba(30, 27, 75, 0.6) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(165, 180, 252, 0.3);
+  box-shadow: 0 0 60px rgba(99, 102, 241, 0.3),
+              0 0 120px rgba(67, 56, 202, 0.15),
+              inset 0 2px 4px rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: floatSlow 10s ease-in-out infinite;
+  position: relative;
+}
+
+.sleep-moon-orb::before {
+  content: '';
+  position: absolute;
+  top: 14%;
+  left: 20%;
+  width: 30%;
+  height: 22%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  filter: blur(5px);
+  transform: rotate(-10deg);
+}
+
+/* Stars in sleep view */
+.sleep-star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--star-duration, 3s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   GAME CARDS — miniature 3D environments
+   ────────────────────────────────────────────────────────────────────────── */
+.game-card-3d {
+  perspective: var(--perspective-mid);
+  cursor: pointer;
+}
+
+.game-card-inner {
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal);
+  border-radius: var(--radius-lg);
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.game-card-3d:hover .game-card-inner {
+  transform: translateY(-6px) rotateX(3deg);
+  box-shadow: 0 24px 56px -8px rgba(0,0,0,0.5);
+}
+
+.game-card-3d:active .game-card-inner {
+  transform: translateY(1px) rotateX(0deg);
+}
+
+/* Memory game tiles */
+.memory-tile-3d {
+  border-radius: var(--radius-md);
+  perspective: 200px;
+  cursor: pointer;
+}
+
+.memory-tile-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease-smooth);
+}
+
+.memory-tile-3d.flipped .memory-tile-inner {
+  transform: rotateY(180deg);
+}
+
+.memory-tile-front,
+.memory-tile-back {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.memory-tile-back {
+  transform: rotateY(180deg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MUSIC GLASS PLAYER
+   ────────────────────────────────────────────────────────────────────────── */
+.music-glass-player {
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-spring), box-shadow var(--transition-normal);
+}
+
+.music-glass-player:hover {
+  transform: translateY(-2px);
+}
+
+.music-waveform {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 24px;
+}
+
+.music-waveform-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--el-crystal);
+  animation: waveformBeat var(--beat-duration, 0.8s) ease-in-out infinite alternate;
+  animation-delay: var(--beat-delay, 0s);
+}
+
+@keyframes waveformBeat {
+  from { height: 4px; }
+  to   { height: var(--beat-height, 20px); }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   FLOATING QUOTE
+   ────────────────────────────────────────────────────────────────────────── */
+.elemental-quote {
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  opacity: 0.75;
+  text-align: center;
+  max-width: 380px;
+  margin: 0 auto;
+  transition: opacity var(--transition-normal);
+  letter-spacing: 0.1px;
+}
+
+.elemental-quote:hover { opacity: 1; }
+
+.elemental-quote-mark {
+  font-size: 42px;
+  line-height: 0.5;
+  color: var(--el-crystal-glass);
+  font-family: Georgia, serif;
+  display: block;
+  margin-bottom: 8px;
+  font-style: normal;
+}

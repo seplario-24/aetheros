@@ -6,6 +6,7 @@
 import { store } from './store/db.js';
 import { FocusOrb } from './visuals/orb.js';
 import { atmosphereEngine } from './visuals/atmosphere.js';
+import { ParticleSystem } from './visuals/particles.js';
 import { CommandPalette } from './components/command-palette.js';
 import { QuickAddModal } from './components/quick-add.js';
 
