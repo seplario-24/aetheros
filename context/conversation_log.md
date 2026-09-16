@@ -132,3 +132,30 @@
   5. Verified all views and 144Hz canvas loop via automated Node tests.
   6. Synchronized canonical memory files in `context/`.
 
+---
+
+### Exchange 12
+- **User**: "okay, now change the year dot matrix.. the dot matrox for year 2026..it is showing some random data
+i want a systematic dot calender which is from 1st january 2026 to 31st december 2026.. and everyday it should keep track of the work as is.. it should show how many days are left for year to end and how many percent the year is completed.. also the calender should refresh every year" (accompanied by screenshot showing the old dot matrix with empty dots for the first 43 weeks and activity dots only on the far right).
+- **Assistant**:
+  1. Diagnosed root cause:
+     - The previous calendar looped backwards 364 days from `today` (Sept 18, 2025 to Sept 17, 2026), omitting Q4 2026 completely.
+     - `js/store/db.js` only seeded 60 days of historical data (starting mid-July 2026), leaving Jan–July completely blank (`lvl-0`), and had zero completed tasks across past days.
+  2. Overhauled `js/store/db.js`:
+     - Updated `createSeedState()` to systematically generate realistic deep work focus sessions (2–4 on weekdays, 1–2 on weekends, occasional Sunday rest days), completed outcomes, and daily habit records for all 260 days from **January 1, 2026 up to today**.
+     - Updated `loadState()` to detect if early 2026 data is missing from existing `localStorage` and automatically backfill the missing historical months from Jan 1 without overwriting live user data.
+  3. Overhauled `js/views/dot-calendar.js`:
+     - Built a strict, systematic 365-day calendar from **1st January to 31st December of the active year**.
+     - Implemented dynamic annual auto-refresh (`new Date().getFullYear()`) and year navigation controls (`◀ 2025 | 2026 | 2027 ▶` + return to current year).
+     - Added an Executive Countdown & Completion Meter Card:
+       - Displays exact days remaining (e.g. `105 Days Left in 2026`, Day 260 of 365).
+       - Displays exact percentage completed (e.g. `71.2% Year Completed`).
+       - Features an ultra-sleek 3D glowing progress bar with gradient track (`linear-gradient(90deg, #3B82F6, #06B6D4, #10B981)`) and pulsing beacon head.
+     - Formatted the 53-week grid with 12 Month headers (`Jan` through `Dec`) mathematically aligned above the exact week columns where each month begins.
+     - Added day-of-week row labels (`Sun` through `Sat`).
+     - Distinct visual states: past active days (`lvl-1` through `lvl-4`), past rest days (`lvl-0`), today's glowing cyan beacon dot (`.today-dot`), and future days with dashed outlines (`.future-dot`).
+     - Enhanced the Day Inspector modal to inspect past, present, or upcoming days.
+  4. Added `.today-dot`, `.future-dot`, `.spacer-dot`, and `.year-progress-card` styles in `css/components.css`.
+  5. Bumped cache-busting query strings to `?v=10.0` in `index.html` and `js/app.js`.
+  6. Verified store data, calendar math, and view rendering via automated Node test script (`scratch/verify_dots.mjs`).
+

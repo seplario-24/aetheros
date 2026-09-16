@@ -179,10 +179,34 @@ class AetherStore {
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && parsed.tasks && parsed.categories) {
-            if (!parsed.habits || parsed.habits.length === 0) {
+            const currentYear = new Date().getFullYear();
+            const hasEarlySessions = (parsed.focusSessions || []).some(s => s.startTime && s.startTime.startsWith(`${currentYear}-01-`));
+            if (!parsed.habits || parsed.habits.length === 0 || !hasEarlySessions) {
               const seed = this.createSeedState();
-              parsed.habits = seed.habits;
-              parsed.habitRecords = seed.habitRecords;
+              if (!parsed.habits || parsed.habits.length === 0) {
+                parsed.habits = seed.habits;
+                parsed.habitRecords = seed.habitRecords;
+              }
+              if (!hasEarlySessions) {
+                const existingDates = new Set((parsed.focusSessions || []).map(s => s.startTime ? s.startTime.split('T')[0] : ''));
+                const missingSessions = seed.focusSessions.filter(s => {
+                  const dStr = s.startTime ? s.startTime.split('T')[0] : '';
+                  return !existingDates.has(dStr);
+                });
+                parsed.focusSessions = [...(parsed.focusSessions || []), ...missingSessions];
+
+                const existingTaskDates = new Set((parsed.tasks || []).filter(t => t.completed && t.completedAt).map(t => t.completedAt.split('T')[0]));
+                const missingTasks = seed.tasks.filter(t => {
+                  if (!t.completed || !t.completedAt) return false;
+                  const dStr = t.completedAt.split('T')[0];
+                  return !existingTaskDates.has(dStr);
+                });
+                parsed.tasks = [...(parsed.tasks || []), ...missingTasks];
+
+                const existingHrKeys = new Set((parsed.habitRecords || []).map(r => `${r.habitId}_${r.date}`));
+                const missingHrs = seed.habitRecords.filter(r => !existingHrKeys.has(`${r.habitId}_${r.date}`));
+                parsed.habitRecords = [...(parsed.habitRecords || []), ...missingHrs];
+              }
               this.state = parsed;
               this.saveState();
             }
@@ -948,34 +972,61 @@ class AetherStore {
       }
     ];
 
-    // Generate 60 days of historical focus sessions and sleep records
+    // Generate historical focus sessions, completed tasks, sleep records and habits from Jan 1 to today
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    const daysSinceJan1 = Math.max(1, Math.floor((today - startOfYear) / 86400000) + 1);
+
     const focusSessions = [];
     const sleepRecords = [];
+    const historicalTasks = [];
     const catPool = ['cat-research', 'cat-study', 'cat-editing', 'cat-reading', 'cat-course', 'cat-content'];
+    const taskTitlesPool = [
+      'Literature review on neural manifolds',
+      'Optimize WebGL fragment shader',
+      'Refactor state synchronization loop',
+      'Draft publication abstract & figures',
+      'Benchmark memory footprint under high concurrency',
+      'Conduct user evaluation & protocol trial',
+      'Implement audio spatial panning system',
+      'Audit accessibility & contrast ratios',
+      'Write technical documentation for core pipeline',
+      'Sprint retrospective & backlog grooming',
+      'Deep work on algorithmic complexity reduction',
+      'Design token alignment and CSS variables audit',
+      'Profile battery consumption on mobile webkit',
+      'Assemble interactive data visualization canvas',
+      'Unit testing edge cases in state machine'
+    ];
 
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < daysSinceJan1; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
       const dStr = d.toISOString().split('T')[0];
+      const dayOfWeek = d.getDay(); // 0 is Sun, 6 is Sat
 
-      // Sleep record
-      const bedH = (22 + (i % 3 === 0 ? 1 : 0)).toString().padStart(2, '0');
-      const bedM = (30 + (i * 7) % 25).toString().padStart(2, '0');
-      const wakeH = '07';
-      const wakeM = (10 + (i * 11) % 20).toString().padStart(2, '0');
-      const sMins = 7 * 60 + 20 + ((i * 17) % 50);
-      sleepRecords.push({
-        id: `sleep-seed-${i}`,
-        date: dStr,
-        sleepTime: `${bedH}:${bedM}`,
-        wakeTime: `${wakeH}:${wakeM}`,
-        durationMinutes: sMins,
-        quality: 4 + (i % 2 === 0 ? 1 : 0),
-        notes: i % 7 === 0 ? 'Woke up feeling deeply rested and alert.' : ''
-      });
+      // Sleep record (last 90 days)
+      if (i < 90) {
+        const bedH = (22 + (i % 3 === 0 ? 1 : 0)).toString().padStart(2, '0');
+        const bedM = (30 + (i * 7) % 25).toString().padStart(2, '0');
+        const wakeH = '07';
+        const wakeM = (10 + (i * 11) % 20).toString().padStart(2, '0');
+        const sMins = 7 * 60 + 20 + ((i * 17) % 50);
+        sleepRecords.push({
+          id: `sleep-seed-${i}`,
+          date: dStr,
+          sleepTime: `${bedH}:${bedM}`,
+          wakeTime: `${wakeH}:${wakeM}`,
+          durationMinutes: sMins,
+          quality: 4 + (i % 2 === 0 ? 1 : 0),
+          notes: i % 7 === 0 ? 'Woke up feeling deeply rested and alert.' : ''
+        });
+      }
 
-      // Focus sessions (between 2 to 5 sessions per day)
-      const numSessions = 2 + (i % 4);
+      // Systematic realistic focus sessions
+      // Occasional rest day on Sundays
+      const isRestDay = dayOfWeek === 0 && (i % 3 === 0);
+      const numSessions = isRestDay ? 0 : (dayOfWeek === 0 || dayOfWeek === 6 ? (1 + (i % 2)) : (2 + (i % 4)));
+
       for (let s = 0; s < numSessions; s++) {
         const catId = catPool[(i + s) % catPool.length];
         const dur = [25, 45, 60, 90][(i + s) % 4];
@@ -995,7 +1046,41 @@ class AetherStore {
           notes: ''
         });
       }
+
+      // Historical completed tasks (1-3 completed outcomes on active past days)
+      if (i > 0 && !isRestDay) {
+        const numTasks = 1 + (i % 4);
+        for (let t = 0; t < numTasks; t++) {
+          const tTitle = taskTitlesPool[(i * 3 + t) % taskTitlesPool.length];
+          const tCat = catPool[(i + t) % catPool.length];
+          const tTime = new Date(d);
+          tTime.setHours(11 + t * 2, 30, 0);
+
+          historicalTasks.push({
+            id: `task-hist-${i}-${t}`,
+            title: tTitle,
+            description: 'Completed scheduled focus outcome.',
+            categoryId: tCat,
+            priority: t % 3 === 0 ? 'high' : 'medium',
+            estimatedDuration: 45,
+            scheduledStart: `${dStr}T10:00`,
+            scheduledEnd: `${dStr}T11:00`,
+            deadline: null,
+            completed: true,
+            completedAt: tTime.toISOString(),
+            subtasks: [],
+            tags: ['DeepWork', 'Milestone'],
+            energyLevel: 'high',
+            repeatRule: 'none',
+            createdAt: d.toISOString(),
+            updatedAt: tTime.toISOString()
+          });
+        }
+      }
     }
+
+    // Combine current active tasks with historical completed tasks
+    tasks.push(...historicalTasks);
 
     const routines = this.createDefaultRoutines();
 
@@ -1005,11 +1090,11 @@ class AetherStore {
       { id: 'g-3', game: 'Stroop Test', score: 24, duration: 45, date: todayIso }
     ];
 
-    // Generate 60 days of historical habit records
+    // Generate historical habit records for all days of the year up to today
     const habits = JSON.parse(JSON.stringify(DEFAULT_HABITS));
     const habitRecords = [];
 
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < daysSinceJan1; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
       const dStr = d.toISOString().split('T')[0];

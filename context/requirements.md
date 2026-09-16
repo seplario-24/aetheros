@@ -85,8 +85,24 @@ The visual language is grounded in **natural elements, physical materials, direc
 - **Streak Protection & Analytics**: Visual indicators for completed, skipped, and pending habits.
 
 ### 4.6 Year Dot Matrix (`js/views/dot-calendar.js`)
-- **365-Day Life Grid**: Full year-in-pixels matrix showing annual progress, productivity intensity, and active days.
-- **Tooltips & Hover Elevation**: Interactive day inspection showing focus minutes and completed tasks.
+- **Systematic 365-Day Annual Matrix**: Strictly runs from 1st January to 31st December of the active year, displaying a 53-week grid with 12 Month headers mathematically aligned above the exact week columns where each month begins.
+- **Executive Countdown & Completion Meter**:
+  - Displays exact days left in the year (e.g. `105 Days Left in 2026`, Day 260 of 365, year ends Thursday Dec 31).
+  - Displays exact percentage completed (e.g. `71.2% Year Completed`) with an ultra-sleek 3D glowing progress bar and beacon bead head.
+- **Dynamic Work Tracking "As Is"**:
+  - Automatically records and aggregates deep work focus sessions, completed tasks, daily habits, and productivity scores for every day.
+  - Multi-metric switcher: `💧 Focus Time`, `💎 Outcomes`, `⚡ Score Index`, `🌿 Habits`.
+- **Distinct Visual States**:
+  - Past active days: 4 intensity levels (`lvl-1` through `lvl-4`).
+  - Past rest days: Dark glass empty sphere (`lvl-0`).
+  - Today: Glowing cyan beacon dot (`.today-dot`) with animated pulse keyframes.
+  - Future days (tomorrow through Dec 31): Subtle dashed outline (`.future-dot`) displaying remaining days.
+- **Annual Auto-Refresh & Navigation**:
+  - Automatically initializes to `new Date().getFullYear()`, refreshing the entire matrix whenever a new year begins.
+  - Year navigation controls (`◀ 2025 | 2026 | 2027 ▶` + return to current year button).
+- **Comprehensive Day Inspector**:
+  - Tactile modal inspecting any day's focus time, completed outcomes, productivity score, full habits checklist, and session log.
+
 
 ### 4.7 Intelligence & Analytics (`js/views/analytics.js`)
 - **Volumetric Metric Displays**: Total focus hours, task completion velocity, streak health, sleep-focus correlation.

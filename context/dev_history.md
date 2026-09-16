@@ -202,3 +202,35 @@
   5. **Cache Busting**:
      - Bumped query string versioning to `?v=9.0` in `index.html` and `js/app.js`.
 - **Reasoning**: Delivered an uncompromising 144Hz+ high-refresh experience with zero micro-stutter, genuine 3D lighting, and physical depth.
+
+---
+
+### [2026-09-17 03:05] Milestone 7: Systematic 2026 Dot Matrix Overhaul with Countdown & Completion Meter
+- **Problem**: User reported the year dot matrix for 2026 was showing random data (the first 43 weeks appeared empty, and only the right ~9 weeks had colored dots). The user requested a systematic dot calendar running strictly from 1st January 2026 to 31st December 2026, daily tracking of work as is, clear displays of how many days are left in the year and percent completed, and annual automatic refresh.
+- **Root Cause Analysis**:
+  - `js/views/dot-calendar.js` ran a backwards loop: `for (let i = 364; i >= 0; i--)` from `today`. On Sept 17, 2026, this started in Sept 2025 and ended on today, omitting Q4 2026 completely.
+  - `js/store/db.js` only seeded 60 days of historical data (`i < 60`), leaving all days prior to mid-July 2026 blank (`lvl-0`).
+  - Completed outcomes (tasks) were only seeded on `today`, causing the Outcomes metric to be empty across all past days.
+- **Modifications Made**:
+  1. **Historical Data Layer (`js/store/db.js`)**:
+     - Calculated `daysSinceJan1 = Math.max(1, Math.floor((today - startOfYear) / 86400000) + 1)` (~260 days for Sept 17, 2026).
+     - Generated realistic deep work sessions, completed tasks, and daily habit records for all 260 days from January 1, 2026 up to today.
+     - Hardened `loadState()` to detect if early 2026 data is absent in existing `localStorage` and automatically backfill missing days from Jan 1 without overwriting today's user activity.
+  2. **Systematic 365-Day Calendar Engine (`js/views/dot-calendar.js`)**:
+     - Dynamically initialized `selectedYear = new Date().getFullYear()` (auto-refreshes every year).
+     - Generated exact 365-day (or 366-day) grid strictly spanning **1st January to 31st December**.
+     - Implemented **Executive Year Countdown & Completion Meter**:
+       - `105 Days Left in 2026` (Day 260 of 365 • Year ends Thursday, Dec 31, 2026).
+       - `71.2% Year Completed` with an ultra-sleek 3D glowing progress bar (`linear-gradient(90deg, #3B82F6, #06B6D4, #10B981)`) and beacon bead head.
+     - Built 4 Elemental Stat Cards: Days Remaining (🔥), Annual Progress (💧), Active Harvest Days (🌿), and Total Yearly Volume (💎).
+     - Structured the 53-week matrix with 7 day-of-week rows (`Sun` to `Sat`), 4 leading spacer cells for Thursday Jan 1, and 12 Month headers (`Jan` through `Dec`) mathematically aligned above their respective starting week columns.
+     - Added distinct visual states: past active days (`lvl-1` to `lvl-4`), past rest days (`lvl-0`), today's pulsating cyan beacon dot (`.today-dot`), and future days (`.future-dot`).
+     - Added year navigation controls (`◀ 2025 | 2026 | 2027 ▶` + Jump to Today).
+     - Enhanced the Day Inspector modal to inspect past, present, or upcoming days.
+  3. **Visual Styling (`css/components.css`)**:
+     - Added `.today-dot` with animated cyan pulse beacon keyframes.
+     - Added `.future-dot` with dashed border and hover glow.
+     - Added `.year-progress-card`, `.year-progress-track`, and `.year-progress-fill`.
+  4. **Cache Busting**:
+     - Bumped query string versioning to `?v=10.0` in `index.html` and `js/app.js`.
+- **Reasoning**: Delivered an accurate, systematic 365-day annual timeline from Jan 1 to Dec 31 with real-time countdown, completion progress, and automated annual refresh.
