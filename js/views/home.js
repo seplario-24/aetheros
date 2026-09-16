@@ -85,11 +85,15 @@ export function renderHomeView(container, navigate) {
     : (tasks.length === 0 ? 'Your workspace is clear. Create your first task.' : 'All planned outcomes conquered.');
   if (totalFocusMinutes > 0) contextualSub += ` ${focusStr} of deep focus logged.`;
 
-  const currentQuote = MOTIVATIONAL_QUOTES[prefs.quoteIndex % MOTIVATIONAL_QUOTES.length];
+  const quoteList = Array.isArray(MOTIVATIONAL_QUOTES) && MOTIVATIONAL_QUOTES.length > 0
+    ? MOTIVATIONAL_QUOTES
+    : [{ quote: "Focus on the work, not the clock.", author: "Productivity Principle" }];
+  const qIdx = (typeof prefs.quoteIndex === 'number' && !isNaN(prefs.quoteIndex)) ? Math.abs(prefs.quoteIndex) : 0;
+  const currentQuote = quoteList[qIdx % quoteList.length] || quoteList[0];
 
   // Up-next category glow
   const upNextCat = upNextTask ? store.getCategoryById(upNextTask.categoryId) : null;
-  const upNextGlow = upNextCat ? upNextCat.color + '30' : 'var(--el-crystal-soft)';
+  const upNextGlow = upNextCat ? (upNextCat.color || '#6366F1') + '30' : 'var(--el-crystal-soft)';
 
   container.innerHTML = `
     <div class="animate-fade-in-scale home-3d-world">

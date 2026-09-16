@@ -191,4 +191,6 @@ export class ParticleSystem {
 }
 
 // Make globally available for view scripts
-window.ParticleSystem = ParticleSystem;
+if (typeof window !== 'undefined') {
+  window.ParticleSystem = ParticleSystem;
+}

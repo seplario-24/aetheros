@@ -4,27 +4,27 @@
  * 3D canvas lifecycle, and global shortcuts (Sections 133-169).
  */
 
-import { auth } from './auth/auth.js?v=4.1';
-import { store } from './store/db.js?v=4.1';
-import { FocusOrb } from './visuals/orb.js?v=4.1';
-import { atmosphereEngine } from './visuals/atmosphere.js?v=4.1';
-import { ParticleSystem } from './visuals/particles.js?v=4.1';
-import { CommandPalette } from './components/command-palette.js?v=4.1';
-import { QuickAddModal } from './components/quick-add.js?v=4.1';
-import { ProfileMenu } from './components/profile-menu.js?v=4.1';
+import { auth } from './auth/auth.js';
+import { store } from './store/db.js';
+import { FocusOrb } from './visuals/orb.js';
+import { atmosphereEngine } from './visuals/atmosphere.js';
+import { ParticleSystem } from './visuals/particles.js';
+import { CommandPalette } from './components/command-palette.js';
+import { QuickAddModal } from './components/quick-add.js';
+import { ProfileMenu } from './components/profile-menu.js';
 
-import { renderLandingView } from './views/landing.js?v=4.1';
-import { renderOnboardingView } from './views/onboarding.js?v=4.1';
-import { renderHomeView } from './views/home.js?v=4.1';
-import { renderTasksView } from './views/tasks.js?v=4.1';
-import { renderCalendarView } from './views/calendar.js?v=4.1';
-import { renderFocusView } from './views/focus.js?v=4.1';
-import { renderDotCalendarView } from './views/dot-calendar.js?v=4.1';
-import { renderAnalyticsView } from './views/analytics.js?v=4.1';
-import { renderSleepView } from './views/sleep.js?v=4.1';
-import { renderGamesView } from './views/games.js?v=4.1';
-import { renderHabitsView } from './views/habits.js?v=4.1';
-import { renderSettingsView } from './views/settings.js?v=4.1';
+import { renderLandingView } from './views/landing.js';
+import { renderOnboardingView } from './views/onboarding.js';
+import { renderHomeView } from './views/home.js';
+import { renderTasksView } from './views/tasks.js';
+import { renderCalendarView } from './views/calendar.js';
+import { renderFocusView } from './views/focus.js';
+import { renderDotCalendarView } from './views/dot-calendar.js';
+import { renderAnalyticsView } from './views/analytics.js';
+import { renderSleepView } from './views/sleep.js';
+import { renderGamesView } from './views/games.js';
+import { renderHabitsView } from './views/habits.js';
+import { renderSettingsView } from './views/settings.js';
 
 // 3D Intensity Mapping by Screen (Section 133)
 export const SCREEN_3D_INTENSITY = {
@@ -322,40 +322,54 @@ class AetherApp {
       return;
     }
 
-    switch (this.currentView) {
-      case 'home':
-        renderHomeView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'tasks':
-        renderTasksView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'calendar':
-        renderCalendarView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'focus':
-        renderFocusView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'habits':
-        renderHabitsView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'dots':
-        renderDotCalendarView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'analytics':
-        renderAnalyticsView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'sleep':
-        renderSleepView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'games':
-        renderGamesView(this.viewport, (v) => this.navigate(v));
-        break;
-      case 'settings':
-        renderSettingsView(this.viewport, (v) => this.navigate(v));
-        break;
-      default:
-        renderHomeView(this.viewport, (v) => this.navigate(v));
-        break;
+    try {
+      switch (this.currentView) {
+        case 'home':
+          renderHomeView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'tasks':
+          renderTasksView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'calendar':
+          renderCalendarView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'focus':
+          renderFocusView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'habits':
+          renderHabitsView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'dots':
+          renderDotCalendarView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'analytics':
+          renderAnalyticsView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'sleep':
+          renderSleepView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'games':
+          renderGamesView(this.viewport, (v) => this.navigate(v));
+          break;
+        case 'settings':
+          renderSettingsView(this.viewport, (v) => this.navigate(v));
+          break;
+        default:
+          renderHomeView(this.viewport, (v) => this.navigate(v));
+          break;
+      }
+    } catch (err) {
+      console.error(`[AetherApp] Error rendering view ${this.currentView}:`, err);
+      this.viewport.innerHTML = `
+        <div style="padding: 40px; text-align: center; color: #E2E8F0;">
+          <div style="font-size: 32px; margin-bottom: 12px;">✨</div>
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Personal OS Workspace Ready</h3>
+          <p style="font-size: 13px; color: #94A3B8; max-width: 420px; margin: 0 auto 20px auto;">
+            Click below to refresh and load your personal command center.
+          </p>
+          <button class="btn btn-primary" onclick="location.reload()">Refresh Workspace</button>
+        </div>
+      `;
     }
   }
 
