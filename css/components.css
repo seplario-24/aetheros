@@ -1846,3 +1846,39 @@ body.zen-mode .view-viewport { padding: 0; }
   .stats-overview-grid { grid-template-columns: 1fr; }
   .dashboard-hero { flex-direction: column; }
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   EDIT TASK MODAL & GRANULAR TIMESETTER STYLES
+   ────────────────────────────────────────────────────────────────────────── */
+.edit-timesetter-chip {
+  transition: all var(--transition-fast);
+}
+
+.edit-timesetter-chip:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #FFFFFF !important;
+  border-color: var(--accent-cyan) !important;
+  transform: translateY(-1px);
+}
+
+.subtask-delete-btn:hover {
+  color: var(--accent-rose) !important;
+  background: rgba(244, 63, 94, 0.1) !important;
+  border-radius: 4px;
+}
+
+.tag-remove-btn:hover {
+  color: var(--accent-rose) !important;
+}
+
+@media (max-width: 640px) {
+  #edit-task-backdrop .modal-container {
+    max-height: 94vh;
+    border-radius: var(--radius-md);
+  }
+
+  #edit-task-backdrop .modal-body {
+    padding: 16px;
+    gap: 14px;
+  }
+}

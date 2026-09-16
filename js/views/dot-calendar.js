@@ -420,12 +420,18 @@ export function renderDotCalendarView(container, navigate) {
   const modalBody = container.querySelector('#inspector-modal-body');
   const modalClose = container.querySelector('#inspector-modal-close');
 
+  const closeModal = () => {
+    if (!modal.classList.contains('open')) return;
+    modal.classList.remove('open');
+    if (window.aetherApp) window.aetherApp.popModal('day-inspector');
+  };
+
   if (modalClose && modal) {
-    modalClose.addEventListener('click', () => modal.classList.remove('open'));
+    modalClose.addEventListener('click', closeModal);
   }
   if (modal) {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) modal.classList.remove('open');
+      if (e.target === modal) closeModal();
     });
   }
 
@@ -571,6 +577,9 @@ export function renderDotCalendarView(container, navigate) {
         ` : ''}
       `;
       modal.classList.add('open');
+      if (window.aetherApp) {
+        window.aetherApp.pushModal('day-inspector', () => modal.classList.remove('open'));
+      }
     });
   });
 }

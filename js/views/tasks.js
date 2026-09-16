@@ -224,11 +224,23 @@ export function renderTasksView(container, navigate) {
       e.stopPropagation();
       const taskId = btn.getAttribute('data-task-id');
       const task = store.getTaskById(taskId);
-      if (task) {
-        const newTitle = prompt('Edit Outcome Title:', task.title);
-        if (newTitle && newTitle.trim()) {
-          store.updateTask(taskId, { title: newTitle.trim() });
-          renderTasksView(container, navigate);
+      if (task && window.aetherEditTask) {
+        window.aetherEditTask.open(task);
+      }
+    });
+  });
+
+  // Clicking on task info center opens full edit task modal
+  container.querySelectorAll('.task-info-center').forEach(info => {
+    info.style.cursor = 'pointer';
+    info.addEventListener('click', (e) => {
+      if (e.target.closest('.btn-toggle-subtasks')) return;
+      const card = info.closest('.task-card');
+      if (card) {
+        const taskId = card.getAttribute('data-task-id');
+        const task = store.getTaskById(taskId);
+        if (task && window.aetherEditTask) {
+          window.aetherEditTask.open(task);
         }
       }
     });
@@ -345,7 +357,7 @@ function renderTaskItem(task) {
               Focus
             </button>
           ` : ''}
-          <button class="btn btn-ghost btn-icon btn-edit-task" data-task-id="${task.id}" title="Rename Outcome" style="width: 30px; height: 30px; color: var(--text-muted); font-size: 13px;">
+          <button class="btn btn-ghost btn-icon btn-edit-task" data-task-id="${task.id}" title="Edit Outcome Details" style="width: 30px; height: 30px; color: var(--text-muted); font-size: 13px;">
             ✎
           </button>
           <button class="btn btn-ghost btn-icon btn-delete-task" data-task-id="${task.id}" title="Delete Outcome" style="width: 30px; height: 30px; color: var(--text-muted);">

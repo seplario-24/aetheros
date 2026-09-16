@@ -94,13 +94,20 @@ export class CommandPalette {
     this.input.value = '';
     this.selectedIndex = 0;
     this.overlay.classList.add('open');
+    if (window.aetherApp && typeof window.aetherApp.pushModal === 'function') {
+      window.aetherApp.pushModal('command-palette', () => this.close(false));
+    }
     this.updateResults();
     setTimeout(() => this.input.focus(), 50);
   }
 
-  close() {
+  close(shouldPop = true) {
+    if (!this.isOpen) return;
     this.isOpen = false;
     this.overlay.classList.remove('open');
+    if (shouldPop && window.aetherApp && typeof window.aetherApp.popModal === 'function') {
+      window.aetherApp.popModal('command-palette');
+    }
   }
 
   getDefaultCommands() {

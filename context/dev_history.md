@@ -271,3 +271,35 @@
   6. **Cache Busting**:
      - Bumped query string versioning to `?v=11.0` in `index.html` and `js/app.js`.
 - **Reasoning**: Extended task duration capabilities to accommodate realistic multi-hour deep work blocks, introduced precision lap interval tracking for focus sessions, and polished cockpit ergonomics with the intuitive circular reset glyph and clear "Start Focus" CTA.
+
+---
+
+### [2026-09-17 03:36] Milestone 9: Comprehensive Edit Task Modal Window & Native Step-by-Step Back Navigation
+- **Problem**:
+  1. Task editing was previously limited to a single `prompt('Edit Outcome Title:', ...)` popup, preventing users from modifying task intensity, notes, category, priority, timing, scheduling, subtasks, or tags.
+  2. On mobile devices, pressing the browser or hardware Back button immediately exited and closed the website instead of stepping back through modals, drawers, or previously visited screens.
+- **Modifications Made**:
+  1. **Comprehensive Edit Task Modal Component (`js/components/edit-task.js`)**:
+     - Built `EditTaskModal` providing an executive 3D glassmorphic window to customize all task attributes:
+       - **Identity**: Title text input, live category color orb, and task ID indicator.
+       - **Context**: Multi-line notes & description textarea.
+       - **Classification**: Category selector, Priority selector (Critical, High, Medium, Low, None), Energy requirement selector (High, Medium, Low), and Recurrence cadence selector.
+       - **Timing & Presets**: Duration presets (15m to 12h) + interactive custom timesetter stepper buttons (`+`/`-` hours, `+`/`-` minutes), quick chips, and live duration badge.
+       - **Temporal Scheduling**: Scheduled Start (`datetime-local`), Scheduled End (`datetime-local`), Hard Deadline (`datetime-local`).
+       - **Subtasks / Action Steps**: Interactive checklist editor with step completion toggles, inline title editing, delete action, and dynamic step adder.
+       - **Tags & Labels**: Tag chips with removal trigger and keyboard tag adder (`Enter` or comma).
+       - **Lifecycle Actions**: "Delete Task" with confirmation dialog, "Start Focus" (configures timer engine and launches Focus Cockpit), Cancel, and Save Changes.
+  2. **View Integrations (`js/views/tasks.js`, `js/views/home.js`)**:
+     - Updated `.btn-edit-task` and clicking `.task-info-center` in `tasks.js` to trigger `window.aetherEditTask.open(task)`.
+     - Connected the Up-Next priority card (`.up-next-left`) and home task items in `home.js` to open `window.aetherEditTask.open(task)`.
+  3. **Step-by-Step Back Navigation & Routing Engine (`js/app.js`)**:
+     - Implemented full SPA Hash Routing (`#/home`, `#/tasks`, `#/focus`, etc.) with `history.pushState` and `popstate` listening.
+     - Created a global Modal & Drawer Stack (`pushModal`, `popModal`):
+       - When any modal or drawer is opened, an overlay state is registered.
+       - When the user presses the mobile back button or browser back, open modals (Edit Task, Quick Add, Command Palette, Day Inspector, Sidebar Drawer) close first without navigating away from the current view.
+       - If no modals are open, pressing Back steps back to previously visited views in chronological order (e.g. Focus -> Tasks -> Home).
+  4. **Component Styling (`css/components.css`)**:
+     - Added styles for `.edit-timesetter-chip`, `.subtask-delete-btn`, `.tag-remove-btn`, and responsive mobile constraints.
+  5. **Cache Busting**:
+     - Bumped query string versioning to `?v=12.0` in `index.html` and `js/app.js`.
+- **Reasoning**: Solved the mobile web app exit frustration by mimicking native app back-stack behavior, while delivering a comprehensive command center for editing outcomes minutely.

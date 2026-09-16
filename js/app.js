@@ -3,23 +3,24 @@
  * Router, reactive store sync, 3D canvas lifecycle, and global shortcuts.
  */
 
-import { store } from './store/db.js?v=11.0';
-import { FocusOrb } from './visuals/orb.js?v=11.0';
-import { atmosphereEngine } from './visuals/atmosphere.js?v=11.0';
-import { ParticleSystem } from './visuals/particles.js?v=11.0';
-import { CommandPalette } from './components/command-palette.js?v=11.0';
-import { QuickAddModal } from './components/quick-add.js?v=11.0';
+import { store } from './store/db.js?v=12.0';
+import { FocusOrb } from './visuals/orb.js?v=12.0';
+import { atmosphereEngine } from './visuals/atmosphere.js?v=12.0';
+import { ParticleSystem } from './visuals/particles.js?v=12.0';
+import { CommandPalette } from './components/command-palette.js?v=12.0';
+import { QuickAddModal } from './components/quick-add.js?v=12.0';
+import { EditTaskModal } from './components/edit-task.js?v=12.0';
 
-import { renderHomeView } from './views/home.js?v=11.0';
-import { renderTasksView } from './views/tasks.js?v=11.0';
-import { renderCalendarView } from './views/calendar.js?v=11.0';
-import { renderFocusView } from './views/focus.js?v=11.0';
-import { renderDotCalendarView } from './views/dot-calendar.js?v=11.0';
-import { renderAnalyticsView } from './views/analytics.js?v=11.0';
-import { renderSleepView } from './views/sleep.js?v=11.0';
-import { renderGamesView } from './views/games.js?v=11.0';
-import { renderHabitsView } from './views/habits.js?v=11.0';
-import { renderSettingsView } from './views/settings.js?v=11.0';
+import { renderHomeView } from './views/home.js?v=12.0';
+import { renderTasksView } from './views/tasks.js?v=12.0';
+import { renderCalendarView } from './views/calendar.js?v=12.0';
+import { renderFocusView } from './views/focus.js?v=12.0';
+import { renderDotCalendarView } from './views/dot-calendar.js?v=12.0';
+import { renderAnalyticsView } from './views/analytics.js?v=12.0';
+import { renderSleepView } from './views/sleep.js?v=12.0';
+import { renderGamesView } from './views/games.js?v=12.0';
+import { renderHabitsView } from './views/habits.js?v=12.0';
+import { renderSettingsView } from './views/settings.js?v=12.0';
 
 // 3D Intensity Mapping by Screen (User Directive Section 133)
 export const SCREEN_3D_INTENSITY = {
@@ -35,11 +36,17 @@ export const SCREEN_3D_INTENSITY = {
   dots: 0.30
 };
 
+export const VALID_VIEWS = [
+  'home', 'tasks', 'calendar', 'focus', 'habits', 'dots', 'analytics', 'sleep', 'games', 'settings'
+];
+
 class AetherApp {
   constructor() {
     this.currentView = 'home';
     this.viewport = null;
     this.orb = null;
+    this.modalStack = [];
+    this.isHandlingPopstate = false;
 
     this.init();
   }
@@ -66,9 +73,11 @@ class AetherApp {
     // 3. Initialize Global Overlays
     window.aetherCommandPalette = new CommandPalette((view) => this.navigate(view));
     window.aetherQuickAdd = new QuickAddModal();
+    window.aetherEditTask = new EditTaskModal();
 
-    // 4. Bind Navigation Elements
+    // 4. Bind Navigation & Mobile Back History Routing
     this.bindNavigation();
+    this.bindHistoryRouting();
 
     // 5. Global Keyboard Shortcuts
     this.bindKeyboardShortcuts();
@@ -80,9 +89,12 @@ class AetherApp {
       this.renderCurrentView();
     });
 
-    // 7. Initial View Render & Badges
+    // 7. Initial View Render from URL hash or default 'home'
     this.updateBadges();
-    this.navigate('home');
+    const initialHash = window.location.hash.replace(/^#\/?/, '').trim();
+    const startView = VALID_VIEWS.includes(initialHash) ? initialHash : 'home';
+    window.history.replaceState({ type: 'view', view: startView }, '', '#' + startView);
+    this.navigate(startView, { pushHistory: false });
   }
 
   bindNavigation() {
@@ -121,7 +133,14 @@ class AetherApp {
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     if (mobileMenuBtn && sidebar) {
       mobileMenuBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('mobile-open');
+        const isOpen = sidebar.classList.toggle('mobile-open');
+        if (isOpen) {
+          this.pushModal('mobile-sidebar', () => {
+            sidebar.classList.remove('mobile-open');
+          });
+        } else {
+          this.popModal('mobile-sidebar');
+        }
       });
     }
 
@@ -195,8 +214,76 @@ class AetherApp {
     });
   }
 
-  navigate(viewName) {
+  pushModal(id, closeFn) {
+    this.modalStack.push({ id, closeFn });
+    window.history.pushState({ type: 'modal', id }, '', window.location.hash || '#' + this.currentView);
+  }
+
+  popModal(id) {
+    const idx = this.modalStack.findIndex(m => m.id === id);
+    if (idx !== -1) {
+      this.modalStack.splice(idx, 1);
+      // Discard the pushed modal state if closed directly via UI (✕, backdrop, cancel)
+      if (window.history.state && window.history.state.type === 'modal' && window.history.state.id === id) {
+        this.isHandlingPopstate = true;
+        window.history.back();
+      }
+    }
+  }
+
+  bindHistoryRouting() {
+    window.addEventListener('popstate', (e) => {
+      // If we popped history programmatically in popModal(), ignore this popstate trigger
+      if (this.isHandlingPopstate) {
+        this.isHandlingPopstate = false;
+        return;
+      }
+
+      // Priority 1: Step-by-step modal & drawer closure
+      if (this.modalStack.length > 0) {
+        const topModal = this.modalStack.pop();
+        if (topModal && typeof topModal.closeFn === 'function') {
+          try {
+            topModal.closeFn();
+          } catch (err) {
+            console.error('[AetherApp] Error closing modal on back navigation:', err);
+          }
+        }
+        return;
+      }
+
+      // Priority 2: Step-by-step view back navigation
+      let targetView = 'home';
+      if (e.state && e.state.type === 'view' && e.state.view && VALID_VIEWS.includes(e.state.view)) {
+        targetView = e.state.view;
+      } else {
+        const hashView = window.location.hash.replace(/^#\/?/, '').trim();
+        if (hashView && VALID_VIEWS.includes(hashView)) {
+          targetView = hashView;
+        }
+      }
+
+      if (targetView !== this.currentView) {
+        this.navigate(targetView, { pushHistory: false });
+      }
+    });
+  }
+
+  navigate(viewName, options = {}) {
+    const { pushHistory = true } = options;
+    if (!VALID_VIEWS.includes(viewName)) viewName = 'home';
+
     this.currentView = viewName;
+
+    // History Synchronization for Step-by-Step Back Navigation
+    const targetHash = '#' + viewName;
+    if (pushHistory) {
+      if (window.location.hash !== targetHash) {
+        window.history.pushState({ type: 'view', view: viewName }, '', targetHash);
+      } else if (!window.history.state) {
+        window.history.replaceState({ type: 'view', view: viewName }, '', targetHash);
+      }
+    }
 
     // Update active nav styling
     document.querySelectorAll('[data-nav]').forEach(el => {

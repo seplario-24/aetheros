@@ -40,6 +40,10 @@ The visual language is grounded in **natural elements, physical materials, direc
    - Hosted on Vercel (`https://aetheros-nine.vercel.app/`).
    - Repository: `seplario-24/aetheros` on GitHub (`main` branch).
    - `vercel.json` configured as a static site without immutable caching to allow instant deployment updates.
+7. **Step-by-Step Back Navigation & Modal Stack**:
+   - Full SPA history management via URL hash routing (`#/home`, `#/tasks`, `#/focus`, etc.) and `window.addEventListener('popstate')`.
+   - Global modal stack (`pushModal`, `popModal`): pressing the mobile hardware back button or browser back button closes open modals/drawers first without leaving the view or exiting the website.
+   - Subsequent back presses navigate chronologically back through previously visited views step-by-step.
 
 ---
 
@@ -49,18 +53,28 @@ The visual language is grounded in **natural elements, physical materials, direc
 - **Spatial Greeting**: Contextual dynamic time-of-day greeting (Morning, Afternoon, Evening, Late Night) with user name (`Shlok`), date, remaining task count, and motivational quote with robust fallback protection.
 - **Hero 3D Focus Orb**: Interactive canvas object reacting to productivity intensity and mouse parallax.
 - **Volumetric Stat Cards**: Frosted glass metrics for Daily Progress (Crystal), Focus Time (Water), Sleep Duration (Air), and Day Streak (Fire).
-- **Target Priority Task**: Physical glass preview of the top urgent outcome with quick start trigger.
+- **Target Priority Task**: Physical glass preview of the top urgent outcome with quick start trigger and direct click-to-edit integration.
 - **Quick Action Bar**: Launch Focus, Log Sleep, or Log Habit with a single click.
 
-### 4.2 Tasks & Outcomes (`js/views/tasks.js`, `js/components/quick-add.js`)
+### 4.2 Tasks & Outcomes (`js/views/tasks.js`, `js/components/quick-add.js`, `js/components/edit-task.js`)
 - **Tactile Task Cards**: Physical depth, status pills, category indicator tags, multi-hour estimated duration badges (e.g. `⏱ 2h`, `⏱ 2h 30m`).
 - **Organized Filtering**: All, Active, Completed, Priority (Critical, High, Medium, Low), Category tabs.
 - **Interactive Completion**: Completing a task triggers tactile audio chime and radial particle explosion (`ParticleSystem.taskComplete()`).
+- **Comprehensive Edit Task Modal Window (`js/components/edit-task.js`)**:
+  - Full granular customization of all task dimensions:
+    - **Identity**: Title, live category color orb, and unique task ID badge.
+    - **Context**: Rich description & multi-line context notes.
+    - **Classification**: Category, Priority (Critical 🔥, High ⚡, Medium 💧, Low 🌱, None), Energy Requirement (High ⚡ Focus Peak, Medium ⚖️ Balanced, Low 🌱 Routine), Recurrence (None, Daily, Weekly).
+    - **Timing & Schedule**: Presets (15m to 12h) + interactive custom timesetter (steppers, quick chips, live duration badge), Scheduled Start, Scheduled End, and Hard Deadline.
+    - **Action Checklist**: Subtasks manager with inline text editing, completion toggle, item deletion, and new step creator.
+    - **Tags & Labels**: Tag chips with removal and quick adder.
+    - **Actions**: Permanent Delete (with confirm), Direct "Start Focus" launch, Cancel, and Save Changes.
+  - Accessible via edit button (`✎`), clicking task card info, or clicking Up-Next priority task on home view.
 - **Extended Estimated Task Duration**:
   - Preserves 6 core presets: `15m`, `30m`, `45m`, `1 hour (60 min)`, `90m`, `2 hours (120 min)`.
   - Extended multi-hour presets: `2.5h`, `3h`, `4h`, `5h`, `6h`, `8h`, `10h`, `12h`.
   - Interactive Custom Timesetter: Dedicated steppers (`+` / `-`) for hours and minutes, quick-select hour chips (`1h`–`12h`), real-time duration badge, and bi-directional dropdown sync.
-- **Modal Add/Edit**: Modal overlay with keyboard shortcuts (`N` for quick add, `Ctrl+K` for search).
+- **Modal Add/Edit**: Modal overlays with keyboard shortcuts (`N` for quick add, `Ctrl+K` for search, `Escape` to close).
 
 ### 4.3 Time Calendar (`js/views/calendar.js`)
 - **3D Dimensional Timeline**: Elevated day and week timeline grids.

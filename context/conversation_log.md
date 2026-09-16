@@ -189,3 +189,37 @@ i want a systematic dot calender which is from 1st january 2026 to 31st december
   8. Bumped cache-busting query strings to `?v=11.0` in `index.html` and `js/app.js`.
   9. Verified with automated test script (`scratch/test_duration_laps.mjs`).
 
+---
+
+### Exchange 14
+- **User Request**:
+  > in the edit task option, i just dont want the option to change the name of the task, i want the whole edit task window opened.. the task shold be able to edited minutely from intensity to timing and everything... also while viewing in the mobile, when i press back it completely goes back and closes the website.. i dont want that.. it should be a step by step back process.. like it should operate step by step and not just close entrire website..it should go back from where it went just like in any regular website or app
+- **Assistant**:
+  1. **Comprehensive Edit Task Modal Window (`js/components/edit-task.js`)**:
+     - Replaced the basic browser `prompt()` with a dedicated, glassmorphic `EditTaskModal` component.
+     - Enabled minute, granular editing of all task dimensions:
+       - Outcome Title (bold text input).
+       - Description & Context Notes (multi-line textarea).
+       - Category selector with live color indicator bead.
+       - Priority level: Critical (🔥), High (⚡), Medium (💧), Low (🌱), None.
+       - Energy Intensity requirement: High (⚡ Cognitive Peak), Medium (⚖️ Balanced Flow), Low (🌱 Routine/Admin).
+       - Recurrence Cadence: Does Not Repeat, Daily, Weekly.
+       - Estimated Duration: All presets (15m to 12h) + interactive custom timesetter steppers (`+`/`-` hours, `+`/`-` minutes, quick chips, live duration badge).
+       - Granular Temporal Scheduling: Scheduled Start (`datetime-local`), Scheduled End (`datetime-local`), Hard Deadline (`datetime-local`).
+       - Subtasks / Action Checklist manager: Editable step titles, completion checkboxes, remove button, and new step creator.
+       - Tags & Labels manager: Interactive tag chips with remove action and keyboard tag adder (`Enter` / `,`).
+       - Completion status toggle.
+       - Footer actions: Permanent Task Deletion (with confirm), Direct "Start Focus" session launcher, Cancel, and Save Changes.
+  2. **Connected Task Views to EditTaskModal**:
+     - `js/views/tasks.js`: Updated `.btn-edit-task` and clicking `.task-info-center` to open `window.aetherEditTask.open(task)`.
+     - `js/views/home.js`: Enabled editing tasks directly by clicking the Up-Next priority spotlight (`.up-next-left`) or task items in the Today's Agenda list.
+  3. **Step-by-Step Back Navigation & Routing System (`js/app.js`)**:
+     - Implemented full SPA History & Hash Routing (`#/home`, `#/tasks`, `#/focus`, etc.) with `history.pushState` and `popstate` listening.
+     - Created a global Modal & Drawer Stack (`pushModal`, `popModal`):
+       - When any modal/drawer is open (Edit Task modal, Quick Add modal, Command Palette, Day Inspector, Mobile Sidebar drawer), pressing the hardware/mobile Back button or browser Back button closes the active modal first without leaving the current view or exiting the website.
+       - When no modal is open, pressing Back navigates back to previously visited views step-by-step (e.g. Focus -> Tasks -> Home).
+       - Connected `QuickAddModal`, `CommandPalette`, `DayInspectorModal`, and the Mobile Sidebar Drawer to the navigation stack.
+  4. Added responsive styling in `css/components.css`.
+  5. Bumped cache-busting versioning to `?v=12.0` in `index.html` and `js/app.js`.
+  6. Verified via automated test suite (`scratch/test_edit_and_navigation.mjs`).
+

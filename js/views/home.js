@@ -407,6 +407,32 @@ export function renderHomeView(container, navigate) {
     });
   });
 
+  // Open Edit Task Modal on clicking Up-Next priority spotlight
+  const upNextLeft = container.querySelector('.up-next-left');
+  if (upNextLeft && upNextTask) {
+    upNextLeft.style.cursor = 'pointer';
+    upNextLeft.title = 'Click to edit outcome details';
+    upNextLeft.addEventListener('click', () => {
+      window.aetherEditTask?.open(upNextTask);
+    });
+  }
+
+  // Open Edit Task Modal on clicking task info in Home tasks list
+  container.querySelectorAll('#home-tasks-container .task-info-center').forEach(info => {
+    info.style.cursor = 'pointer';
+    info.title = 'Click to edit outcome details';
+    info.addEventListener('click', () => {
+      const card = info.closest('.task-card');
+      if (card) {
+        const taskId = card.getAttribute('data-task-id');
+        const task = store.getTaskById(taskId);
+        if (task && window.aetherEditTask) {
+          window.aetherEditTask.open(task);
+        }
+      }
+    });
+  });
+
   const btnViewAll = container.querySelector('#btn-view-all-tasks');
   if (btnViewAll) btnViewAll.addEventListener('click', () => navigate('tasks'));
 

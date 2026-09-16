@@ -432,12 +432,19 @@ export class QuickAddModal {
     }
 
     this.overlay.classList.add('open');
+    if (window.aetherApp && typeof window.aetherApp.pushModal === 'function') {
+      window.aetherApp.pushModal('quick-add', () => this.close(false));
+    }
     setTimeout(() => this.titleInput.focus(), 50);
   }
 
-  close() {
+  close(shouldPop = true) {
+    if (!this.isOpen) return;
     this.isOpen = false;
     this.overlay.classList.remove('open');
+    if (shouldPop && window.aetherApp && typeof window.aetherApp.popModal === 'function') {
+      window.aetherApp.popModal('quick-add');
+    }
   }
 
   submit() {
