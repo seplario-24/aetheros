@@ -397,7 +397,12 @@ export class FocusOrb {
     this.animId = requestAnimationFrame(() => this.render());
   }
 
+  setIntensity(intensity) {
+    this.intensity = Math.max(0, Math.min(1, intensity));
+  }
+
   destroy() {
     if (this.animId) cancelAnimationFrame(this.animId);
   }
 }
+

@@ -4,27 +4,27 @@
  * 3D canvas lifecycle, and global shortcuts (Sections 133-169).
  */
 
-import { auth } from './auth/auth.js?v=3.0';
-import { store } from './store/db.js?v=3.0';
-import { FocusOrb } from './visuals/orb.js?v=3.0';
-import { atmosphereEngine } from './visuals/atmosphere.js?v=3.0';
-import { ParticleSystem } from './visuals/particles.js?v=3.0';
-import { CommandPalette } from './components/command-palette.js?v=3.0';
-import { QuickAddModal } from './components/quick-add.js?v=3.0';
-import { ProfileMenu } from './components/profile-menu.js?v=3.0';
+import { auth } from './auth/auth.js?v=4.1';
+import { store } from './store/db.js?v=4.1';
+import { FocusOrb } from './visuals/orb.js?v=4.1';
+import { atmosphereEngine } from './visuals/atmosphere.js?v=4.1';
+import { ParticleSystem } from './visuals/particles.js?v=4.1';
+import { CommandPalette } from './components/command-palette.js?v=4.1';
+import { QuickAddModal } from './components/quick-add.js?v=4.1';
+import { ProfileMenu } from './components/profile-menu.js?v=4.1';
 
-import { renderLandingView } from './views/landing.js?v=3.0';
-import { renderOnboardingView } from './views/onboarding.js?v=3.0';
-import { renderHomeView } from './views/home.js?v=3.0';
-import { renderTasksView } from './views/tasks.js?v=3.0';
-import { renderCalendarView } from './views/calendar.js?v=3.0';
-import { renderFocusView } from './views/focus.js?v=3.0';
-import { renderDotCalendarView } from './views/dot-calendar.js?v=3.0';
-import { renderAnalyticsView } from './views/analytics.js?v=3.0';
-import { renderSleepView } from './views/sleep.js?v=3.0';
-import { renderGamesView } from './views/games.js?v=3.0';
-import { renderHabitsView } from './views/habits.js?v=3.0';
-import { renderSettingsView } from './views/settings.js?v=3.0';
+import { renderLandingView } from './views/landing.js?v=4.1';
+import { renderOnboardingView } from './views/onboarding.js?v=4.1';
+import { renderHomeView } from './views/home.js?v=4.1';
+import { renderTasksView } from './views/tasks.js?v=4.1';
+import { renderCalendarView } from './views/calendar.js?v=4.1';
+import { renderFocusView } from './views/focus.js?v=4.1';
+import { renderDotCalendarView } from './views/dot-calendar.js?v=4.1';
+import { renderAnalyticsView } from './views/analytics.js?v=4.1';
+import { renderSleepView } from './views/sleep.js?v=4.1';
+import { renderGamesView } from './views/games.js?v=4.1';
+import { renderHabitsView } from './views/habits.js?v=4.1';
+import { renderSettingsView } from './views/settings.js?v=4.1';
 
 // 3D Intensity Mapping by Screen (Section 133)
 export const SCREEN_3D_INTENSITY = {
@@ -51,27 +51,43 @@ class AetherApp {
   }
 
   init() {
-    // 1. Set Initial Theme from Preferences
-    const prefs = store.getPreferences();
-    document.documentElement.setAttribute('data-theme', prefs.theme || 'dark');
-
-    // 2. Initialize Atmospheric Environmental Engine
-    atmosphereEngine.init();
-    window.atmosphereEngine = atmosphereEngine;
-
-    // 3. Initialize 3D Focus Orb Canvas
-    const canvas = document.getElementById('focus-orb-canvas');
-    if (canvas) {
-      this.orb = new FocusOrb(canvas);
-      window.aetherOrb = this.orb;
-    }
+    this.viewport = document.getElementById('view-viewport');
     window.aetherApp = this;
 
-    this.viewport = document.getElementById('view-viewport');
+    // 1. Set Initial Theme from Preferences
+    try {
+      const prefs = store.getPreferences();
+      document.documentElement.setAttribute('data-theme', prefs.theme || 'dark');
+    } catch (e) {
+      console.warn('[AetherApp] Theme init fallback:', e);
+    }
+
+    // 2. Initialize Atmospheric Environmental Engine
+    try {
+      atmosphereEngine.init();
+      window.atmosphereEngine = atmosphereEngine;
+    } catch (e) {
+      console.warn('[AetherApp] Atmosphere engine init warning:', e);
+    }
+
+    // 3. Initialize 3D Focus Orb Canvas
+    try {
+      const canvas = document.getElementById('focus-orb-canvas');
+      if (canvas) {
+        this.orb = new FocusOrb(canvas);
+        window.aetherOrb = this.orb;
+      }
+    } catch (e) {
+      console.warn('[AetherApp] Focus orb canvas init warning:', e);
+    }
 
     // 4. Initialize Global Overlays
-    window.aetherCommandPalette = new CommandPalette((view) => this.navigate(view));
-    window.aetherQuickAdd = new QuickAddModal();
+    try {
+      window.aetherCommandPalette = new CommandPalette((view) => this.navigate(view));
+      window.aetherQuickAdd = new QuickAddModal();
+    } catch (e) {
+      console.warn('[AetherApp] Overlays init warning:', e);
+    }
 
     // 5. Bind Navigation & Shortcuts
     this.bindNavigation();
@@ -115,7 +131,9 @@ class AetherApp {
 
   showLanding() {
     document.body.classList.add('app-auth-mode');
-    if (this.orb) this.orb.setIntensity(0.7);
+    if (this.orb && typeof this.orb.setIntensity === 'function') {
+      this.orb.setIntensity(0.7);
+    }
 
     renderLandingView(this.viewport, (user, isNewUser) => {
       if (isNewUser) {
@@ -128,7 +146,9 @@ class AetherApp {
 
   showOnboarding() {
     document.body.classList.add('app-auth-mode');
-    if (this.orb) this.orb.setIntensity(0.45);
+    if (this.orb && typeof this.orb.setIntensity === 'function') {
+      this.orb.setIntensity(0.45);
+    }
 
     renderOnboardingView(this.viewport, () => {
       this.showApp();
@@ -356,9 +376,21 @@ class AetherApp {
   }
 }
 
-// Bootstrap on DOM ready
+// Bootstrap on DOM ready with interactive readyState fallback
+function bootApp() {
+  if (!window.aetherApp) {
+    try {
+      window.aetherApp = new AetherApp();
+    } catch (err) {
+      console.error('[AetherApp] Boot fatal error:', err);
+    }
+  }
+}
+
 if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.aetherApp = new AetherApp();
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootApp);
+  } else {
+    bootApp();
+  }
 }

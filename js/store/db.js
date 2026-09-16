@@ -481,9 +481,17 @@ class AetherStore {
   updateHabit(id, patch) {
     const habit = this.getHabitById(id);
     if (!habit) return null;
-    Object.assign(habit, patch);
+    Object.assign(habit, patch, { updatedAt: new Date().toISOString() });
     this.saveState();
     return habit;
+  }
+
+  archiveHabit(id) {
+    return this.updateHabit(id, { active: false });
+  }
+
+  restoreHabit(id) {
+    return this.updateHabit(id, { active: true });
   }
 
   deleteHabit(id) {
@@ -493,10 +501,283 @@ class AetherStore {
     this.saveState();
   }
 
+  getHabitRecords() {
+    return this.state?.habitRecords || [];
+  }
+
   getHabitRecord(habitId, dateStr) {
     return (this.state?.habitRecords || []).find(
       r => r.habitId === habitId && r.date === dateStr
-    );
+    ) || null;
+  }
+
+  getHabitStatus(habitId, dateStr) {
+    const rec = this.getHabitRecord(habitId, dateStr);
+    return rec ? rec.status : 'unlogged';
+  }
+
+  setHabitStatus(habitId, dateStr, status, value = null, note = '') {
+    if (!this.state) return null;
+    this.state.habitRecords = this.state.habitRecords || [];
+    const existingIndex = this.state.habitRecords.findIndex(r => r.habitId === habitId && r.date === dateStr);
+
+    if (status === 'unlogged') {
+      if (existingIndex >= 0) {
+        this.state.habitRecords.splice(existingIndex, 1);
+      }
+      this.saveState();
+      return null;
+    }
+
+    const now = new Date().toISOString();
+    const record = {
+      id: existingIndex >= 0 ? this.state.habitRecords[existingIndex].id : `hr-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      userId: this.currentUserId,
+      habitId,
+      date: dateStr,
+      status, // 'completed' | 'failed' | 'skipped'
+      value: value !== null ? Number(value) : null,
+      note,
+      updatedAt: now
+    };
+
+    if (existingIndex >= 0) {
+      this.state.habitRecords[existingIndex] = record;
+    } else {
+      this.state.habitRecords.push(record);
+    }
+
+    this.saveState();
+    return record;
+  }
+
+  cycleHabitStatus(habitId, dateStr) {
+    const rec = this.getHabitRecord(habitId, dateStr);
+    const cur = rec ? rec.status : 'unlogged';
+
+    let next = 'completed';
+    if (cur === 'unlogged') next = 'completed';
+    else if (cur === 'completed') next = 'failed';
+    else if (cur === 'failed') next = 'skipped';
+    else if (cur === 'skipped') next = 'unlogged';
+
+    this.setHabitStatus(habitId, dateStr, next);
+    return next;
+  }
+
+  getHabitStats(habitId, monthStr) {
+    const habit = this.getHabitById(habitId);
+    const records = (this.state?.habitRecords || []).filter(r => r.habitId === habitId);
+    const recordMap = new Map(records.map(r => [r.date, r]));
+
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
+    // 1. Current Streak & Best Streak Calculation
+    let currentStreak = 0;
+    let checkDate = new Date(today);
+
+    // Check today first
+    const todayRec = recordMap.get(todayStr);
+    if (todayRec && todayRec.status === 'completed') {
+      currentStreak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else if (!todayRec || todayRec.status === 'unlogged') {
+      // Pending today: start streak from yesterday
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else if (todayRec.status === 'skipped' && habit && habit.streakPolicy === 'preserve_on_skip') {
+      // Preserves streak
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // Step backwards day-by-day
+    const maxLookback = 365;
+    for (let i = 0; i < maxLookback; i++) {
+      const dStr = checkDate.toISOString().split('T')[0];
+      const rec = recordMap.get(dStr);
+
+      if (rec && rec.status === 'completed') {
+        currentStreak++;
+      } else if (rec && rec.status === 'skipped' && habit && habit.streakPolicy === 'preserve_on_skip') {
+        // Preserves streak without breaking
+      } else {
+        // Failed or unlogged in the past breaks current streak
+        break;
+      }
+      checkDate.setDate(checkDate.getDate() - 1);
+    }
+
+    // Calculate Longest Streak in history
+    let longestStreak = 0;
+    let tempStreak = 0;
+    const sortedDates = Array.from(recordMap.keys()).sort();
+
+    for (const dStr of sortedDates) {
+      const rec = recordMap.get(dStr);
+      if (rec.status === 'completed') {
+        tempStreak++;
+        if (tempStreak > longestStreak) longestStreak = tempStreak;
+      } else if (rec.status === 'skipped' && habit && habit.streakPolicy === 'preserve_on_skip') {
+        // Preserve
+      } else {
+        tempStreak = 0;
+      }
+    }
+    if (currentStreak > longestStreak) longestStreak = currentStreak;
+
+    // 2. Monthly Stats for monthStr (e.g. '2026-09')
+    const targetMonth = monthStr || todayStr.substring(0, 7);
+    const [year, month] = targetMonth.split('-').map(Number);
+    const daysInMonth = new Date(year, month, 0).getDate();
+
+    let completedCount = 0;
+    let failedCount = 0;
+    let skippedCount = 0;
+    let unloggedCount = 0;
+
+    const dayOfWeekCounts = Array(7).fill(0);
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayStr = `${targetMonth}-${String(day).padStart(2, '0')}`;
+      const rec = recordMap.get(dayStr);
+      const dayDate = new Date(`${dayStr}T00:00:00`);
+      const dow = dayDate.getDay();
+
+      if (!rec || rec.status === 'unlogged') {
+        unloggedCount++;
+      } else if (rec.status === 'completed') {
+        completedCount++;
+        dayOfWeekCounts[dow]++;
+      } else if (rec.status === 'failed') {
+        failedCount++;
+      } else if (rec.status === 'skipped') {
+        skippedCount++;
+      }
+    }
+
+    const totalTracked = completedCount + failedCount;
+    const loggedCompletionRate = totalTracked > 0 ? Math.round((completedCount / totalTracked) * 100) : 0;
+    const monthlyConsistency = Math.round((completedCount / daysInMonth) * 100);
+
+    return {
+      currentStreak,
+      longestStreak: Math.max(longestStreak, currentStreak),
+      completedCount,
+      totalCompleted: completedCount,
+      failedCount,
+      skippedCount,
+      unloggedCount,
+      daysInMonth,
+      loggedCompletionRate,
+      monthlyConsistency,
+      dayOfWeekCounts
+    };
+  }
+
+  getTodayHabitSummary() {
+    const habits = this.getHabits();
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    let completed = 0;
+    let failed = 0;
+    let skipped = 0;
+    let unlogged = 0;
+
+    for (const h of habits) {
+      const rec = this.getHabitRecord(h.id, todayStr);
+      if (!rec || rec.status === 'unlogged') unlogged++;
+      else if (rec.status === 'completed') completed++;
+      else if (rec.status === 'failed') failed++;
+      else if (rec.status === 'skipped') skipped++;
+    }
+
+    const total = habits.length;
+    const completionPct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return {
+      completed,
+      failed,
+      skipped,
+      unlogged,
+      total,
+      completionPct,
+      completionRate: completionPct
+    };
+  }
+
+  getDailyHabitCompletionRate(dateStr) {
+    const habits = this.getHabits();
+    if (!habits || habits.length === 0) {
+      return { completed: 0, total: 0, rate: 0, pct: 0 };
+    }
+
+    let completed = 0;
+    for (const h of habits) {
+      const rec = this.getHabitRecord(h.id, dateStr);
+      if (rec && rec.status === 'completed') completed++;
+    }
+    const pct = Math.round((completed / habits.length) * 100);
+    return {
+      completed,
+      total: habits.length,
+      rate: habits.length > 0 ? (completed / habits.length) : 0,
+      pct
+    };
+  }
+
+  exportJSON() {
+    return JSON.stringify(this.state, null, 2);
+  }
+
+  exportCSV() {
+    const headers = ['Type', 'ID', 'Title_Or_Metric', 'Category', 'DurationMinutes', 'Date', 'Status'];
+    const rows = [headers.join(',')];
+
+    if (!this.state) return rows.join('\n');
+
+    // Export Tasks
+    for (const t of (this.state.tasks || [])) {
+      const cat = this.getCategoryById(t.categoryId)?.name || 'General';
+      const cleanTitle = `"${(t.title || '').replace(/"/g, '""')}"`;
+      rows.push(['Task', t.id, cleanTitle, cat, t.estimatedDuration, t.scheduledStart || t.createdAt, t.completed ? 'Completed' : 'Pending'].join(','));
+    }
+
+    // Export Sessions
+    for (const s of (this.state.focusSessions || [])) {
+      const cat = this.getCategoryById(s.categoryId)?.name || 'General';
+      rows.push(['FocusSession', s.id, s.mode, cat, s.actualDuration, s.endTime, s.completed ? 'Completed' : 'Interrupted'].join(','));
+    }
+
+    // Export Habits
+    for (const h of (this.state.habits || [])) {
+      rows.push(['Habit', h.id, `"${(h.name || '').replace(/"/g, '""')}"`, h.category, h.target, h.createdAt, h.active ? 'Active' : 'Archived'].join(','));
+    }
+
+    return rows.join('\n');
+  }
+
+  importJSON(jsonString) {
+    try {
+      const parsed = JSON.parse(jsonString);
+      if (parsed && Array.isArray(parsed.tasks)) {
+        this.state = parsed;
+        this.saveState();
+        return { success: true };
+      }
+      return { success: false, error: 'Invalid AETHER data format' };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
+  }
+
+  clearAllData() {
+    this.state = this.createEmptyCleanState(this.currentUserId || 'anonymous');
+    this.saveState();
+  }
+
+  restoreDemoData() {
+    this.state = this.createDemoSeedState(this.currentUserId || 'demo-guest');
+    this.saveState();
   }
 
   logHabitRecord(habitId, dateStr, status, value = null, note = '') {
