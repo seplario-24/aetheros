@@ -1365,3 +1365,120 @@ option:checked, option:hover {
   border-color: rgba(99, 102, 241, 0.6);
   box-shadow: 0 0 14px rgba(99, 102, 241, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.35);
 }
+
+/* ==========================================================================
+   MULTI-USER ARCHITECTURE & 3D AUTHENTICATION VIEWS (Sections 133-169)
+   ========================================================================== */
+body.app-auth-mode .app-sidebar,
+body.app-auth-mode .app-topbar,
+body.app-auth-mode .mobile-bottom-nav {
+  display: none !important;
+}
+
+body.app-auth-mode .app-main {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+body.app-auth-mode .view-viewport {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+@keyframes landingPulse {
+  0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.85; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.landing-card:hover {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  box-shadow: 0 36px 90px -10px rgba(0, 0, 0, 0.9), 0 0 40px rgba(99, 102, 241, 0.3) !important;
+}
+
+.btn-google-signin:hover {
+  background: #FFFFFF !important;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 255, 255, 0.4) !important;
+}
+
+.btn-google-signin:active {
+  transform: translateY(1px);
+}
+
+.onboarding-card {
+  animation: modalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wizard-cat-chip:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.profile-popover-card {
+  animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateX(2px);
+}
+
+/* 3D Empty States (Section 146 & 147) */
+.aether-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 56px 28px;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-xl);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+  max-width: 520px;
+  margin: 20px auto;
+}
+
+.empty-state-orb {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.2) 0%, rgba(99,102,241,0.25) 50%, rgba(15,23,42,0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.25);
+  animation: floatOrb 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+.empty-state-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
+}
+
+.empty-state-desc {
+  font-size: 13.5px;
+  color: #94A3B8;
+  max-width: 360px;
+  line-height: 1.5;
+  margin: 0 0 22px 0;
+}

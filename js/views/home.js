@@ -54,10 +54,25 @@ export function renderHomeView(container, navigate) {
   const focusStr = focusHours > 0 ? `${focusHours}h ${focusMins}m` : `${totalFocusMinutes}m`;
 
   // Sleep
-  const todaySleep = sleepRecords.find(r => r.date === todayIso) || sleepRecords[0];
-  const sleepDurationMins = todaySleep ? todaySleep.durationMinutes : 450;
+  const todaySleep = sleepRecords.find(r => r.date === todayIso);
+  const sleepDurationMins = todaySleep ? todaySleep.durationMinutes : 0;
   const sHours = Math.floor(sleepDurationMins / 60);
   const sMins = sleepDurationMins % 60;
+
+  // Calculate dynamic streak from user activity (Section 139 & 150)
+  let activeStreak = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const dStr = d.toISOString().split('T')[0];
+    const hasFocus = focusSessions.some(s => s.startTime && s.startTime.startsWith(dStr));
+    const hasTask = tasks.some(t => t.completed && t.completedAt && t.completedAt.startsWith(dStr));
+    if (hasFocus || hasTask) {
+      activeStreak++;
+    } else if (i > 0) {
+      break;
+    }
+  }
 
   // Up next task
   const incompleteTasks = todayTasks.filter(t => !t.completed);
@@ -65,7 +80,9 @@ export function renderHomeView(container, navigate) {
                      incompleteTasks.find(t => t.priority === 'high') ||
                      incompleteTasks[0] || null;
 
-  let contextualSub = `${incompleteTasks.length} task${incompleteTasks.length === 1 ? '' : 's'} remaining today.`;
+  let contextualSub = incompleteTasks.length > 0
+    ? `${incompleteTasks.length} task${incompleteTasks.length === 1 ? '' : 's'} remaining today.`
+    : (tasks.length === 0 ? 'Your workspace is clear. Create your first task.' : 'All planned outcomes conquered.');
   if (totalFocusMinutes > 0) contextualSub += ` ${focusStr} of deep focus logged.`;
 
   const currentQuote = MOTIVATIONAL_QUOTES[prefs.quoteIndex % MOTIVATIONAL_QUOTES.length];
@@ -108,11 +125,9 @@ export function renderHomeView(container, navigate) {
             <span style="font-size: 13px; font-weight: 700; color: var(--el-crystal);">${progressPct}%</span>
           </div>
           <div class="stat-value" style="color: var(--el-crystal);">
-            ${completedCount}<span style="font-size: 16px; font-weight: 500; color: var(--text-tertiary);">/${totalCount} tasks</span>
+            ${completedCount} <span style="font-size: 16px; font-weight: 500; color: var(--text-tertiary);">/ ${totalCount}</span>
           </div>
-          <div class="progress-track-3d">
-            <div class="progress-fill-3d" style="width: ${progressPct}%; background: linear-gradient(90deg, var(--el-crystal) 0%, var(--el-air) 100%);"></div>
-          </div>
+          <div class="stat-caption">${totalCount === 0 ? 'No tasks scheduled today' : `${totalCount - completedCount} outcomes remaining`}</div>
         </div>
 
         <!-- Focus Time — Water element -->
@@ -121,12 +136,12 @@ export function renderHomeView(container, navigate) {
           <div class="stat-header">
             <span style="display: flex; align-items: center; gap: 7px;">
               <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--el-water); box-shadow: 0 0 8px var(--el-water-glow); display:inline-block;"></span>
-              Focus Time
+              Focus Logged
             </span>
-            <span class="badge" style="background: var(--el-water-glass); color: var(--el-water); font-size: 10px; border: 1px solid var(--el-water-soft);">Deep Work</span>
+            <span style="font-size: 13px; font-weight: 700; color: var(--el-water);">Today</span>
           </div>
           <div class="stat-value tabular-nums" style="color: var(--el-water);">${focusStr}</div>
-          <div class="stat-caption">${todaySessions.length} session${todaySessions.length === 1 ? '' : 's'} recorded</div>
+          <div class="stat-caption">${todaySessions.length} deep work session${todaySessions.length === 1 ? '' : 's'}</div>
         </div>
 
         <!-- Sleep — Air element -->
@@ -137,10 +152,10 @@ export function renderHomeView(container, navigate) {
               <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--el-air); box-shadow: 0 0 8px var(--el-air-glow); display:inline-block;"></span>
               Sleep
             </span>
-            <span class="badge" style="background: var(--el-air-glass); color: var(--el-air); font-size: 10px; border: 1px solid var(--el-air-soft);">Rested</span>
+            <span class="badge" style="background: var(--el-air-glass); color: var(--el-air); font-size: 10px; border: 1px solid var(--el-air-soft);">${todaySleep ? 'Logged' : 'Pending'}</span>
           </div>
-          <div class="stat-value tabular-nums" style="color: var(--el-air);">${sHours}h ${sMins}m</div>
-          <div class="stat-caption">Woke at ${todaySleep ? todaySleep.wakeTime : '07:15'}</div>
+          <div class="stat-value tabular-nums" style="color: var(--el-air);">${todaySleep ? `${sHours}h ${sMins}m` : '—'}</div>
+          <div class="stat-caption">${todaySleep ? `Woke at ${todaySleep.wakeTime}` : 'No sleep record logged'}</div>
         </div>
 
         <!-- Streak — Fire element -->
@@ -154,9 +169,9 @@ export function renderHomeView(container, navigate) {
             <span style="color: var(--el-fire); font-size: 18px;">🔥</span>
           </div>
           <div class="stat-value" style="color: var(--el-fire);">
-            14 <span style="font-size: 16px; font-weight: 500; color: var(--text-tertiary);">days</span>
+            ${activeStreak} <span style="font-size: 16px; font-weight: 500; color: var(--text-tertiary);">days</span>
           </div>
-          <div class="stat-caption">Best: 21 days</div>
+          <div class="stat-caption">${activeStreak === 0 ? 'Ignite your streak today' : `${activeStreak} consecutive days of action`}</div>
         </div>
 
       </div>

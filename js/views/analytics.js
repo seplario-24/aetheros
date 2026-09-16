@@ -10,6 +10,40 @@ export function renderAnalyticsView(container, navigate) {
   const sessions = store.getFocusSessions();
   const tasks = store.getTasks();
 
+  // Zero-Data Analytics Protection (Section 147)
+  if (sessions.length === 0) {
+    container.innerHTML = `
+      <div class="animate-fade-in" style="perspective: 1200px; padding: 20px 0;">
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--el-crystal);">Cognitive Intelligence</span>
+          </div>
+          <h1 style="font-size: 28px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 4px;">Focus Intelligence</h1>
+          <p style="font-size: 13.5px; color: var(--text-secondary);">Deep productivity analytics and cognitive velocity calibration.</p>
+        </div>
+
+        <div class="aether-empty-state" style="padding: 72px 32px; max-width: 580px;">
+          <div class="empty-state-orb" style="background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.2) 0%, rgba(6,182,212,0.3) 50%, rgba(15,23,42,0.9) 100%);">💎</div>
+          <h3 class="empty-state-title" style="font-size: 22px;">No focus data yet</h3>
+          <p class="empty-state-desc" style="font-size: 14px; max-width: 400px; margin-bottom: 26px;">
+            Your personal insights, peak cognitive windows, and velocity metrics will take shape as you complete focus sessions in your OS.
+          </p>
+          <button class="btn btn-primary" id="btn-empty-start-focus" style="padding: 12px 28px; font-size: 14px; font-weight: 700; border-radius: var(--radius-full); box-shadow: 0 8px 24px var(--accent-primary-glow);">
+            🚀 Start Your First Focus Session
+          </button>
+        </div>
+      </div>
+    `;
+
+    const btnFocus = container.querySelector('#btn-empty-start-focus');
+    if (btnFocus) {
+      btnFocus.addEventListener('click', () => {
+        if (navigate) navigate('focus');
+      });
+    }
+    return;
+  }
+
   // 1. Calculate Category Distribution
   const catTotals = {};
   let totalMins = 0;
