@@ -189,13 +189,17 @@ export function renderSleepView(container, navigate) {
         <div style="display: flex; flex-direction: column; gap: 20px;">
           <!-- Morning Routine -->
           <div class="glass-panel" style="padding: 22px; border-radius: var(--radius-lg); box-shadow: var(--shadow-glass); border-left: 4px solid var(--el-light);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
               <div>
                 <h3 style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                  <span>☀️</span> Morning Momentum Protocol
+                  <span>☀️</span> ${morningRoutine.title || 'Morning Momentum Protocol'}
                 </h3>
                 <span style="font-size: 12px; color: var(--text-tertiary);">Scheduled Window: ${morningRoutine.scheduledTime}</span>
               </div>
+              <button class="btn btn-secondary btn-edit-routine" data-routine-id="${morningRoutine.id}" style="font-size: 12px; padding: 6px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16); color: #fff; cursor: pointer;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Edit Protocol</span>
+              </button>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
@@ -210,13 +214,17 @@ export function renderSleepView(container, navigate) {
 
           <!-- Evening Decompression -->
           <div class="glass-panel" style="padding: 22px; border-radius: var(--radius-lg); box-shadow: var(--shadow-glass); border-left: 4px solid var(--el-air);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
               <div>
                 <h3 style="font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                  <span>🌙</span> Evening Decompression Protocol
+                  <span>🌙</span> ${nightRoutine.title || 'Evening Decompression Protocol'}
                 </h3>
                 <span style="font-size: 12px; color: var(--text-tertiary);">Scheduled Window: ${nightRoutine.scheduledTime}</span>
               </div>
+              <button class="btn btn-secondary btn-edit-routine" data-routine-id="${nightRoutine.id}" style="font-size: 12px; padding: 6px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16); color: #fff; cursor: pointer;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Edit Protocol</span>
+              </button>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
@@ -227,6 +235,63 @@ export function renderSleepView(container, navigate) {
                 </label>
               `).join('')}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D Routine & Protocol Editor Modal -->
+      <div id="routine-editor-modal" class="routine-modal-backdrop" aria-hidden="true">
+        <div class="routine-modal-card" role="dialog" aria-modal="true">
+          <!-- Modal Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="modal-routine-icon" style="font-size: 24px; filter: drop-shadow(0 2px 8px rgba(255,255,255,0.3));">☀️</span>
+              <div>
+                <h2 id="modal-routine-heading" style="font-size: 18px; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.4px;">Edit Protocol</h2>
+                <span style="font-size: 12px; color: var(--text-tertiary);">Customize ritual steps & schedule</span>
+              </div>
+            </div>
+            <button id="modal-routine-close-btn" class="routine-step-delete-btn" style="padding: 6px;" title="Close modal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+
+          <!-- Protocol Details Inputs -->
+          <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+            <div>
+              <label style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; display: block; letter-spacing: 0.5px;">Protocol Title</label>
+              <input type="text" id="modal-routine-title-input" class="glass-input" style="width: 100%; font-size: 13.5px;" placeholder="e.g. Morning Momentum Protocol">
+            </div>
+            <div>
+              <label style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; display: block; letter-spacing: 0.5px;">Scheduled Window / Target Time</label>
+              <input type="text" id="modal-routine-time-input" class="glass-input" style="width: 100%; font-size: 13.5px;" placeholder="e.g. 07:15 or 22:30">
+            </div>
+          </div>
+
+          <!-- Protocol Steps Section -->
+          <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <label style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.5px;">Protocol Action Steps</label>
+              <span id="modal-routine-step-count" style="font-size: 11px; font-family: var(--font-mono); color: var(--text-tertiary);">0 steps</span>
+            </div>
+
+            <!-- Steps List Container -->
+            <div id="modal-routine-steps-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px; margin-bottom: 12px;"></div>
+
+            <!-- Add Step Input Row -->
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="modal-new-step-text" class="glass-input" style="flex: 1; font-size: 13px;" placeholder="Add a new action step (e.g. 10m sunlight)...">
+              <button id="modal-btn-add-step" class="btn btn-secondary" style="white-space: nowrap; font-size: 12px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span>Add Step</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Actions Footer -->
+          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px;">
+            <button id="modal-routine-cancel-btn" class="btn btn-secondary" style="font-size: 13px; padding: 8px 18px;">Cancel</button>
+            <button id="modal-routine-save-btn" class="btn btn-primary" style="font-size: 13px; padding: 8px 22px; box-shadow: 0 4px 16px var(--accent-primary-glow);">Save Protocol</button>
           </div>
         </div>
       </div>
@@ -257,4 +322,181 @@ export function renderSleepView(container, navigate) {
       renderSleepView(container, navigate);
     });
   });
+
+  // --------------------------------------------------------------------------
+  // 3D Protocol Editor Modal Controller
+  // --------------------------------------------------------------------------
+  let activeEditingRoutine = null;
+
+  function escapeHtml(str) {
+    return (str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  const modal = container.querySelector('#routine-editor-modal');
+  const modalHeading = container.querySelector('#modal-routine-heading');
+  const modalIcon = container.querySelector('#modal-routine-icon');
+  const modalTitleInput = container.querySelector('#modal-routine-title-input');
+  const modalTimeInput = container.querySelector('#modal-routine-time-input');
+  const modalStepsList = container.querySelector('#modal-routine-steps-list');
+  const modalStepCount = container.querySelector('#modal-routine-step-count');
+  const modalNewStepText = container.querySelector('#modal-new-step-text');
+  const modalBtnAddStep = container.querySelector('#modal-btn-add-step');
+  const modalCancelBtn = container.querySelector('#modal-routine-cancel-btn');
+  const modalCloseBtn = container.querySelector('#modal-routine-close-btn');
+  const modalSaveBtn = container.querySelector('#modal-routine-save-btn');
+
+  function openRoutineModal(routineId) {
+    const routine = store.getRoutineById(routineId) || routines.find(r => r.id === routineId);
+    if (!routine) return;
+
+    activeEditingRoutine = {
+      id: routine.id,
+      title: routine.title || (routine.timeOfDay === 'morning' ? 'Morning Momentum Protocol' : 'Evening Decompression Protocol'),
+      timeOfDay: routine.timeOfDay,
+      scheduledTime: routine.scheduledTime || '',
+      steps: (routine.steps || []).map(s => ({ ...s }))
+    };
+
+    const isMorning = activeEditingRoutine.timeOfDay === 'morning';
+    modalIcon.textContent = isMorning ? '☀️' : '🌙';
+    modalHeading.textContent = `Edit ${isMorning ? 'Morning Momentum' : 'Evening Decompression'} Protocol`;
+    modalTitleInput.value = activeEditingRoutine.title;
+    modalTimeInput.value = activeEditingRoutine.scheduledTime;
+    modalNewStepText.value = '';
+
+    renderModalSteps();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    setTimeout(() => modalTitleInput.focus(), 50);
+  }
+
+  function closeRoutineModal() {
+    if (modal) {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    activeEditingRoutine = null;
+  }
+
+  function renderModalSteps() {
+    if (!activeEditingRoutine || !modalStepsList) return;
+    const steps = activeEditingRoutine.steps;
+    modalStepCount.textContent = `${steps.length} step${steps.length === 1 ? '' : 's'}`;
+
+    if (steps.length === 0) {
+      modalStepsList.innerHTML = `
+        <div style="text-align: center; padding: 18px; color: var(--text-tertiary); font-size: 12.5px; font-style: italic;">
+          No action steps yet. Add your first step below.
+        </div>
+      `;
+      return;
+    }
+
+    modalStepsList.innerHTML = steps.map((step, idx) => `
+      <div class="routine-step-edit-item" data-step-idx="${idx}">
+        <span style="font-size: 11px; font-family: var(--font-mono); color: var(--text-tertiary); min-width: 18px;">${idx + 1}.</span>
+        <input type="text" class="routine-step-input" data-step-idx="${idx}" value="${escapeHtml(step.text)}" placeholder="Step description...">
+        <button type="button" class="routine-step-delete-btn" data-step-idx="${idx}" title="Delete step">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    `).join('');
+
+    // Bind step text editing
+    modalStepsList.querySelectorAll('.routine-step-input').forEach(input => {
+      input.addEventListener('input', (e) => {
+        const idx = Number(e.target.getAttribute('data-step-idx'));
+        if (activeEditingRoutine && activeEditingRoutine.steps[idx]) {
+          activeEditingRoutine.steps[idx].text = e.target.value;
+        }
+      });
+    });
+
+    // Bind step delete buttons
+    modalStepsList.querySelectorAll('.routine-step-delete-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.getAttribute('data-step-idx'));
+        if (activeEditingRoutine && activeEditingRoutine.steps[idx] !== undefined) {
+          activeEditingRoutine.steps.splice(idx, 1);
+          renderModalSteps();
+        }
+      });
+    });
+  }
+
+  function handleAddStep() {
+    if (!activeEditingRoutine || !modalNewStepText) return;
+    const text = modalNewStepText.value.trim();
+    if (!text) return;
+
+    activeEditingRoutine.steps.push({
+      id: `s-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      text,
+      completed: false
+    });
+
+    modalNewStepText.value = '';
+    renderModalSteps();
+    modalNewStepText.focus();
+  }
+
+  function handleSaveRoutine() {
+    if (!activeEditingRoutine) return;
+    const updatedTitle = modalTitleInput.value.trim() || activeEditingRoutine.title;
+    const updatedTime = modalTimeInput.value.trim() || activeEditingRoutine.scheduledTime;
+
+    // Filter out any blank steps
+    const cleanedSteps = activeEditingRoutine.steps
+      .map(s => ({ ...s, text: s.text.trim() }))
+      .filter(s => s.text.length > 0);
+
+    store.updateRoutine(activeEditingRoutine.id, {
+      title: updatedTitle,
+      scheduledTime: updatedTime,
+      steps: cleanedSteps
+    });
+
+    ambientAudio.playChime();
+    closeRoutineModal();
+    renderSleepView(container, navigate);
+  }
+
+  // Bind Edit Protocol buttons
+  container.querySelectorAll('.btn-edit-routine').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const routineId = btn.getAttribute('data-routine-id');
+      openRoutineModal(routineId);
+    });
+  });
+
+  // Bind modal step addition
+  if (modalBtnAddStep) {
+    modalBtnAddStep.addEventListener('click', handleAddStep);
+  }
+  if (modalNewStepText) {
+    modalNewStepText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleAddStep();
+      }
+    });
+  }
+
+  // Bind modal actions
+  if (modalSaveBtn) modalSaveBtn.addEventListener('click', handleSaveRoutine);
+  if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeRoutineModal);
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeRoutineModal);
+
+  // Close on clicking backdrop outside card
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeRoutineModal();
+    });
+  }
 }
+

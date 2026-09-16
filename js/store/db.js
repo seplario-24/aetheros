@@ -394,6 +394,51 @@ class AetherStore {
     return this.state.routines || [];
   }
 
+  getRoutineById(id) {
+    return (this.state.routines || []).find(r => r.id === id) || null;
+  }
+
+  updateRoutine(routineId, updates) {
+    const routine = (this.state.routines || []).find(r => r.id === routineId);
+    if (!routine) return null;
+    if (updates.title !== undefined) routine.title = updates.title.trim();
+    if (updates.scheduledTime !== undefined) routine.scheduledTime = updates.scheduledTime;
+    if (Array.isArray(updates.steps)) routine.steps = updates.steps;
+    this.saveState();
+    return routine;
+  }
+
+  addRoutineStep(routineId, text) {
+    const routine = (this.state.routines || []).find(r => r.id === routineId);
+    if (!routine || !text || !text.trim()) return null;
+    const newStep = {
+      id: `s-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      text: text.trim(),
+      completed: false
+    };
+    routine.steps.push(newStep);
+    this.saveState();
+    return newStep;
+  }
+
+  updateRoutineStep(routineId, stepId, text) {
+    const routine = (this.state.routines || []).find(r => r.id === routineId);
+    if (!routine) return null;
+    const step = routine.steps.find(s => s.id === stepId);
+    if (!step) return null;
+    step.text = text.trim();
+    this.saveState();
+    return step;
+  }
+
+  deleteRoutineStep(routineId, stepId) {
+    const routine = (this.state.routines || []).find(r => r.id === routineId);
+    if (!routine) return false;
+    routine.steps = routine.steps.filter(s => s.id !== stepId);
+    this.saveState();
+    return true;
+  }
+
   toggleRoutineStep(routineId, stepId, dateStr) {
     const routine = this.state.routines.find(r => r.id === routineId);
     if (!routine) return;

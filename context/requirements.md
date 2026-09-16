@@ -93,8 +93,12 @@ The visual language is grounded in **natural elements, physical materials, direc
 - **SVG Trend Visualizations**: Clean 3D bar and line charts comparing planned vs. actual deep work.
 
 ### 4.8 Sleep & Protocol (`js/views/sleep.js`)
-- **Lunar Air Theme**: Moon phase indicators, bedtime vs. wake-up time calculation, sleep duration vs. target.
-- **Morning & Evening Routines**: Interactive step-by-step checklist protocols (hydration, daylight exposure, screen cutoff).
+- **Lunar Air Theme**: Moon phase indicators, floating 3D moon orb with celestial lighting, bedtime vs. wake-up time calculation, 7-day volumetric duration chart vs. target.
+- **Morning Momentum & Evening Decompression Protocols**: Fully interactive, customizable protocols:
+  - Editable protocol title (e.g. Morning Momentum Protocol, Evening Decompression / Compression Protocol) and scheduled window.
+  - Dynamic action steps (add new steps, edit step text in place, delete steps with tactile controls).
+  - Step completion checkboxes with audio feedback and persistent state storage in `AetherStore`.
+  - 3D Elemental Glassmorphic Protocol Editor modal (`#routine-editor-modal`) with smooth entry/exit animations.
 
 ### 4.9 Mind Games (`js/views/games.js`)
 - **Cognitive Reset Suite**: 3 tactile cognitive micro-games:

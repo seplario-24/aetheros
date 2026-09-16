@@ -134,3 +134,40 @@
   - Verified that all 10 view modules render without errors in automated Node testing.
 - **Git Commit**: `ce38a94` — *fix: resolve blank screen by hardening bootstrap, guarding quoteIndex, and removing auth barriers*
 - **Reasoning**: Eliminated all fatal runtime exceptions, race conditions, and auth blocks to guarantee that the application always boots and displays all views reliably.
+
+---
+
+## Milestone 4: Sleep & Routines Protocol Customization Engine
+- **Objective**: Provide users full capability to edit, customize, add, and delete action steps and scheduled windows for both the **Morning Momentum Protocol** and the **Evening Decompression / Compression Protocol** in the Sleep & Routines view (`js/views/sleep.js`).
+- **Issues Addressed**:
+  - The routine cards previously displayed static hardcoded checklist steps without an editing interface.
+  - Users could not modify routine titles, scheduled target times, or customize the daily rituals to fit their specific workflow.
+- **Modifications Made**:
+  1. **Store Layer (`js/store/db.js`)**:
+     - Added `getRoutineById(id)` to retrieve specific routine records.
+     - Added `updateRoutine(routineId, updates)` supporting updates to `title`, `scheduledTime`, and `steps`.
+     - Added `addRoutineStep(routineId, text)` generating unique step IDs and initial unchecked state.
+     - Added `updateRoutineStep(routineId, stepId, text)` for in-place text modification.
+     - Added `deleteRoutineStep(routineId, stepId)` to remove steps from routine schedules.
+  2. **3D Visual Styling (`css/elemental.css`)**:
+     - Created `.routine-modal-backdrop` with deep dark blur (`rgba(4, 7, 15, 0.78)` with `backdrop-filter: blur(18px)`).
+     - Created `.routine-modal-card` with luminous glass borders, radial glows, and spring transitions.
+     - Created `.routine-step-edit-item` and `.routine-step-delete-btn` for tactile in-place editing and deletion with hover animations.
+  3. **Sleep Sanctuary View (`js/views/sleep.js`)**:
+     - Added tactile "Edit Protocol" buttons with pen icon to both Morning Momentum and Evening Decompression cards.
+     - Added the 3D Protocol Editor Modal (`#routine-editor-modal`) featuring:
+       - Contextual protocol icon (☀️ / 🌙) and heading.
+       - Protocol title text input.
+       - Scheduled window time input.
+       - Interactive steps list with live step counter.
+       - In-place text editing for each step.
+       - Trash button with delete animation for removing steps.
+       - "+ Add Step" input and button (supports Enter key submission).
+       - Save and Cancel actions with chime sound feedback (`ambientAudio.playChime()`).
+       - Backdrop click and Escape key dismissal.
+  4. **Cache Busting (`index.html`, `js/app.js`)**:
+     - Bumped query string versioning to `?v=8.0` for stylesheets and application modules to prevent stale Vercel CDN caching.
+  5. **Verification**:
+     - Tested all 10 views in automated Node test suite (`scratch/test_all_views.mjs`).
+     - Tested all routine store methods (`addRoutineStep`, `updateRoutineStep`, `deleteRoutineStep`, `updateRoutine`).
+- **Reasoning**: Empowered users with complete ownership and flexibility over their circadian protocols, ensuring both morning momentum and evening compression habits can be tailored precisely to their lifestyle.
