@@ -4,7 +4,11 @@
  * CSV/JSON export & import capabilities.
  */
 
-const STORAGE_KEY = 'AETHER_PRODUCTIVITY_OS_STORE_V1';
+const STORAGE_KEY = 'AETHER_PRODUCTIVITY_OS_STORE_V2';
+const STORAGE_KEY_V1 = 'AETHER_PRODUCTIVITY_OS_STORE_V1';
+
+// Known demo/seed task IDs — these are always safe to purge
+const DEMO_TASK_IDS = new Set(['task-1','task-2','task-3','task-4','task-5','task-6']);
 
 export const DEFAULT_CATEGORIES = [
   { id: 'cat-study', name: 'Study', color: '#6366F1', icon: 'book-open', isCustom: false },
@@ -175,41 +179,60 @@ class AetherStore {
   loadState() {
     try {
       if (typeof localStorage !== 'undefined') {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        // Try V2 storage first (current)
+        let raw = localStorage.getItem(STORAGE_KEY);
+        let migratedFromV1 = false;
+
+        // If no V2, attempt migration from V1
+        if (!raw) {
+          const v1Raw = localStorage.getItem(STORAGE_KEY_V1);
+          if (v1Raw) {
+            raw = v1Raw;
+            migratedFromV1 = true;
+          }
+        }
+
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.tasks && parsed.categories) {
-            const currentYear = new Date().getFullYear();
-            const hasEarlySessions = (parsed.focusSessions || []).some(s => s.startTime && s.startTime.startsWith(`${currentYear}-01-`));
-            if (!parsed.habits || parsed.habits.length === 0 || !hasEarlySessions) {
+          if (parsed && parsed.tasks !== undefined && parsed.categories) {
+
+            // MIGRATION: strip all known demo pending tasks so user only sees their own data
+            if (migratedFromV1 || !parsed._v2clean) {
+              parsed.tasks = (parsed.tasks || []).filter(t => {
+                // Remove demo tasks that are still pending; keep ones user has modified
+                if (DEMO_TASK_IDS.has(t.id) && !t.completed) return false;
+                return true;
+              });
+              parsed._v2clean = true;
+            }
+
+            // Ensure required arrays exist
+            if (!parsed.habits) parsed.habits = [];
+            if (!parsed.habitRecords) parsed.habitRecords = [];
+            if (!parsed.focusSessions) parsed.focusSessions = [];
+            if (!parsed.sleepRecords) parsed.sleepRecords = [];
+            if (!parsed.routines || parsed.routines.length === 0) {
+              parsed.routines = this.createDefaultRoutines();
+            }
+            if (!parsed.gameRecords) parsed.gameRecords = [];
+
+            // Seed historical analytics data for fresh installs only
+            // (users who have no focus sessions at all get the history so graphs aren't empty)
+            const hasAnySessions = (parsed.focusSessions || []).length > 0;
+            if (!hasAnySessions) {
               const seed = this.createSeedState();
-              if (!parsed.habits || parsed.habits.length === 0) {
+              parsed.focusSessions = seed.focusSessions;
+              parsed.sleepRecords = seed.sleepRecords;
+              // Only seed habits if user has none at all
+              if (parsed.habits.length === 0) {
                 parsed.habits = seed.habits;
                 parsed.habitRecords = seed.habitRecords;
               }
-              if (!hasEarlySessions) {
-                const existingDates = new Set((parsed.focusSessions || []).map(s => s.startTime ? s.startTime.split('T')[0] : ''));
-                const missingSessions = seed.focusSessions.filter(s => {
-                  const dStr = s.startTime ? s.startTime.split('T')[0] : '';
-                  return !existingDates.has(dStr);
-                });
-                parsed.focusSessions = [...(parsed.focusSessions || []), ...missingSessions];
-
-                const existingTaskDates = new Set((parsed.tasks || []).filter(t => t.completed && t.completedAt).map(t => t.completedAt.split('T')[0]));
-                const missingTasks = seed.tasks.filter(t => {
-                  if (!t.completed || !t.completedAt) return false;
-                  const dStr = t.completedAt.split('T')[0];
-                  return !existingTaskDates.has(dStr);
-                });
-                parsed.tasks = [...(parsed.tasks || []), ...missingTasks];
-
-                const existingHrKeys = new Set((parsed.habitRecords || []).map(r => `${r.habitId}_${r.date}`));
-                const missingHrs = seed.habitRecords.filter(r => !existingHrKeys.has(`${r.habitId}_${r.date}`));
-                parsed.habitRecords = [...(parsed.habitRecords || []), ...missingHrs];
-              }
-              this.state = parsed;
-              this.saveState();
+              // Do NOT seed pending tasks — user starts clean
             }
+
+            this.state = parsed;
+            this.saveState();
             return parsed;
           }
         }
@@ -217,7 +240,11 @@ class AetherStore {
     } catch (e) {
       console.warn('Failed to parse existing state from localStorage:', e);
     }
-    return this.createSeedState();
+    // Completely fresh install — seed analytics history but NO pending tasks
+    const freshState = this.createSeedState();
+    freshState.tasks = []; // user starts with empty task list
+    freshState._v2clean = true;
+    return freshState;
   }
 
   saveState() {
@@ -828,8 +855,24 @@ class AetherStore {
       habits: [],
       habitRecords: [],
       routines: this.createDefaultRoutines(),
-      gameRecords: []
+      gameRecords: [],
+      _v2clean: true
     };
+    this.saveState();
+  }
+
+  // Remove only demo/sample tasks — keeps user's own tasks intact
+  clearDemoTasks() {
+    this.state.tasks = this.state.tasks.filter(t => !DEMO_TASK_IDS.has(t.id));
+    this.state.habits = this.state.habits.filter(h => !h.id.startsWith('habit-') || h.isCustom);
+    this.saveState();
+  }
+
+  // Remove only demo/sample habits (seeded ones) — keeps user's own habits intact
+  clearDemoHabits() {
+    const defaultHabitIds = new Set(DEFAULT_HABITS.map(h => h.id));
+    this.state.habits = this.state.habits.filter(h => !defaultHabitIds.has(h.id));
+    this.state.habitRecords = this.state.habitRecords.filter(r => !defaultHabitIds.has(r.habitId));
     this.saveState();
   }
 
@@ -845,132 +888,11 @@ class AetherStore {
     const today = new Date();
     const todayIso = today.toISOString().split('T')[0];
 
-    const tasks = [
-      {
-        id: 'task-1',
-        title: 'Quantum Physics — Linear Algebra Eigenvalues',
-        description: 'Spectral decomposition and Dirac notation practice problems.',
-        categoryId: 'cat-research',
-        priority: 'critical',
-        estimatedDuration: 90,
-        scheduledStart: `${todayIso}T10:00`,
-        scheduledEnd: `${todayIso}T11:30`,
-        deadline: `${todayIso}T20:00`,
-        completed: false,
-        completedAt: null,
-        subtasks: [
-          { id: 'st-1', title: 'Review Hermitian matrices', completed: true },
-          { id: 'st-2', title: 'Derive Pauli spin operators', completed: false },
-          { id: 'st-3', title: 'Complete exercise set 4.2', completed: false }
-        ],
-        tags: ['Physics', 'Quantum', 'Math'],
-        energyLevel: 'high',
-        repeatRule: 'none',
-        createdAt: today.toISOString(),
-        updatedAt: today.toISOString()
-      },
-      {
-        id: 'task-2',
-        title: 'Edit Architectural Walkthrough Video',
-        description: 'Cut pacing, color grade LUTs, and mix binaural audio master.',
-        categoryId: 'cat-editing',
-        priority: 'high',
-        estimatedDuration: 60,
-        scheduledStart: `${todayIso}T13:00`,
-        scheduledEnd: `${todayIso}T14:00`,
-        deadline: `${todayIso}T18:00`,
-        completed: false,
-        completedAt: null,
-        subtasks: [
-          { id: 'st-4', title: 'Rough cut assembly', completed: true },
-          { id: 'st-5', title: 'Sound design passes', completed: false }
-        ],
-        tags: ['Video', 'YouTube', 'Design'],
-        energyLevel: 'medium',
-        repeatRule: 'none',
-        createdAt: today.toISOString(),
-        updatedAt: today.toISOString()
-      },
-      {
-        id: 'task-3',
-        title: 'Read "Structure and Interpretation of Computer Programs"',
-        description: 'Chapter 3: Modularity, Objects, and State.',
-        categoryId: 'cat-reading',
-        priority: 'medium',
-        estimatedDuration: 45,
-        scheduledStart: `${todayIso}T16:00`,
-        scheduledEnd: `${todayIso}T16:45`,
-        deadline: null,
-        completed: true,
-        completedAt: new Date(today.getTime() - 2 * 3600000).toISOString(),
-        subtasks: [],
-        tags: ['SICP', 'CS', 'Books'],
-        energyLevel: 'medium',
-        repeatRule: 'daily',
-        createdAt: today.toISOString(),
-        updatedAt: today.toISOString()
-      },
-      {
-        id: 'task-4',
-        title: 'Complete Deep Learning Course Module 7',
-        description: 'Transformers, self-attention mechanisms, and positional encoding.',
-        categoryId: 'cat-course',
-        priority: 'high',
-        estimatedDuration: 75,
-        scheduledStart: `${todayIso}T18:00`,
-        scheduledEnd: `${todayIso}T19:15`,
-        deadline: null,
-        completed: false,
-        completedAt: null,
-        subtasks: [
-          { id: 'st-6', title: 'Watch lecture 7.1 and 7.2', completed: false },
-          { id: 'st-7', title: 'Code multi-head attention block', completed: false }
-        ],
-        tags: ['AI', 'PyTorch', 'Study'],
-        energyLevel: 'high',
-        repeatRule: 'none',
-        createdAt: today.toISOString(),
-        updatedAt: today.toISOString()
-      },
-      {
-        id: 'task-5',
-        title: 'Zone-2 Aerobic Run & Mobility Stretch',
-        description: '45-minute steady heart-rate conditioning in the park.',
-        categoryId: 'cat-exercise',
-        priority: 'medium',
-        estimatedDuration: 45,
-        scheduledStart: `${todayIso}T07:30`,
-        scheduledEnd: `${todayIso}T08:15`,
-        deadline: null,
-        completed: true,
-        completedAt: new Date(today.getTime() - 16 * 3600000).toISOString(),
-        subtasks: [],
-        tags: ['Fitness', 'Cardio'],
-        energyLevel: 'medium',
-        repeatRule: 'daily',
-        createdAt: today.toISOString(),
-        updatedAt: today.toISOString()
-      },
-      {
-        id: 'task-6',
-        title: 'Inbox Zero & Project Triage',
-        description: 'Review research collaborator emails and organize sprint backlog.',
-        categoryId: 'cat-admin',
-        priority: 'low',
-        estimatedDuration: 30,
-        scheduledStart: `${todayIso}T09:00`,
-        scheduledEnd: `${todayIso}T09:30`,
-        deadline: null,
-        completed: true,
-        completedAt: new Date(today.getTime() - 14 * 3600000).toISOString(),
-        subtasks: [],
-        tags: ['Admin', 'Email'],
-        energyLevel: 'low',
-        repeatRule: 'weekdays',
-        createdAt: today.toISOString(),
-        updatedAt: today.toISOString()
-      }
-    ];
+    // No pending demo tasks — users start with a clean task list.
+    // createSeedState() is used only for historical analytics data (focus sessions,
+    // sleep records, habit records). The tasks array is intentionally empty here;
+    // loadState() and the fresh-install path will keep it empty for new users.
+    const tasks = [];
 
     // Generate historical focus sessions, completed tasks, sleep records and habits from Jan 1 to today
     const startOfYear = new Date(today.getFullYear(), 0, 1);
@@ -1140,7 +1062,8 @@ class AetherStore {
       habits,
       habitRecords,
       routines,
-      gameRecords
+      gameRecords,
+      _v2clean: true
     };
   }
 

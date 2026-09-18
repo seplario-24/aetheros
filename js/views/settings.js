@@ -146,6 +146,15 @@ export function renderSettingsView(container, navigate) {
             </label>
           </div>
 
+          <div style="display: flex; gap: 12px; border-top: 1px solid var(--border-subtle); padding-top: 18px; flex-wrap: wrap; margin-bottom: 14px;">
+            <button class="btn btn-secondary" id="btn-clear-demo-tasks" style="color: var(--accent-emerald); border-color: var(--accent-emerald);">
+              🧹 Remove Sample Tasks
+            </button>
+            <button class="btn btn-secondary" id="btn-clear-demo-habits" style="color: var(--accent-cyan); border-color: var(--accent-cyan);">
+              🧹 Remove Sample Habits
+            </button>
+          </div>
+
           <div style="display: flex; gap: 12px; border-top: 1px solid var(--border-subtle); padding-top: 18px; flex-wrap: wrap;">
             <button class="btn btn-secondary" id="btn-restore-demo" style="color: var(--accent-cyan);">
               🔄 Reset to Sample Data (60 Days History)
@@ -288,6 +297,30 @@ export function renderSettingsView(container, navigate) {
           }
         };
         reader.readAsText(file);
+      }
+    });
+  }
+
+  // Clear Demo Tasks
+  const btnClearDemoTasks = container.querySelector('#btn-clear-demo-tasks');
+  if (btnClearDemoTasks) {
+    btnClearDemoTasks.addEventListener('click', () => {
+      if (confirm('Remove all sample/demo tasks? Your own tasks will be kept.')) {
+        store.clearDemoTasks();
+        alert('Sample tasks removed.');
+        renderSettingsView(container, navigate);
+      }
+    });
+  }
+
+  // Clear Demo Habits
+  const btnClearDemoHabits = container.querySelector('#btn-clear-demo-habits');
+  if (btnClearDemoHabits) {
+    btnClearDemoHabits.addEventListener('click', () => {
+      if (confirm('Remove all sample/demo habits? Your own habits will be kept.')) {
+        store.clearDemoHabits();
+        alert('Sample habits removed.');
+        renderSettingsView(container, navigate);
       }
     });
   }
