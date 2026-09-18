@@ -223,3 +223,26 @@ i want a systematic dot calender which is from 1st january 2026 to 31st december
   5. Bumped cache-busting versioning to `?v=12.0` in `index.html` and `js/app.js`.
   6. Verified via automated test suite (`scratch/test_edit_and_navigation.mjs`).
 
+---
+
+### Exchange 11
+- **User**: "it is still happening that all the previous outcomes are still visible.. i want only the tasks habits and routines that I have added.. also the completed task butoon is not working.." (accompanied by screenshot showing "Completed Today 621 done Tangible progress logged" and "+ New Outcome (N)").
+- **Assistant**:
+  1. Diagnosed the root causes:
+     - The 621 completed tasks originated from the `historicalTasks` generation loop in `createSeedState()` in `js/store/db.js`, which pushed hundreds of historical tasks (`task-hist-*`) into the tasks array. `loadState()` was only filtering pending demo tasks with IDs `task-1`..`task-6`, leaving completed demo tasks and all 621 historical tasks untouched.
+     - Pre-seeded habits from `DEFAULT_HABITS` and sample routine steps (`m-1`..`m-4`, `n-1`..`n-4`) were also persisting.
+     - The completed task button failed because in `tasks.js`, `ParticleSystem.taskComplete(rect.left + rect.width / 2, ...)` passed numbers to `taskComplete(taskCardEl)`, causing `(number).classList.add` to throw an unhandled `TypeError`, which stopped execution before `renderTasksView` could run. In `home.js`, the task toggle handler was missing a call to `renderHomeView()`.
+  2. Implemented the fixes:
+     - Upgraded `ParticleSystem` in `js/visuals/particles.js` with `burstAt(cx, cy, color, count)` and made `taskComplete(target, y, color)` accept both elements and coordinates without throwing.
+     - Fixed task completion handlers in `tasks.js` and `home.js` to guarantee smooth re-rendering on both views, wrapped in try-catch blocks.
+     - Fixed `completedTodayCount` in `tasks.js` to calculate tasks actually completed today (`completedAt.startsWith(todayStr)`).
+     - Defined `DEMO_TASK_IDS`, `DEMO_TASK_PREFIXES`, `DEMO_TASK_TITLES`, `DEMO_HABIT_IDS`, and `DEMO_ROUTINE_STEP_IDS` in `js/store/db.js`.
+     - In `loadState()`: Unconditionally stripped all demo tasks (pending and completed), demo habits, orphaned habit records, and demo routine steps, keeping only user-added items.
+     - In `createSeedState()`: Completely deleted `historicalTasks` generation and `tasks.push(...historicalTasks)`, leaving tasks array `[]`, habits array `[]`, habitRecords `[]`, and routine steps `[]`, while preserving focus sessions and sleep records for the annual dot matrix and circadian charts.
+     - Added clean fallback UI cards in `js/views/sleep.js` and `js/views/habits.js` when routine steps or habits are empty.
+     - Bumped cache-busting query strings to `?v=14.0` in `index.html`.
+  3. Verified with automated Node tests:
+     - Verified `isDemoTask`, store methods, and task completion toggle persistence.
+     - Simulated dirty localStorage with 621 historical tasks, demo habits, and demo routine steps, verifying that `loadState()` cleanly purges all demo data and leaves only user-added items.
+
+

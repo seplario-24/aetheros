@@ -58,8 +58,9 @@ The visual language is grounded in **natural elements, physical materials, direc
 
 ### 4.2 Tasks & Outcomes (`js/views/tasks.js`, `js/components/quick-add.js`, `js/components/edit-task.js`)
 - **Tactile Task Cards**: Physical depth, status pills, category indicator tags, multi-hour estimated duration badges (e.g. `⏱ 2h`, `⏱ 2h 30m`).
+- **Clean User Horizon**: Zero demo/historical sample tasks or fake completed outcomes in the user's task horizon. The outcomes list, habit matrix, and routine steps display ONLY items that the user has added. Historical analytics data (focus sessions and sleep records) are preserved independently for background charts without polluting the task or habit horizons.
 - **Organized Filtering**: All, Active, Completed, Priority (Critical, High, Medium, Low), Category tabs.
-- **Interactive Completion**: Completing a task triggers tactile audio chime and radial particle explosion (`ParticleSystem.taskComplete()`).
+- **Interactive Completion**: Completing a task triggers tactile audio chime and radial particle explosion (`ParticleSystem.taskComplete()`). Toggling task completion in both Command Center (`home.js`) and Outcomes (`tasks.js`) immediately updates local persistence and re-renders the active view without errors.
 - **Comprehensive Edit Task Modal Window (`js/components/edit-task.js`)**:
   - Full granular customization of all task dimensions:
     - **Identity**: Title, live category color orb, and unique task ID badge.

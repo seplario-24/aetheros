@@ -397,7 +397,11 @@ export function renderHabitsView(container, navigate) {
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
-          ${habits.map(h => {
+          ${habits.length === 0 ? `
+            <div class="glass-card" style="padding: 36px; text-align: center; color: var(--text-tertiary);">
+              No habit protocols active today. Click "Add Habit" above to forge your consistency matrix!
+            </div>
+          ` : habits.map(h => {
             const rec = store.getHabitRecord(h.id, todayStr);
             const status = rec ? rec.status : 'unlogged';
 

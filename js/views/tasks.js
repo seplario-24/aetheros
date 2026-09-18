@@ -35,8 +35,13 @@ export function renderTasksView(container, navigate) {
   // Vitals calculations
   const totalPendingMinutes = pendingTasks.reduce((acc, t) => acc + (t.estimatedDuration || 0), 0);
   const pendingHours = (totalPendingMinutes / 60).toFixed(1);
-  const criticalCount = pendingTasks.filter(t => t.priority === 'critical' || t.priority === 'high').length;
-  const completedTodayCount = completedTasks.length;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const completedTodayTasks = completedTasks.filter(t => {
+    if (t.completedAt && t.completedAt.startsWith(todayStr)) return true;
+    if (t.updatedAt && t.updatedAt.startsWith(todayStr)) return true;
+    return false;
+  });
+  const completedTodayCount = completedTodayTasks.length;
 
   container.innerHTML = `
     <div class="animate-fade-in" style="perspective: 1200px;">
@@ -200,11 +205,17 @@ export function renderTasksView(container, navigate) {
       const updated = store.toggleTaskCompleted(taskId);
 
       if (updated && updated.completed) {
-        const rect = btn.getBoundingClientRect();
-        if (window.ParticleSystem && window.ParticleSystem.taskComplete) {
-          window.ParticleSystem.taskComplete(rect.left + rect.width / 2, rect.top + rect.height / 2, cat ? cat.color : '#10b981');
+        try {
+          const card = btn.closest('.task-card');
+          if (window.ParticleSystem && window.ParticleSystem.taskComplete) {
+            window.ParticleSystem.taskComplete(card || btn, null, cat ? cat.color : '#10b981');
+          }
+          if (ambientAudio && ambientAudio.playChime) {
+            ambientAudio.playChime();
+          }
+        } catch (err) {
+          console.warn('Task completion effect failed:', err);
         }
-        ambientAudio.playChime();
       }
       renderTasksView(container, navigate);
     });

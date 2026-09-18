@@ -203,12 +203,16 @@ export function renderSleepView(container, navigate) {
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
-              ${morningRoutine.steps.map(s => `
+              ${(morningRoutine.steps && morningRoutine.steps.length > 0) ? morningRoutine.steps.map(s => `
                 <label style="display: flex; align-items: center; gap: 12px; font-size: 13.5px; cursor: pointer; padding: 6px 10px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.03);">
                   <input type="checkbox" class="routine-checkbox" data-routine-id="${morningRoutine.id}" data-step-id="${s.id}" ${s.completed ? 'checked' : ''} style="cursor: pointer;">
                   <span style="${s.completed ? 'text-decoration: line-through; opacity: 0.5;' : 'font-weight: 500;'}">${s.text}</span>
                 </label>
-              `).join('')}
+              `).join('') : `
+                <div style="padding: 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1);">
+                  No custom routine steps added yet. Click "Edit Protocol" above to configure your steps.
+                </div>
+              `}
             </div>
           </div>
 
@@ -228,12 +232,16 @@ export function renderSleepView(container, navigate) {
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 12px;">
-              ${nightRoutine.steps.map(s => `
+              ${(nightRoutine.steps && nightRoutine.steps.length > 0) ? nightRoutine.steps.map(s => `
                 <label style="display: flex; align-items: center; gap: 12px; font-size: 13.5px; cursor: pointer; padding: 6px 10px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.03);">
                   <input type="checkbox" class="routine-checkbox" data-routine-id="${nightRoutine.id}" data-step-id="${s.id}" ${s.completed ? 'checked' : ''} style="cursor: pointer;">
                   <span style="${s.completed ? 'text-decoration: line-through; opacity: 0.5;' : 'font-weight: 500;'}">${s.text}</span>
                 </label>
-              `).join('')}
+              `).join('') : `
+                <div style="padding: 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.1);">
+                  No custom routine steps added yet. Click "Edit Protocol" above to configure your steps.
+                </div>
+              `}
             </div>
           </div>
         </div>

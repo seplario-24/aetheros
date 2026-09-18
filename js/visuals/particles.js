@@ -16,61 +16,77 @@ export class ParticleSystem {
    */
   static burst(originEl, color = '#8B5CF6', count = 16) {
     if (!originEl) return;
-
-    const rect = originEl.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-
-    const container = document.createElement('div');
-    container.style.cssText = `
-      position: fixed;
-      left: 0; top: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
-      overflow: hidden;
-    `;
-    document.body.appendChild(container);
-
-    for (let i = 0; i < count; i++) {
-      const particle = document.createElement('div');
-      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
-      const distance = 40 + Math.random() * 80;
-      const size = 3 + Math.random() * 5;
-      const dx = Math.cos(angle) * distance;
-      const dy = Math.sin(angle) * distance;
-      const duration = 0.5 + Math.random() * 0.3;
-      const delay = Math.random() * 0.1;
-
-      // Vary color slightly
-      const alpha = 0.6 + Math.random() * 0.4;
-      const particleColor = ParticleSystem._varyColor(color, alpha);
-
-      particle.style.cssText = `
-        position: absolute;
-        left: ${cx}px;
-        top: ${cy}px;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        background: ${particleColor};
-        box-shadow: 0 0 ${size * 2}px ${particleColor};
-        --dx: ${dx}px;
-        --dy: ${dy}px;
-        will-change: transform, opacity;
-        transform: translate3d(0, 0, 0);
-        backface-visibility: hidden;
-        animation: burstFly ${duration}s ease-out ${delay}s forwards;
-        opacity: 0;
-      `;
-
-      container.appendChild(particle);
+    try {
+      if (typeof originEl.getBoundingClientRect === 'function') {
+        const rect = originEl.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        ParticleSystem.burstAt(cx, cy, color, count);
+      }
+    } catch (e) {
+      console.warn('Particle burst error:', e);
     }
+  }
 
-    // Cleanup after animation
-    setTimeout(() => {
-      if (container.parentNode) container.parentNode.removeChild(container);
-    }, 900);
+  /**
+   * Emit a burst of particles at absolute window coordinates (cx, cy)
+   */
+  static burstAt(cx, cy, color = '#8B5CF6', count = 16) {
+    try {
+      if (typeof document === 'undefined') return;
+      const container = document.createElement('div');
+      container.style.cssText = `
+        position: fixed;
+        left: 0; top: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+        overflow: hidden;
+      `;
+      document.body.appendChild(container);
+
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+        const distance = 40 + Math.random() * 80;
+        const size = 3 + Math.random() * 5;
+        const dx = Math.cos(angle) * distance;
+        const dy = Math.sin(angle) * distance;
+        const duration = 0.5 + Math.random() * 0.3;
+        const delay = Math.random() * 0.1;
+
+        // Vary color slightly
+        const alpha = 0.6 + Math.random() * 0.4;
+        const particleColor = ParticleSystem._varyColor(color, alpha);
+
+        particle.style.cssText = `
+          position: absolute;
+          left: ${cx}px;
+          top: ${cy}px;
+          width: ${size}px;
+          height: ${size}px;
+          border-radius: 50%;
+          background: ${particleColor};
+          box-shadow: 0 0 ${size * 2}px ${particleColor};
+          --dx: ${dx}px;
+          --dy: ${dy}px;
+          will-change: transform, opacity;
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
+          animation: burstFly ${duration}s ease-out ${delay}s forwards;
+          opacity: 0;
+        `;
+
+        container.appendChild(particle);
+      }
+
+      // Cleanup after animation
+      setTimeout(() => {
+        if (container.parentNode) container.parentNode.removeChild(container);
+      }, 900);
+    } catch (e) {
+      console.warn('Particle burstAt error:', e);
+    }
   }
 
   /**
@@ -172,14 +188,29 @@ export class ParticleSystem {
   }
 
   /**
-   * Task completion animation on the card
+   * Task completion animation on the card or at coordinates
    */
-  static taskComplete(taskCardEl) {
-    if (!taskCardEl) return;
-    const color = '#10B981';
-    taskCardEl.classList.add('completed-anim');
-    setTimeout(() => taskCardEl.classList.remove('completed-anim'), 500);
-    ParticleSystem.burst(taskCardEl, color, 12);
+  static taskComplete(target, y, color = '#10B981') {
+    if (!target) return;
+    try {
+      if (typeof target === 'number') {
+        const cx = target;
+        const cy = typeof y === 'number' ? y : 0;
+        const burstColor = (typeof color === 'string' && color) ? color : '#10B981';
+        ParticleSystem.burstAt(cx, cy, burstColor, 14);
+        return;
+      }
+      const cardEl = target.closest ? (target.closest('.task-card') || target) : target;
+      if (cardEl && cardEl.classList) {
+        cardEl.classList.add('completed-anim');
+        setTimeout(() => {
+          if (cardEl && cardEl.classList) cardEl.classList.remove('completed-anim');
+        }, 500);
+      }
+      ParticleSystem.burst(cardEl || target, color || '#10B981', 14);
+    } catch (e) {
+      console.warn('ParticleSystem.taskComplete error:', e);
+    }
   }
 
   // Internal helper to vary a hex color's opacity
@@ -197,4 +228,6 @@ export class ParticleSystem {
 }
 
 // Make globally available for view scripts
-window.ParticleSystem = ParticleSystem;
+if (typeof window !== 'undefined') {
+  window.ParticleSystem = ParticleSystem;
+}

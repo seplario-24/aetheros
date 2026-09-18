@@ -382,15 +382,23 @@ export function renderHomeView(container, navigate) {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const taskId = btn.getAttribute('data-task-id');
+      const task = store.getTaskById(taskId);
+      const cat = task ? store.getCategoryById(task.categoryId) : null;
       const updated = store.toggleTaskCompleted(taskId);
       if (updated && updated.completed) {
-        ambientAudio.playChime();
-        // Particle wow moment
-        const card = container.querySelector(`[data-task-id="${taskId}"].task-card`);
-        if (card && window.ParticleSystem) {
-          window.ParticleSystem.burst(card, '#10B981', 14);
+        try {
+          if (ambientAudio && ambientAudio.playChime) {
+            ambientAudio.playChime();
+          }
+          const card = container.querySelector(`[data-task-id="${taskId}"].task-card`);
+          if (card && window.ParticleSystem) {
+            window.ParticleSystem.burst(card, cat ? cat.color : '#10B981', 14);
+          }
+        } catch (err) {
+          console.warn('Task complete effect err:', err);
         }
       }
+      renderHomeView(container, navigate);
     });
   });
 

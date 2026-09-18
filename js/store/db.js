@@ -7,8 +7,55 @@
 const STORAGE_KEY = 'AETHER_PRODUCTIVITY_OS_STORE_V2';
 const STORAGE_KEY_V1 = 'AETHER_PRODUCTIVITY_OS_STORE_V1';
 
-// Known demo/seed task IDs — these are always safe to purge
+// Known demo/seed task IDs & patterns — these are always purged
 const DEMO_TASK_IDS = new Set(['task-1','task-2','task-3','task-4','task-5','task-6']);
+const DEMO_TASK_PREFIXES = ['task-hist-', 'task-seed-', 'task-demo-'];
+const DEMO_TASK_TITLES = new Set([
+  'Literature review on neural manifolds',
+  'Optimize WebGL fragment shader',
+  'Refactor state synchronization loop',
+  'Draft publication abstract & figures',
+  'Benchmark memory footprint under high concurrency',
+  'Conduct user evaluation & protocol trial',
+  'Implement audio spatial panning system',
+  'Audit accessibility & contrast ratios',
+  'Write technical documentation for core pipeline',
+  'Sprint retrospective & backlog grooming',
+  'Deep work on algorithmic complexity reduction',
+  'Design token alignment and CSS variables audit',
+  'Profile battery consumption on mobile webkit',
+  'Assemble interactive data visualization canvas',
+  'Unit testing edge cases in state machine',
+  'Read 25 pages of Deep Work',
+  'Complete Chapter 4 in Advanced Algorithms',
+  'Edit 120s vertical video reel',
+  'Weekly team planning sync & retro',
+  'Gym: Push strength progression',
+  'Review pull requests and triage bugs'
+]);
+
+export const DEMO_HABIT_IDS = new Set([
+  'habit-exercise',
+  'habit-reading',
+  'habit-meditation',
+  'habit-no-sugar',
+  'habit-coding',
+  'habit-hydration',
+  'habit-sleep-off'
+]);
+
+export const DEMO_ROUTINE_STEP_IDS = new Set([
+  'm-1', 'm-2', 'm-3', 'm-4',
+  'n-1', 'n-2', 'n-3', 'n-4'
+]);
+
+export function isDemoTask(t) {
+  if (!t || !t.id) return true;
+  if (DEMO_TASK_IDS.has(t.id)) return true;
+  if (DEMO_TASK_PREFIXES.some(prefix => t.id.startsWith(prefix))) return true;
+  if (t.title && DEMO_TASK_TITLES.has(t.title.trim())) return true;
+  return false;
+}
 
 export const DEFAULT_CATEGORIES = [
   { id: 'cat-study', name: 'Study', color: '#6366F1', icon: 'book-open', isCustom: false },
@@ -181,29 +228,40 @@ class AetherStore {
       if (typeof localStorage !== 'undefined') {
         // Try V2 storage first (current)
         let raw = localStorage.getItem(STORAGE_KEY);
-        let migratedFromV1 = false;
 
         // If no V2, attempt migration from V1
         if (!raw) {
           const v1Raw = localStorage.getItem(STORAGE_KEY_V1);
           if (v1Raw) {
             raw = v1Raw;
-            migratedFromV1 = true;
           }
         }
 
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && parsed.tasks !== undefined && parsed.categories) {
+          if (parsed && parsed.categories) {
 
-            // MIGRATION: strip all known demo pending tasks so user only sees their own data
-            if (migratedFromV1 || !parsed._v2clean) {
-              parsed.tasks = (parsed.tasks || []).filter(t => {
-                // Remove demo tasks that are still pending; keep ones user has modified
-                if (DEMO_TASK_IDS.has(t.id) && !t.completed) return false;
-                return true;
-              });
-              parsed._v2clean = true;
+            // ALWAYS purge all demo tasks (both completed and pending)
+            parsed.tasks = (parsed.tasks || []).filter(t => !isDemoTask(t));
+
+            // ALWAYS purge demo habits
+            parsed.habits = (parsed.habits || []).filter(h => h && h.id && !DEMO_HABIT_IDS.has(h.id));
+
+            // Strip orphaned or demo habit records
+            const activeHabitIds = new Set((parsed.habits || []).map(h => h.id));
+            parsed.habitRecords = (parsed.habitRecords || []).filter(r => 
+              r && r.habitId && !DEMO_HABIT_IDS.has(r.habitId) && activeHabitIds.has(r.habitId)
+            );
+
+            // Strip demo routine steps
+            if (Array.isArray(parsed.routines)) {
+              for (const r of parsed.routines) {
+                if (Array.isArray(r.steps)) {
+                  r.steps = r.steps.filter(s => s && s.id && !DEMO_ROUTINE_STEP_IDS.has(s.id));
+                }
+              }
+            } else {
+              parsed.routines = this.createDefaultRoutines();
             }
 
             // Ensure required arrays exist
@@ -211,26 +269,17 @@ class AetherStore {
             if (!parsed.habitRecords) parsed.habitRecords = [];
             if (!parsed.focusSessions) parsed.focusSessions = [];
             if (!parsed.sleepRecords) parsed.sleepRecords = [];
-            if (!parsed.routines || parsed.routines.length === 0) {
-              parsed.routines = this.createDefaultRoutines();
-            }
             if (!parsed.gameRecords) parsed.gameRecords = [];
 
-            // Seed historical analytics data for fresh installs only
-            // (users who have no focus sessions at all get the history so graphs aren't empty)
+            // Seed historical focus & sleep data ONLY if user has none at all (for background graphs)
             const hasAnySessions = (parsed.focusSessions || []).length > 0;
             if (!hasAnySessions) {
               const seed = this.createSeedState();
               parsed.focusSessions = seed.focusSessions;
               parsed.sleepRecords = seed.sleepRecords;
-              // Only seed habits if user has none at all
-              if (parsed.habits.length === 0) {
-                parsed.habits = seed.habits;
-                parsed.habitRecords = seed.habitRecords;
-              }
-              // Do NOT seed pending tasks — user starts clean
             }
 
+            parsed._v3clean = true;
             this.state = parsed;
             this.saveState();
             return parsed;
@@ -240,10 +289,12 @@ class AetherStore {
     } catch (e) {
       console.warn('Failed to parse existing state from localStorage:', e);
     }
-    // Completely fresh install — seed analytics history but NO pending tasks
+    // Completely fresh install — zero demo tasks, zero demo habits, zero demo steps
     const freshState = this.createSeedState();
-    freshState.tasks = []; // user starts with empty task list
-    freshState._v2clean = true;
+    freshState.tasks = [];
+    freshState.habits = [];
+    freshState.habitRecords = [];
+    freshState._v3clean = true;
     return freshState;
   }
 
@@ -861,18 +912,31 @@ class AetherStore {
     this.saveState();
   }
 
-  // Remove only demo/sample tasks — keeps user's own tasks intact
+  // Remove all demo/sample tasks — keeps user's own tasks intact
   clearDemoTasks() {
-    this.state.tasks = this.state.tasks.filter(t => !DEMO_TASK_IDS.has(t.id));
-    this.state.habits = this.state.habits.filter(h => !h.id.startsWith('habit-') || h.isCustom);
+    this.state.tasks = (this.state.tasks || []).filter(t => !isDemoTask(t));
     this.saveState();
   }
 
-  // Remove only demo/sample habits (seeded ones) — keeps user's own habits intact
+  // Remove all demo/sample habits — keeps user's own habits intact
   clearDemoHabits() {
-    const defaultHabitIds = new Set(DEFAULT_HABITS.map(h => h.id));
-    this.state.habits = this.state.habits.filter(h => !defaultHabitIds.has(h.id));
-    this.state.habitRecords = this.state.habitRecords.filter(r => !defaultHabitIds.has(r.habitId));
+    this.state.habits = (this.state.habits || []).filter(h => h && h.id && !DEMO_HABIT_IDS.has(h.id));
+    const activeIds = new Set(this.state.habits.map(h => h.id));
+    this.state.habitRecords = (this.state.habitRecords || []).filter(r => 
+      r && r.habitId && !DEMO_HABIT_IDS.has(r.habitId) && activeIds.has(r.habitId)
+    );
+    this.saveState();
+  }
+
+  // Remove demo routine steps — keeps user's custom routine steps intact
+  clearDemoRoutines() {
+    if (Array.isArray(this.state.routines)) {
+      for (const r of this.state.routines) {
+        if (Array.isArray(r.steps)) {
+          r.steps = r.steps.filter(s => s && s.id && !DEMO_ROUTINE_STEP_IDS.has(s.id));
+        }
+      }
+    }
     this.saveState();
   }
 
@@ -882,43 +946,22 @@ class AetherStore {
   }
 
   // ------------------------------------------------------------------------
-  // Seed State Generator (Realistic 60+ Days History)
+  // Seed State Generator (Analytics History Seeder)
   // ------------------------------------------------------------------------
   createSeedState() {
     const today = new Date();
     const todayIso = today.toISOString().split('T')[0];
 
-    // No pending demo tasks — users start with a clean task list.
-    // createSeedState() is used only for historical analytics data (focus sessions,
-    // sleep records, habit records). The tasks array is intentionally empty here;
-    // loadState() and the fresh-install path will keep it empty for new users.
+    // No demo tasks — users start with an empty, clean outcome horizon
     const tasks = [];
 
-    // Generate historical focus sessions, completed tasks, sleep records and habits from Jan 1 to today
+    // Generate historical focus sessions and sleep records from Jan 1 to today for graphs
     const startOfYear = new Date(today.getFullYear(), 0, 1);
     const daysSinceJan1 = Math.max(1, Math.floor((today - startOfYear) / 86400000) + 1);
 
     const focusSessions = [];
     const sleepRecords = [];
-    const historicalTasks = [];
     const catPool = ['cat-research', 'cat-study', 'cat-editing', 'cat-reading', 'cat-course', 'cat-content'];
-    const taskTitlesPool = [
-      'Literature review on neural manifolds',
-      'Optimize WebGL fragment shader',
-      'Refactor state synchronization loop',
-      'Draft publication abstract & figures',
-      'Benchmark memory footprint under high concurrency',
-      'Conduct user evaluation & protocol trial',
-      'Implement audio spatial panning system',
-      'Audit accessibility & contrast ratios',
-      'Write technical documentation for core pipeline',
-      'Sprint retrospective & backlog grooming',
-      'Deep work on algorithmic complexity reduction',
-      'Design token alignment and CSS variables audit',
-      'Profile battery consumption on mobile webkit',
-      'Assemble interactive data visualization canvas',
-      'Unit testing edge cases in state machine'
-    ];
 
     for (let i = 0; i < daysSinceJan1; i++) {
       const d = new Date(today);
@@ -944,8 +987,7 @@ class AetherStore {
         });
       }
 
-      // Systematic realistic focus sessions
-      // Occasional rest day on Sundays
+      // Systematic realistic focus sessions for analytics and dot calendar
       const isRestDay = dayOfWeek === 0 && (i % 3 === 0);
       const numSessions = isRestDay ? 0 : (dayOfWeek === 0 || dayOfWeek === 6 ? (1 + (i % 2)) : (2 + (i % 4)));
 
@@ -968,41 +1010,7 @@ class AetherStore {
           notes: ''
         });
       }
-
-      // Historical completed tasks (1-3 completed outcomes on active past days)
-      if (i > 0 && !isRestDay) {
-        const numTasks = 1 + (i % 4);
-        for (let t = 0; t < numTasks; t++) {
-          const tTitle = taskTitlesPool[(i * 3 + t) % taskTitlesPool.length];
-          const tCat = catPool[(i + t) % catPool.length];
-          const tTime = new Date(d);
-          tTime.setHours(11 + t * 2, 30, 0);
-
-          historicalTasks.push({
-            id: `task-hist-${i}-${t}`,
-            title: tTitle,
-            description: 'Completed scheduled focus outcome.',
-            categoryId: tCat,
-            priority: t % 3 === 0 ? 'high' : 'medium',
-            estimatedDuration: 45,
-            scheduledStart: `${dStr}T10:00`,
-            scheduledEnd: `${dStr}T11:00`,
-            deadline: null,
-            completed: true,
-            completedAt: tTime.toISOString(),
-            subtasks: [],
-            tags: ['DeepWork', 'Milestone'],
-            energyLevel: 'high',
-            repeatRule: 'none',
-            createdAt: d.toISOString(),
-            updatedAt: tTime.toISOString()
-          });
-        }
-      }
     }
-
-    // Combine current active tasks with historical completed tasks
-    tasks.push(...historicalTasks);
 
     const routines = this.createDefaultRoutines();
 
@@ -1012,46 +1020,9 @@ class AetherStore {
       { id: 'g-3', game: 'Stroop Test', score: 24, duration: 45, date: todayIso }
     ];
 
-    // Generate historical habit records for all days of the year up to today
-    const habits = JSON.parse(JSON.stringify(DEFAULT_HABITS));
+    // User starts with empty habits and empty habit records
+    const habits = [];
     const habitRecords = [];
-
-    for (let i = 0; i < daysSinceJan1; i++) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const dStr = d.toISOString().split('T')[0];
-
-      for (let hIdx = 0; hIdx < habits.length; hIdx++) {
-        const h = habits[hIdx];
-        let status = 'completed';
-
-        if (i === 0) {
-          // Today: 4 completed, 2 unlogged, 1 skipped
-          if (hIdx === 0 || hIdx === 1 || hIdx === 2 || hIdx === 4) status = 'completed';
-          else if (hIdx === 3) status = 'skipped';
-          else status = 'unlogged';
-        } else {
-          // Deterministic realistic pattern
-          const seedVal = (i * 17 + hIdx * 23) % 100;
-          if (seedVal < 74) status = 'completed';
-          else if (seedVal < 86) status = 'skipped';
-          else if (seedVal < 95) status = 'failed';
-          else status = 'unlogged';
-        }
-
-        if (status !== 'unlogged') {
-          habitRecords.push({
-            id: `hr-seed-${h.id}-${i}`,
-            habitId: h.id,
-            date: dStr,
-            status,
-            value: h.target,
-            note: '',
-            updatedAt: d.toISOString()
-          });
-        }
-      }
-    }
 
     return {
       preferences: { ...DEFAULT_PREFERENCES },
@@ -1063,7 +1034,7 @@ class AetherStore {
       habitRecords,
       routines,
       gameRecords,
-      _v2clean: true
+      _v3clean: true
     };
   }
 
@@ -1071,27 +1042,17 @@ class AetherStore {
     return [
       {
         id: 'rt-morning',
-        title: 'Morning Momentum Routine',
+        title: 'Morning Momentum Protocol',
         timeOfDay: 'morning',
         scheduledTime: '07:15',
-        steps: [
-          { id: 'm-1', text: 'Drink 500ml water + electrolytes', completed: true },
-          { id: 'm-2', text: '10 minutes mindful breathing or daylight exposure', completed: true },
-          { id: 'm-3', text: 'Review top 3 essential outcomes for today', completed: true },
-          { id: 'm-4', text: '30-45 minutes movement or conditioning', completed: true }
-        ]
+        steps: []
       },
       {
         id: 'rt-night',
         title: 'Evening Decompression Protocol',
         timeOfDay: 'night',
         scheduledTime: '22:30',
-        steps: [
-          { id: 'n-1', text: 'Zero blue light screens 45 min before sleep', completed: false },
-          { id: 'n-2', text: 'Brief reflection: What went exceptionally well?', completed: false },
-          { id: 'n-3', text: 'Review tomorrow\'s calendar timeline', completed: false },
-          { id: 'n-4', text: '20 minutes book reading in bed', completed: false }
-        ]
+        steps: []
       }
     ];
   }
